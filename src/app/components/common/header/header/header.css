@@ -1,0 +1,12 @@
+.header-toolbar{
+    background-color: #000;
+    display: flex;
+    justify-content: space-between;
+    color: #fff;
+}
+
+.left-section{
+    display: flex;
+    align-items: center;
+    gap: .3em;
+}

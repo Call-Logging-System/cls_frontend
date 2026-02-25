@@ -1,0 +1,20 @@
+<mat-toolbar color="primary" class="header-toolbar">
+
+  <div class="left-section">
+    <mat-icon>support_agent</mat-icon>
+    <span class="app-title">{{ appName }}</span>
+  </div>
+
+  <span class="spacer"></span>
+
+  <div class="right-section">
+    <button mat-button routerLink="/dashboard">Dashboard</button>
+    <button mat-button routerLink="/calls">Calls</button>
+    <button mat-button routerLink="/reports">Reports</button>
+    <button mat-button routerLink="/login">
+      <mat-icon>login</mat-icon>
+      Login
+    </button>
+  </div>
+
+</mat-toolbar>
