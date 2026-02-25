@@ -1,0 +1,9 @@
+.footer {
+  justify-content: center;
+  height: 50px;
+  font-size: 14px;
+}
+
+.footer-text {
+  opacity: 0.9;
+}
