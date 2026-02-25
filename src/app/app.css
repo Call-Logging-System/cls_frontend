@@ -4,6 +4,21 @@
   min-height: 100vh;
 }
 
-router-outlet {
+/* Container height minus header & footer */
+.sidenav-container {
   flex: 1;
+}
+
+.sidenav {
+  width: 250px;
+}
+
+mat-sidenav-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.content-wrapper {
+  flex: 1;
+  padding: 20px;
 }

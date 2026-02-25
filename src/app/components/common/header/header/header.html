@@ -1,20 +1,9 @@
-<mat-toolbar color="primary" class="header-toolbar">
+<mat-toolbar color="primary">
 
-  <div class="left-section">
-    <mat-icon>support_agent</mat-icon>
-    <span class="app-title">{{ appName }}</span>
-  </div>
+  <button mat-icon-button (click)="menuClick.emit()">
+    <mat-icon>menu</mat-icon>
+  </button>
 
-  <span class="spacer"></span>
-
-  <div class="right-section">
-    <button mat-button routerLink="/dashboard">Dashboard</button>
-    <button mat-button routerLink="/calls">Calls</button>
-    <button mat-button routerLink="/reports">Reports</button>
-    <button mat-button routerLink="/login">
-      <mat-icon>login</mat-icon>
-      Login
-    </button>
-  </div>
+  <span>CLS - Call Logging System</span>
 
 </mat-toolbar>

@@ -1,0 +1,48 @@
+
+/* Sidebar background */
+:host {
+  display: block;
+  height: 100%;
+  color: #ffffff;
+}
+
+/* Remove default padding */
+.nav-list {
+  padding-top: 10px;
+}
+
+.nav-item {
+  /* margin: 6px 10px; */
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+a{
+  display: flex;
+}
+
+/* Icon styling */
+.nav-item mat-icon {
+  margin-right: 12px;
+  color: #94a3b8;
+}
+
+/* Hover effect */
+.nav-item:hover {
+  background-color: #334155;
+  color: #ffffff;
+}
+
+/* Active route highlight */
+.active-link {
+  background-color: #2563eb !important;  /* blue highlight */
+  color: white !important;
+}
+
+.active-link mat-icon {
+  color: white !important;
+}

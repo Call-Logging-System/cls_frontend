@@ -1,3 +1,27 @@
-<app-header></app-header>
-<router-outlet></router-outlet>
+<app-header (menuClick)="drawer.toggle()"></app-header>
+
+<mat-sidenav-container class="sidenav-container">
+
+  <!-- Sidebar -->
+  <mat-sidenav
+    #drawer
+    mode="side"
+    opened
+    class="sidenav">
+
+    <app-menubar></app-menubar>
+
+  </mat-sidenav>
+
+  <!-- Content -->
+  <mat-sidenav-content>
+
+    <div class="content-wrapper">
+      <router-outlet></router-outlet>
+    </div>
+
+  </mat-sidenav-content>
+
+</mat-sidenav-container>
+
 <app-footer></app-footer>
