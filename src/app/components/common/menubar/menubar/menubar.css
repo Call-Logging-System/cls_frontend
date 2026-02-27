@@ -1,6 +1,8 @@
-/* .sidenav-container {
+ .sidenav-container {
   height: 100vh;
-} */
+  background-color: #1e3a8a;
+  width: 200px;
+}
 
 .nav-list {
   padding: 0;
@@ -18,9 +20,12 @@
 }
 
 .mat-mdc-list-item-icon {
-  margin-right: 8px;
+  color: white;
 }
-
+.mat-mdc-list-item-title{
+  font-size: 16px;
+  color: white;
+}
 .active-link {
   background-color: rgba(0, 0, 0, 0.08);
   font-weight: 500;
