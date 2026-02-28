@@ -4,17 +4,17 @@
   min-height: 100vh;
 }
 
-/* Container height minus header & footer */
 .sidenav-container {
   flex: 1;
 }
 
 .sidenav {
-  width: 250px;
+  width: 220px;
+  background-color: var(--cls-bg);
 }
 
 mat-sidenav-content {
-  display: flex;
+  background-color: var(--cls-bg);
   flex-direction: column;
 }
 

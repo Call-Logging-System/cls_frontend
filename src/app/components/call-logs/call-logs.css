@@ -1,6 +1,6 @@
 .table-wrapper {
   padding: 24px;
-  background: #f5f7fa;
+  background: var(--cls-bg);
   min-height: 100vh;
 }
 
@@ -18,11 +18,12 @@
   width: 100%;
   border-radius: 12px;
   overflow: hidden;
-  background: white;
+  background: var(--cls-table);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .mat-mdc-header-row {
-  background-color: #1e3a8a;
+  background-color: var(--cls-primary);
 }
 
 .mat-mdc-header-cell {
@@ -56,6 +57,7 @@
 
 mat-paginator {
   margin-top: 16px;
-  background: white;
+  background: var(--cls-table);
   border-radius: 0 0 12px 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }

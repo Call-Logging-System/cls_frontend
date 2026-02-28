@@ -1,7 +1,9 @@
  .sidenav-container {
-  height: 100vh;
-  background-color: #1e3a8a;
-  width: 200px;
+  background-color: var(--cls-primary);
+  padding: 20px 20px;
+  margin-top: 10px;
+  margin-left: 10px;
+  border-radius: 8px;
 }
 
 .nav-list {
@@ -12,14 +14,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
 }
 
 .nav-item:hover{
-  background-color: rgb(201, 235, 248);
+  background-color: var(--cls-primary-hover);
 }
 
-.mat-mdc-list-item-icon {
+.nav-item mat-icon {
   color: white;
 }
 .mat-mdc-list-item-title{
