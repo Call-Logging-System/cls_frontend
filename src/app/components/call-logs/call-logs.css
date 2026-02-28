@@ -6,6 +6,9 @@
 
 .table-header {
   margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .table-header h2 {
@@ -61,3 +64,40 @@ mat-paginator {
   border-radius: 0 0 12px 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+
+.add-btn{
+  background-color: var(--cls-primary);
+  padding: 12px;
+  border-radius: 4px;
+  color: #dcfce7;
+  font-weight: bold;
+  border: none;
+  height: 40px;
+  cursor: pointer;
+}
+
+.add-btn:hover{
+  background-color: var(--cls-primary-hover);
+}
+
+.edit-btn {
+  background: none;
+  border: none;
+  color: var(--cls-primary);
+  cursor: pointer;
+}
+
+/* .edit-btn:hover {
+  background-color: rgba(69, 90, 100, 0.1);
+} */
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: #B23A48;
+  cursor: pointer;
+}
+
+/* .delete-btn:hover {
+  background-color: rgba(178, 58, 72, 0.1);
+} */

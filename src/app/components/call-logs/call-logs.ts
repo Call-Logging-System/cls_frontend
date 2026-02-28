@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -36,10 +37,10 @@ const CALL_DATA: CallLog[] = [
   selector: 'app-call-logs',
   templateUrl: './call-logs.html',
   styleUrls: ['./call-logs.css'],
-  imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule],
+  imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatIconModule],
 })
 export class CallLogs implements AfterViewInit {
-  displayedColumns: string[] = ['date', 'issue', 'type', 'reportedBy', 'status', 'duration'];
+  displayedColumns: string[] = ['date', 'issue', 'type', 'reportedBy', 'status', 'duration', 'edit', 'delete'];
   dataSource = new MatTableDataSource(CALL_DATA);
 
   constructor() {
