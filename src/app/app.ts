@@ -1,9 +1,9 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Header } from "./components/common/header/header/header";
-import { Footer } from "./components/common/footer/footer/footer";
+import { Header } from "./components/common/header/header";
+import { Footer } from "./components/common/footer/footer";
 import { MatSidenavContainer, MatSidenav, MatSidenavContent } from "@angular/material/sidenav";
-import { Menubar } from "./components/common/menubar/menubar/menubar";
+import { Menubar } from "./components/common/menubar/menubar";
 
 @Component({
   selector: 'app-root',

@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { AddCallLogDialog } from './add-call-log-dialog/add-call-log-dialog';
 
 export interface CallLog {
   date: string;
@@ -43,9 +45,7 @@ export class CallLogs implements AfterViewInit {
   displayedColumns: string[] = ['date', 'issue', 'type', 'reportedBy', 'status', 'duration', 'edit', 'delete'];
   dataSource = new MatTableDataSource(CALL_DATA);
 
-  constructor() {
-    console.log(this.dataSource.data);
-  }
+  constructor(private dialog: MatDialog) {}
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -54,4 +54,16 @@ export class CallLogs implements AfterViewInit {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
+
+  openAddDialog() {
+  const dialogRef = this.dialog.open(AddCallLogDialog, {
+    width: '400px'
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (result) {
+      console.log('Username entered:', result);
+    }
+  });
+}
 }

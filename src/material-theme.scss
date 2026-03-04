@@ -7,7 +7,6 @@ html {
     color: (
       theme-type: light,
 
-      // Single calm palette
       primary: mat.$blue-palette,
       secondary: mat.$blue-palette,
       tertiary: mat.$blue-palette,
@@ -21,7 +20,6 @@ html {
 body {
   color-scheme: light;
 
-  // Very soft background
   background-color: #F5F7FA;
 
   color: var(--mat-sys-on-surface);
@@ -31,7 +29,6 @@ body {
   height: 100%;
 }
 
-/* Toolbar override - darker tone */
 :root {
   @include mat.toolbar-overrides((
     container-background-color: #455A64,
@@ -41,8 +38,8 @@ body {
 
 :root {
   --cls-primary: 	#275f96;
-  --cls-primary-hover: #23578a;   /* Slightly darker */
-  --cls-bg: #f1f1f1;
+  --cls-primary-hover: #23578a;
+  --cls-bg: #e8e8e8;
   --cls-table:#f6f8fa;
   --cls-hover: #F1F5F9;
 }
