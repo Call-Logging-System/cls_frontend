@@ -3,13 +3,11 @@
 <mat-dialog-content>
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Username</mat-label>
-    <input matInput [(ngModel)]="username" placeholder="Enter username">
+    <input matInput [(ngModel)]="username" placeholder="Enter username" />
   </mat-form-field>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button (click)="close()">Cancel</button>
-  <button mat-raised-button (click)="save()">
-    Continue
-  </button>
+  <button mat-button class="cancel-btn" (click)="close()">Cancel</button>
+  <button mat-raised-button class="primary-btn">Continue</button>
 </mat-dialog-actions>

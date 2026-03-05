@@ -1,1 +1,18 @@
 /* You can add global styles to this file, and also import other style files */
+.primary-btn {
+  background-color: var(--cls-primary) !important;
+  color: #dcfce7 !important;
+  font-weight: bold;
+  border-radius: 4px !important;
+  height: 40px;
+  padding: 0 20px;
+  cursor: pointer !important;
+   transition: all 0.2s ease !important;
+   border: none;
+}
+
+.primary-btn:hover {
+  background-color: var(--cls-primary-hover) !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2) !important;
+  transform: translateY(-1px) !important;
+}

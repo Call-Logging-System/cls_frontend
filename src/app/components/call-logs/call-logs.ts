@@ -1,39 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, effect, inject, signal, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { AddCallLogDialog } from './add-call-log-dialog/add-call-log-dialog';
-
-export interface CallLog {
-  date: string;
-  issue: string;
-  type: string;
-  reportedBy: string;
-  status: string;
-  duration: string;
-}
-
-const CALL_DATA: CallLog[] = [
-  {
-    date: '27-02-2026',
-    issue: 'Login not working',
-    type: 'Bug',
-    reportedBy: 'Mumbai Office',
-    status: 'Solved',
-    duration: '15 mins',
-  },
-  {
-    date: '26-02-2026',
-    issue: 'Report download issue',
-    type: 'Support',
-    reportedBy: 'Pune Office',
-    status: 'Pending',
-    duration: '30 mins',
-  },
-];
+import { CallLogService } from '../../services/call-log/call-log.service';
+import { CallLog } from '../../models/call-log/call-log.model';
 
 @Component({
   selector: 'app-call-logs',
@@ -42,10 +16,36 @@ const CALL_DATA: CallLog[] = [
   imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatIconModule],
 })
 export class CallLogs implements AfterViewInit {
-  displayedColumns: string[] = ['date', 'issue', 'type', 'reportedBy', 'status', 'duration', 'edit', 'delete'];
-  dataSource = new MatTableDataSource(CALL_DATA);
+  callLogs = signal<CallLog[]>([]);
 
-  constructor(private dialog: MatDialog) {}
+  private readonly callLogService = inject(CallLogService);
+  private readonly dialog = inject(MatDialog);
+
+  displayedColumns: string[] = [
+    'date',
+    'issue',
+    'type',
+    'reportedBy',
+    'status',
+    'duration',
+    'edit',
+    'delete',
+  ];
+
+  statusMap: any = {
+    O: 'Open',
+    P: 'In Progress',
+    D: 'Pending',
+    C: 'Closed',
+  };
+
+  dataSource = new MatTableDataSource<CallLog>();
+
+  constructor() {
+    effect(() => {
+      this.dataSource.data = this.callLogs();
+    });
+  }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -53,17 +53,40 @@ export class CallLogs implements AfterViewInit {
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+
+    this.loadCallLogs();
+  }
+
+  loadCallLogs() {
+    this.callLogService.getCallLogs().subscribe({
+      next: (data: any[]) => {
+        const mappedData: CallLog[] = data.map((item) => ({
+          id: item.id,
+          date: item.callDate,
+          issue: item.issueReported,
+          type: item.issueType,
+          reportedBy: item.reportedBy,
+          status: item.status,
+          duration: item.timeTakenMinutes,
+        }));
+
+        this.callLogs.set(mappedData);
+      },
+      error: (err) => {
+        console.error('Error loading call logs', err);
+      },
+    });
   }
 
   openAddDialog() {
-  const dialogRef = this.dialog.open(AddCallLogDialog, {
-    width: '400px'
-  });
+    const dialogRef = this.dialog.open(AddCallLogDialog, {
+      width: '450px',
+    });
 
-  dialogRef.afterClosed().subscribe(result => {
-    if (result) {
-      console.log('Username entered:', result);
-    }
-  });
-}
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.log('Username entered:', result);
+      }
+    });
+  }
 }
