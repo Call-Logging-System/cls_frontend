@@ -7,11 +7,16 @@ import { CallLog } from '../../models/call-log/call-log.model';
   providedIn: 'root',
 })
 export class CallLogService {
-  readonly baseUrl = 'http://localhost:8081/api/';
+  readonly baseUrl = 'http://localhost:8081/api/call_logs/';
 
   constructor(private http: HttpClient) {}
 
   getCallLogs(): Observable<CallLog[]> {
-    return this.http.get<CallLog[]>(this.baseUrl + 'call_logs/getList');
+    return this.http.get<CallLog[]>(this.baseUrl + 'getList');
+  }
+
+  saveOffice(payload: { userName: string; officeLevel: number | null }): Observable<any> {
+    console.log('Saving office with payload:', payload);
+    return this.http.post(this.baseUrl + 'office/save', payload);
   }
 }

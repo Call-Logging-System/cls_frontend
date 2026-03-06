@@ -3,7 +3,7 @@ export interface CallLog {
   date: string;
   issue: string;
   type: string;
-  reportedBy: number;
+  reportedBy: string;
   status: string;
   duration: number;
 }

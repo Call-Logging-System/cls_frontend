@@ -5,25 +5,48 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from "@angular/material/select";
+import { CallLogService } from '../../../services/call-log/call-log.service';
 
 @Component({
   selector: 'app-add-call-log-dialog',
-  imports: [CommonModule,
+  imports: [
+    CommonModule,
     FormsModule,
     MatDialogModule,
     MatButtonModule,
     MatFormFieldModule,
-    MatInputModule],
+    MatInputModule,
+    MatSelectModule
+],
   templateUrl: './add-call-log-dialog.html',
   styleUrl: './add-call-log-dialog.css',
 })
 export class AddCallLogDialog {
   username: string = '';
+  officeLevel: number | null = null;
 
-  constructor(private dialogRef: MatDialogRef<AddCallLogDialog>) {}
+  constructor(
+    private dialogRef: MatDialogRef<AddCallLogDialog>,
+    private callLogService: CallLogService,
+  ) {}
 
   save() {
-    this.dialogRef.close(this.username);
+    if (!this.username) return;
+
+    const payload = {
+      userName: this.username,
+      officeLevel: this.officeLevel
+    };
+
+    this.callLogService.saveOffice(payload).subscribe({
+      next: (res) => {
+        this.dialogRef.close(res);
+      },
+      error: (err) => {
+        console.error(err);
+      },
+    });
   }
 
   close() {

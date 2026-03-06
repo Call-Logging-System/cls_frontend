@@ -1,7 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 .primary-btn {
   background-color: var(--cls-primary) !important;
-  color: #dcfce7 !important;
+  color: #fff !important;
   font-weight: bold;
   border-radius: 4px !important;
   height: 40px;
