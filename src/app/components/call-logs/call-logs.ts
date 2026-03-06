@@ -8,6 +8,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { AddCallLogDialog } from './add-call-log-dialog/add-call-log-dialog';
 import { CallLogService } from '../../services/call-log/call-log.service';
 import { CallLog } from '../../models/call-log/call-log.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-call-logs',
@@ -20,6 +21,7 @@ export class CallLogs implements AfterViewInit {
 
   private readonly callLogService = inject(CallLogService);
   private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
 
   displayedColumns: string[] = [
     'date',
@@ -84,8 +86,8 @@ export class CallLogs implements AfterViewInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        console.log('Username entered:', result);
+      if (result.status == "200") {
+        this.router.navigate(['/add-call-log']);
       }
     });
   }
