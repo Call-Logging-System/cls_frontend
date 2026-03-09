@@ -25,7 +25,7 @@
 }
 .mat-mdc-list-item-title{
   font-size: 16px;
-  color: white;
+  color: white !important;
 }
 .active-link {
   background-color: rgba(0, 0, 0, 0.08);

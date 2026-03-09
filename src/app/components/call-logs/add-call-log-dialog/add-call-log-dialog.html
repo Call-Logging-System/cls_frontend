@@ -4,12 +4,12 @@
   <div class="form-row">
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Username</mat-label>
-      <input matInput [(ngModel)]="username" placeholder="Enter username" />
+      <input matInput [(ngModel)]="username" placeholder="Enter username" required/>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="full-width">
+    <mat-form-field appearance="outline" class="full-width" >
       <mat-label>Office Level</mat-label>
-      <mat-select [(ngModel)]="officeLevel">
+      <mat-select [(ngModel)]="officeLevel" name="officeLevel" required>
         <mat-option [value]="2">Circle</mat-option>
         <mat-option [value]="3">Division</mat-option>
         <mat-option [value]="4">Range</mat-option>

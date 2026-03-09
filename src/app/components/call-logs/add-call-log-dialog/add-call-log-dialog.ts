@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from "@angular/material/select";
+import { MatSelectModule } from '@angular/material/select';
 import { CallLogService } from '../../../services/call-log/call-log.service';
 
 @Component({
@@ -17,8 +17,8 @@ import { CallLogService } from '../../../services/call-log/call-log.service';
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
-],
+    MatSelectModule,
+  ],
   templateUrl: './add-call-log-dialog.html',
   styleUrl: './add-call-log-dialog.css',
 })
@@ -33,15 +33,17 @@ export class AddCallLogDialog {
 
   save() {
     if (!this.username) return;
-
     const payload = {
       userName: this.username,
-      officeLevel: this.officeLevel
+      officeLevel: this.officeLevel,
     };
-
     this.callLogService.saveOffice(payload).subscribe({
       next: (res) => {
-        this.dialogRef.close(res);
+        this.dialogRef.close({
+          status: '200',
+          userName: this.username,
+          officeLevel: this.officeLevel,
+        });
       },
       error: (err) => {
         console.error(err);

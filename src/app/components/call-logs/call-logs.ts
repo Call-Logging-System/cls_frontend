@@ -86,11 +86,14 @@ export class CallLogs implements AfterViewInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result.status == "200") {
-        this.router.navigate(['/add-call-log'], { queryParams: {
-          officeUserName: result.userName,
-          officeLevel: result.officeLevel
-        }});
+      if (result?.status === '200') {
+        // ✅ safe navigation operator prevents crash on dismiss
+        this.router.navigate(['/add-call-log'], {
+          queryParams: {
+            officeUserName: result.userName,
+            officeLevel: result.officeLevel,
+          },
+        });
       }
     });
   }

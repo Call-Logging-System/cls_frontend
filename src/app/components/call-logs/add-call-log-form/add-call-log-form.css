@@ -1,5 +1,6 @@
 .page-container {
   padding: 20px;
+  margin-bottom: 50px;
 }
 
 .form-card {
@@ -52,4 +53,10 @@
   margin: 25px 0 10px 0;
   border-bottom: 1px solid #e0e0e0;
   padding-bottom: 5px;
+}
+
+.back-btn {
+  margin-bottom: 10px;
+  text-decoration: none;
+  color: black !important;
 }

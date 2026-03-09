@@ -7,3 +7,20 @@ export interface CallLog {
   status: string;
   duration: number;
 }
+
+export interface SaveCallLog {
+  officeUserName: string;
+  officeLevel: number;
+  callDate: string;
+  callStartTime: string;
+  callEndTime: string;
+  description: string;
+  isReleased: boolean;
+  issueReported: string;
+  issueType: string;
+  priority: string;
+  releaseDate: string | null;
+  reportedTo: number | null;
+  solvedBy: number | null;
+  status: string;
+}

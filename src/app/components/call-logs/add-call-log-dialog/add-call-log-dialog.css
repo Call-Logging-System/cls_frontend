@@ -1,6 +1,7 @@
 .cancel-btn { 
   height: 40px;
   border-radius: 4px !important;
+  color: #000 !important;
 }
 
 .form-row {

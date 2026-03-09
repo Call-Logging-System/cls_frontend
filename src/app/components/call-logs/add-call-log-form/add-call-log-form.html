@@ -1,19 +1,22 @@
 <div class="page-container">
+  <button mat-button (click)="goBack()" class="back-btn">
+    <mat-icon>arrow_back</mat-icon>
+    Back
+  </button>
   <mat-card class="form-card">
     <h2 class="title">Add Call Log</h2>
 
-    <form (ngSubmit)="saveCallLog()">
-      <!-- ================= Office Details ================= -->
+    <form (ngSubmit)="saveCallLog()" #f="ngForm">
       <h3 class="section-title">Office Details</h3>
       <div class="grid">
         <mat-form-field appearance="outline">
           <mat-label>Office Username</mat-label>
-          <input matInput [(ngModel)]="officeUserName" name="officeUserName" required />
+          <input matInput [(ngModel)]="officeUserName" name="officeUserName" readonly />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Office Level</mat-label>
-          <mat-select [(ngModel)]="officeLevel" name="officeLevel">
+          <mat-select [(ngModel)]="officeLevel" name="officeLevel" disabled>
             <mat-option [value]="2">Circle</mat-option>
             <mat-option [value]="3">Division</mat-option>
             <mat-option [value]="4">Range</mat-option>
@@ -21,22 +24,21 @@
         </mat-form-field>
       </div>
 
-      <!-- ================= Issue Details ================= -->
       <h3 class="section-title">Issue Details</h3>
       <div class="grid">
         <mat-form-field appearance="outline">
           <mat-label>Issue Reported</mat-label>
-          <input matInput [(ngModel)]="callLog.issueReported" name="issueReported" />
+          <input matInput [(ngModel)]="callLog.issueReported" name="issueReported" required />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Date</mat-label>
-          <input matInput type="date" [(ngModel)]="callLog.callDate" name="callDate" />
+          <input matInput type="date" [(ngModel)]="callLog.callDate" name="callDate" required />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Issue Type</mat-label>
-          <mat-select [(ngModel)]="callLog.issueType" name="issueType">
+          <mat-select [(ngModel)]="callLog.issueType" name="issueType" required>
             <mat-option value="B">Bug</mat-option>
             <mat-option value="S">Support</mat-option>
             <mat-option value="C">Change</mat-option>
@@ -46,7 +48,7 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Priority</mat-label>
-          <mat-select [(ngModel)]="callLog.priority" name="priority">
+          <mat-select [(ngModel)]="callLog.priority" name="priority" required>
             <mat-option value="H">High</mat-option>
             <mat-option value="M">Medium</mat-option>
             <mat-option value="L">Low</mat-option>
@@ -66,22 +68,25 @@
         </mat-form-field>
       </div>
 
-      <!-- ================= Reporting Details ================= -->
       <h3 class="section-title">Reporting Details</h3>
       <div class="grid">
-        <mat-form-field appearance="outline">
+        <!-- <mat-form-field appearance="outline">
           <mat-label>Reported By</mat-label>
           <input matInput [(ngModel)]="callLog.reportedBy" name="reportedBy" />
-        </mat-form-field>
+        </mat-form-field> -->
 
         <mat-form-field appearance="outline">
           <mat-label>Reported To</mat-label>
-          <input matInput [(ngModel)]="callLog.reportedTo" name="reportedTo" />
+          <mat-select [(ngModel)]="callLog.reportedTo" name="reportedTo" required>
+            <mat-option *ngFor="let user of users" [value]="user.key">
+              {{ user.value }}
+            </mat-option>
+          </mat-select>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Status</mat-label>
-          <mat-select [(ngModel)]="callLog.status" name="status">
+          <mat-select [(ngModel)]="callLog.status" name="status" required>
             <mat-option value="O">Open</mat-option>
             <mat-option value="P">In Progress</mat-option>
             <mat-option value="D">Pending</mat-option>
@@ -90,16 +95,16 @@
         </mat-form-field>
       </div>
 
-      <!-- ================= Call Tracking ================= -->
       <h3 class="section-title">Call Tracking</h3>
       <div class="grid">
         <mat-form-field appearance="outline">
           <mat-label>Call Start Time</mat-label>
           <input
             matInput
-            type="datetime-local"
+            type="time"
             [(ngModel)]="callLog.callStartTime"
             name="callStartTime"
+            required
           />
         </mat-form-field>
 
@@ -107,19 +112,23 @@
           <mat-label>Call End Time</mat-label>
           <input
             matInput
-            type="datetime-local"
+            type="time"
             [(ngModel)]="callLog.callEndTime"
             name="callEndTime"
+            required
           />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Issue Solved By</mat-label>
-          <input matInput [(ngModel)]="callLog.solvedBy" name="solvedBy" />
+          <mat-select [(ngModel)]="callLog.solvedBy" name="solvedBy">
+            <mat-option *ngFor="let user of users" [value]="user.key">
+              {{ user.value }}
+            </mat-option>
+          </mat-select>
         </mat-form-field>
       </div>
 
-      <!-- ================= Release Information ================= -->
       <h3 class="section-title">Release Information</h3>
       <div class="grid">
         <mat-form-field appearance="outline">
@@ -136,9 +145,10 @@
         </mat-form-field>
       </div>
 
-      <!-- Save Button -->
       <div class="action-buttons">
-        <button mat-raised-button class="primary-btn" type="submit">Save Call Log</button>
+        <button mat-raised-button class="primary-btn" type="submit" [disabled]="f.invalid">
+          Save Call Log
+        </button>
       </div>
     </form>
   </mat-card>
