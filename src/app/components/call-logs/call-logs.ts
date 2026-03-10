@@ -80,21 +80,23 @@ export class CallLogs implements AfterViewInit {
     });
   }
 
-  openAddDialog() {
-    const dialogRef = this.dialog.open(AddCallLogDialog, {
-      width: '450px',
-    });
+  openAddLogForm() {
+    this.router.navigate(['/add-call-log']);
+  }
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result?.status === '200') {
-        // ✅ safe navigation operator prevents crash on dismiss
-        this.router.navigate(['/add-call-log'], {
-          queryParams: {
-            officeUserName: result.userName,
-            officeLevel: result.officeLevel,
-          },
-        });
-      }
-    });
+  openDeleteDialog(element: CallLog) {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete the call log for "${element.issue}"?`,
+    );
+    if (confirmed) {
+      this.callLogService.deleteCallLog(element.id).subscribe({
+        next: () => {
+          this.callLogs.update((logs) => logs.filter((log) => log.id !== element.id));
+        },
+        error: (err) => {
+          console.error('Error deleting call log', err);
+        },
+      });
+    }
   }
 }

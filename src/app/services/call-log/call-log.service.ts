@@ -27,4 +27,8 @@ export class CallLogService {
   saveCallLog(callLog: SaveCallLog): Observable<any> {
     return this.http.post(this.baseUrl + 'save', callLog);
   }
+
+  deleteCallLog(id: number): Observable<any> {
+    return this.http.post(this.baseUrl + 'delete', { id });
+  }
 }

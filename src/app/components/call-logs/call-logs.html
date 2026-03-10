@@ -2,7 +2,7 @@
   <div class="table-header">
     <h2>Call Logs</h2>
 
-    <button mat-raised-button class="primary-btn" (click)="openAddDialog()">Add Call Log</button>
+    <button mat-raised-button class="primary-btn" (click)="openAddLogForm()">Add Call Log</button>
   </div>
 
   <table mat-table [dataSource]="dataSource" matSort class="cls-table">
@@ -77,11 +77,20 @@
     <ng-container matColumnDef="delete">
       <th mat-header-cell *matHeaderCellDef>Delete</th>
       <td mat-cell *matCellDef="let element">
-        <button mat-icon-button class="delete-btn">
+        <button mat-icon-button class="delete-btn" (click)="openDeleteDialog(element)">
           <mat-icon>delete</mat-icon>
         </button>
       </td>
     </ng-container>
+
+    <tr class="mat-row no-data-row" *matNoDataRow>
+      <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+        <div class="no-data-message">
+          <mat-icon>inbox</mat-icon>
+          <span>No records found</span>
+        </div>
+      </td>
+    </tr>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
