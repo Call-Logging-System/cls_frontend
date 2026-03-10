@@ -139,10 +139,23 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   /** End call → stop timer → go to Screen 3 */
   endCall() {
     clearInterval(this.intervalId);
-    const endDate = new Date();
-    this.callLog.callEndTime = this.toTimeStr(endDate);
     this.timerState = 'stopped';
-    this.activeTimeDisplay = this.formatMs(this.elapsed - this.pausedMs);
+
+    if (this.logMode === 'live') {
+      // ✅ Live mode: capture current time as end time
+      const endDate = new Date();
+      this.callLog.callEndTime = this.toTimeStr(endDate);
+      this.activeTimeDisplay = this.formatMs(this.elapsed - this.pausedMs);
+    } else {
+      // ✅ Manual mode: end time already entered by user, just calculate duration
+      const toSeconds = (t: string) => {
+        const parts = t.split(':').map(Number);
+        return parts[0] * 3600 + parts[1] * 60 + (parts[2] ?? 0);
+      };
+      const diffMs = (toSeconds(this.callLog.callEndTime) - toSeconds(this.callLog.callStartTime)) * 1000;
+      this.activeTimeDisplay = diffMs > 0 ? this.formatMs(diffMs) : '—';
+    }
+
     this.screen = 'review';
   }
 
