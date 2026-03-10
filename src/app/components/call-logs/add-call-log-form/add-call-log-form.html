@@ -6,24 +6,66 @@
 
   <mat-card class="form-card">
 
-    <!-- ── SCREEN 1: Incoming Call ── -->
+    <!-- ── SCREEN 1: Choose Mode ── -->
     @if (screen === 'incoming') {
       <div class="incoming-screen">
-        <div class="incoming-icon">📞</div>
-        <h2 class="title">Incoming Call</h2>
-        <p class="incoming-subtitle">Enter the office name, then start the timer</p>
+        <h2 class="title" style="margin-bottom: 6px;">Add Call Log</h2>
+        <p class="incoming-subtitle">Is this call happening right now, or are you logging a past call?</p>
 
+        <!-- Mode toggle -->
+        <div class="mode-toggle">
+          <div class="mode-card" [class.active]="logMode === 'live'" (click)="logMode = 'live'">
+            <span class="mode-icon">📞</span>
+            <div class="mode-label">Live Call</div>
+            <div class="mode-desc">Start timer now while on the call</div>
+          </div>
+          <div class="mode-card" [class.active]="logMode === 'manual'" (click)="logMode = 'manual'">
+            <span class="mode-icon">📋</span>
+            <div class="mode-label">Log Past Call</div>
+            <div class="mode-desc">Enter date & time manually</div>
+          </div>
+        </div>
+
+        <!-- Office field (both modes) -->
         <mat-form-field appearance="outline" class="office-field">
           <mat-label>Office Username</mat-label>
           <input matInput [(ngModel)]="officeUserName" name="officeUserName"
                  placeholder="e.g. DFO_SHIMLA" required />
         </mat-form-field>
 
-        <button mat-raised-button class="start-call-btn"
-                [disabled]="!officeUserName" (click)="startCall()">
-          <mat-icon>play_arrow</mat-icon>
-          Start Timer &amp; Take Call
-        </button>
+        <!-- Manual mode: date + time fields -->
+        @if (logMode === 'manual') {
+          <div class="manual-fields">
+            <mat-form-field appearance="outline">
+              <mat-label>Call Date</mat-label>
+              <input matInput type="date" [(ngModel)]="callLog.callDate" name="manualDate" required />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Start Time</mat-label>
+              <input matInput type="time" [(ngModel)]="callLog.callStartTime" name="manualStart" required />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>End Time</mat-label>
+              <input matInput type="time" [(ngModel)]="callLog.callEndTime" name="manualEnd" required />
+            </mat-form-field>
+          </div>
+        }
+
+        <!-- CTA -->
+        @if (logMode === 'live') {
+          <button mat-raised-button class="start-call-btn"
+                  [disabled]="!officeUserName" (click)="startCall()">
+            <mat-icon>play_arrow</mat-icon>
+            Start Timer &amp; Take Call
+          </button>
+        } @else {
+          <button mat-raised-button class="start-call-btn manual"
+                  [disabled]="!officeUserName || !callLog.callStartTime || !callLog.callEndTime"
+                  (click)="startManual()">
+            <mat-icon>edit_note</mat-icon>
+            Continue to Fill Details
+          </button>
+        }
       </div>
     }
 
@@ -32,32 +74,47 @@
       <div>
 
         <!-- Live timer banner -->
-        <div class="live-banner">
-          <div class="live-indicator">
-            <span class="live-dot"></span>
-            <span class="live-text">LIVE</span>
-          </div>
-          <div class="live-timer">{{ timerDisplay }}</div>
+        <div class="live-banner" [class.manual-banner]="logMode === 'manual'">
+          @if (logMode === 'live') {
+            <div class="live-indicator">
+              <span class="live-dot"></span>
+              <span class="live-text">LIVE</span>
+            </div>
+            <div class="live-timer">{{ timerDisplay }}</div>
+          } @else {
+            <div class="live-indicator">
+              <mat-icon style="color:#1565c0;font-size:18px;width:18px;height:18px">edit_note</mat-icon>
+              <span class="manual-text">PAST CALL</span>
+            </div>
+            <div class="live-timer manual-time">{{ callLog.callStartTime }} → {{ callLog.callEndTime }}</div>
+          }
           <div class="live-office">
             <mat-icon>business</mat-icon>
             {{ officeUserName }}
           </div>
           <div class="live-actions">
-            @if (timerState === 'running') {
-              <button mat-icon-button class="live-btn pause-btn" title="Pause" (click)="timerPause()">
-                <mat-icon>pause</mat-icon>
+            @if (logMode === 'live') {
+              @if (timerState === 'running') {
+                <button mat-icon-button class="live-btn pause-btn" title="Pause" (click)="timerPause()">
+                  <mat-icon>pause</mat-icon>
+                </button>
+              }
+              @if (timerState === 'paused') {
+                <span class="paused-badge">Paused</span>
+                <button mat-icon-button class="live-btn resume-btn" title="Resume" (click)="timerResume()">
+                  <mat-icon>play_arrow</mat-icon>
+                </button>
+              }
+              <button mat-raised-button class="end-call-btn" (click)="endCall()">
+                <mat-icon>call_end</mat-icon>
+                End Call
+              </button>
+            } @else {
+              <button mat-raised-button class="end-call-btn manual-end" (click)="endCall()">
+                <mat-icon>arrow_forward</mat-icon>
+                Review &amp; Save
               </button>
             }
-            @if (timerState === 'paused') {
-              <span class="paused-badge">Paused</span>
-              <button mat-icon-button class="live-btn resume-btn" title="Resume" (click)="timerResume()">
-                <mat-icon>play_arrow</mat-icon>
-              </button>
-            }
-            <button mat-raised-button class="end-call-btn" (click)="endCall()">
-              <mat-icon>call_end</mat-icon>
-              End Call
-            </button>
           </div>
         </div>
 

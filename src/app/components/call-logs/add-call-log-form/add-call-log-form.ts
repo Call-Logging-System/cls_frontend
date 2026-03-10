@@ -32,6 +32,7 @@ export class AddCallLogForm implements OnInit, OnDestroy {
 
   // ── Navigation ──
   screen: Screen = 'incoming';
+  logMode: 'live' | 'manual' = 'live';
 
   // ── Office ──
   officeUserName = '';
@@ -100,6 +101,19 @@ export class AddCallLogForm implements OnInit, OnDestroy {
       this.lastTick = Date.now();
       this.timerDisplay = this.formatMs(this.elapsed - this.pausedMs);
     }, 100);
+    this.screen = 'active';
+  }
+
+  /** Manual mode — skip timer, go straight to form */
+  startManual() {
+    this.timerState = 'stopped';
+    // Calculate active display from manually entered times
+    if (this.callLog.callStartTime && this.callLog.callEndTime) {
+      const [sh, sm] = this.callLog.callStartTime.split(':').map(Number);
+      const [eh, em] = this.callLog.callEndTime.split(':').map(Number);
+      const diffMs = ((eh * 60 + em) - (sh * 60 + sm)) * 60 * 1000;
+      this.activeTimeDisplay = diffMs > 0 ? this.formatMs(diffMs) : '—';
+    }
     this.screen = 'active';
   }
 
