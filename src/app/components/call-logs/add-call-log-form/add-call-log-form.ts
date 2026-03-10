@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -36,7 +36,7 @@ export class AddCallLogForm implements OnInit, OnDestroy {
 
   // ── Office ──
   officeUserName = '';
-  officeLevel!: number;
+  officeLevel: number = 0;
 
   get officeLevelLabel(): string {
     const map: Record<number, string> = { 2: 'Circle', 3: 'Division', 4: 'Range' };
@@ -83,35 +83,42 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   }
 
   private toTimeStr(date: Date): string {
-    return `${this.pad(date.getHours())}:${this.pad(date.getMinutes())}`;
+    return `${this.pad(date.getHours())}:${this.pad(date.getMinutes())}:${this.pad(date.getSeconds())}`;
   }
 
   // ── Call flow actions ──
 
-  /** Screen 1 → Start timer → go to Screen 2 */
-  startCall() {
-    this.startDate = new Date();
+  private startTimer() {
+    clearInterval(this.intervalId);
     this.lastTick = Date.now();
-    this.elapsed = 0;
-    this.pausedMs = 0;
-    this.callLog.callStartTime = this.toTimeStr(this.startDate);
-    this.timerState = 'running';
     this.intervalId = setInterval(() => {
       this.elapsed += Date.now() - this.lastTick;
       this.lastTick = Date.now();
       this.timerDisplay = this.formatMs(this.elapsed - this.pausedMs);
-    }, 100);
+      this.cdr.markForCheck();
+    }, 1000);
+  }
+
+  /** Screen 1 → Start timer → go to Screen 2 */
+  startCall() {
+    this.startDate = new Date();
+    this.elapsed = 0;
+    this.pausedMs = 0;
+    this.callLog.callStartTime = this.toTimeStr(this.startDate);
+    this.timerState = 'running';
+    this.startTimer();
     this.screen = 'active';
   }
 
   /** Manual mode — skip timer, go straight to form */
   startManual() {
     this.timerState = 'stopped';
-    // Calculate active display from manually entered times
     if (this.callLog.callStartTime && this.callLog.callEndTime) {
-      const [sh, sm] = this.callLog.callStartTime.split(':').map(Number);
-      const [eh, em] = this.callLog.callEndTime.split(':').map(Number);
-      const diffMs = ((eh * 60 + em) - (sh * 60 + sm)) * 60 * 1000;
+      const toSeconds = (t: string) => {
+        const parts = t.split(':').map(Number);
+        return parts[0] * 3600 + parts[1] * 60 + (parts[2] ?? 0);
+      };
+      const diffMs = (toSeconds(this.callLog.callEndTime) - toSeconds(this.callLog.callStartTime)) * 1000;
       this.activeTimeDisplay = diffMs > 0 ? this.formatMs(diffMs) : '—';
     }
     this.screen = 'active';
@@ -125,13 +132,8 @@ export class AddCallLogForm implements OnInit, OnDestroy {
 
   timerResume() {
     this.pausedMs += Date.now() - this.pauseStart;
-    this.lastTick = Date.now();
     this.timerState = 'running';
-    this.intervalId = setInterval(() => {
-      this.elapsed += Date.now() - this.lastTick;
-      this.lastTick = Date.now();
-      this.timerDisplay = this.formatMs(this.elapsed - this.pausedMs);
-    }, 100);
+    this.startTimer();
   }
 
   /** End call → stop timer → go to Screen 3 */
@@ -185,6 +187,8 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly callLogService = inject(CallLogService);
+  private readonly ngZone = inject(NgZone);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {

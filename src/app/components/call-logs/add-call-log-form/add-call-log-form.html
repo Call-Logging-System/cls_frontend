@@ -33,6 +33,15 @@
                  placeholder="e.g. DFO_SHIMLA" required />
         </mat-form-field>
 
+        <mat-form-field appearance="outline" class="office-field">
+          <mat-label>Office Level</mat-label>
+          <mat-select [(ngModel)]="officeLevel" name="officeLevel" required>
+            <mat-option [value]="2">Circle</mat-option>
+            <mat-option [value]="3">Division</mat-option>
+            <mat-option [value]="4">Range</mat-option>
+          </mat-select>
+        </mat-form-field>
+
         <!-- Manual mode: date + time fields -->
         @if (logMode === 'manual') {
           <div class="manual-fields">
@@ -42,11 +51,11 @@
             </mat-form-field>
             <mat-form-field appearance="outline">
               <mat-label>Start Time</mat-label>
-              <input matInput type="time" [(ngModel)]="callLog.callStartTime" name="manualStart" required />
+              <input matInput type="time" step="1" [(ngModel)]="callLog.callStartTime" name="manualStart" required />
             </mat-form-field>
             <mat-form-field appearance="outline">
               <mat-label>End Time</mat-label>
-              <input matInput type="time" [(ngModel)]="callLog.callEndTime" name="manualEnd" required />
+              <input matInput type="time" step="1" [(ngModel)]="callLog.callEndTime" name="manualEnd" required />
             </mat-form-field>
           </div>
         }
@@ -54,13 +63,13 @@
         <!-- CTA -->
         @if (logMode === 'live') {
           <button mat-raised-button class="start-call-btn"
-                  [disabled]="!officeUserName" (click)="startCall()">
+                  [disabled]="!officeUserName || !officeLevel" (click)="startCall()">
             <mat-icon>play_arrow</mat-icon>
             Start Timer &amp; Take Call
           </button>
         } @else {
           <button mat-raised-button class="start-call-btn manual"
-                  [disabled]="!officeUserName || !callLog.callStartTime || !callLog.callEndTime"
+                  [disabled]="!officeUserName || !officeLevel || !callLog.callStartTime || !callLog.callEndTime"
                   (click)="startManual()">
             <mat-icon>edit_note</mat-icon>
             Continue to Fill Details
@@ -90,7 +99,7 @@
           }
           <div class="live-office">
             <mat-icon>business</mat-icon>
-            {{ officeUserName }}
+            {{ officeUserName }} &nbsp;·&nbsp; {{ officeLevelLabel }}
           </div>
           <div class="live-actions">
             @if (logMode === 'live') {
