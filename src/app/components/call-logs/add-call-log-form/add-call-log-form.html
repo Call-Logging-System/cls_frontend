@@ -1,264 +1,355 @@
-<div class="page-container">
-  <button mat-button (click)="goBack()" class="back-btn">
-    <mat-icon>arrow_back</mat-icon>
-    Back
-  </button>
+<!-- add-call-log-form.html -->
+<div class="form-wrapper">
 
-  <mat-card class="form-card">
-
-    <!-- ── SCREEN 1: Choose Mode ── -->
-    @if (screen === 'incoming') {
-      <div class="incoming-screen">
-        <h2 class="title" style="margin-bottom: 6px;">Add Call Log</h2>
-        <p class="incoming-subtitle">Is this call happening right now, or are you logging a past call?</p>
-
-        <!-- Mode toggle -->
-        <div class="mode-toggle">
-          <div class="mode-card" [class.active]="logMode === 'live'" (click)="logMode = 'live'">
-            <span class="mode-icon">📞</span>
-            <div class="mode-label">Live Call</div>
-            <div class="mode-desc">Start timer now while on the call</div>
-          </div>
-          <div class="mode-card" [class.active]="logMode === 'manual'" (click)="logMode = 'manual'">
-            <span class="mode-icon">📋</span>
-            <div class="mode-label">Log Past Call</div>
-            <div class="mode-desc">Enter date & time manually</div>
-          </div>
+  <!-- ══════════════════════════════════
+       SCREEN 1 — Incoming Call
+  ═══════════════════════════════════ -->
+  @if (screen === 'incoming') {
+    <div class="form-page-header">
+      <div>
+        <h2>New Call Log</h2>
+        <div class="form-page-subtitle">
+          {{ officeUserName || '—' }}
+          @if (officeLevelLabel) { · {{ officeLevelLabel }} }
         </div>
+      </div>
+      <button mat-button class="ghost-btn" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Back
+      </button>
+    </div>
 
-        <!-- Office field (both modes) -->
-        <mat-form-field appearance="outline" class="office-field">
-          <mat-label>Office Username</mat-label>
-          <input matInput [(ngModel)]="officeUserName" name="officeUserName"
-                 placeholder="e.g. DFO_SHIMLA" required />
-        </mat-form-field>
+    <div class="form-card">
 
-        <mat-form-field appearance="outline" class="office-field">
-          <mat-label>Office Level</mat-label>
-          <mat-select [(ngModel)]="officeLevel" name="officeLevel" required>
-            <mat-option [value]="2">Circle</mat-option>
-            <mat-option [value]="3">Division</mat-option>
-            <mat-option [value]="4">Range</mat-option>
-          </mat-select>
-        </mat-form-field>
+      <!-- Mode toggle -->
+      <div class="mode-toggle">
+        <button class="mode-btn" [class.active]="logMode === 'live'" (click)="logMode = 'live'">
+          <mat-icon>fiber_manual_record</mat-icon>
+          Live Call
+        </button>
+        <button class="mode-btn" [class.active]="logMode === 'manual'" (click)="logMode = 'manual'">
+          <mat-icon>edit_note</mat-icon>
+          Manual Entry
+        </button>
+      </div>
 
-        <!-- Manual mode: date + time fields -->
-        @if (logMode === 'manual') {
-          <div class="manual-fields">
+      <!-- Office details — shown in BOTH modes -->
+      <div class="form-section">
+        <div class="form-section-title">Office Details</div>
+        <div class="form-grid-2">
+
+          <mat-form-field appearance="outline">
+            <mat-label>Office Username</mat-label>
+            <input matInput [(ngModel)]="officeUserName" name="officeUserName"
+                   placeholder="e.g. mumbai_office">
+            <mat-icon matSuffix>business</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Office Level</mat-label>
+            <mat-select [(ngModel)]="officeLevel" name="officeLevel">
+              <mat-option [value]="2">Circle</mat-option>
+              <mat-option [value]="3">Division</mat-option>
+              <mat-option [value]="4">Range</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+        </div>
+      </div>
+
+      <!-- Live mode -->
+      @if (logMode === 'live') {
+        <div class="incoming-live">
+          <div class="phone-icon-wrap">
+            <mat-icon class="phone-icon">call</mat-icon>
+          </div>
+          <p class="incoming-label">Incoming call ready to log</p>
+          <button mat-raised-button class="primary-btn start-btn" (click)="startCall()">
+            <mat-icon>play_arrow</mat-icon>
+            Start Call Timer
+          </button>
+        </div>
+      }
+
+      <!-- Manual mode -->
+      @if (logMode === 'manual') {
+        <div class="form-section">
+          <div class="form-section-title">Call Timing</div>
+          <div class="form-grid-2">
+
             <mat-form-field appearance="outline">
               <mat-label>Call Date</mat-label>
-              <input matInput type="date" [(ngModel)]="callLog.callDate" name="manualDate" required />
+              <input matInput type="date" [(ngModel)]="callLog.callDate" name="callDate">
             </mat-form-field>
+
+            <div></div>
+
             <mat-form-field appearance="outline">
               <mat-label>Start Time</mat-label>
-              <input matInput type="time" step="1" [(ngModel)]="callLog.callStartTime" name="manualStart" required />
+              <input matInput type="time" [(ngModel)]="callLog.callStartTime" name="callStartTime">
             </mat-form-field>
+
             <mat-form-field appearance="outline">
               <mat-label>End Time</mat-label>
-              <input matInput type="time" step="1" [(ngModel)]="callLog.callEndTime" name="manualEnd" required />
+              <input matInput type="time" [(ngModel)]="callLog.callEndTime" name="callEndTime">
             </mat-form-field>
-          </div>
-        }
 
-        <!-- CTA -->
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button mat-raised-button class="primary-btn" (click)="startManual()">
+            <mat-icon>arrow_forward</mat-icon>
+            Continue to Form
+          </button>
+        </div>
+      }
+
+    </div>
+  }
+
+  <!-- ══════════════════════════════════
+       SCREEN 2 — Active Call / Fill Form
+  ═══════════════════════════════════ -->
+  @if (screen === 'active') {
+    <div class="form-page-header">
+      <div>
+        <h2>Active Call</h2>
+        <div class="form-page-subtitle">
+          {{ officeUserName || '—' }}
+          @if (officeLevelLabel) { · {{ officeLevelLabel }} }
+        </div>
+      </div>
+
+      <!-- Live timer badge -->
+      @if (logMode === 'live') {
+        <div class="timer-badge">
+          <span class="timer-dot" [class.paused]="timerState === 'paused'"></span>
+          <span class="timer-display">{{ timerDisplay }}</span>
+          @if (timerState === 'running') {
+            <button mat-icon-button class="timer-ctrl-btn" (click)="timerPause()" matTooltip="Pause">
+              <mat-icon>pause</mat-icon>
+            </button>
+          }
+          @if (timerState === 'paused') {
+            <button mat-icon-button class="timer-ctrl-btn" (click)="timerResume()" matTooltip="Resume">
+              <mat-icon>play_arrow</mat-icon>
+            </button>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="form-card">
+
+      <!-- ── Issue Info ── -->
+      <div class="form-section">
+        <div class="form-section-title">Issue Info</div>
+        <div class="form-grid">
+
+          <mat-form-field appearance="outline">
+            <mat-label>Issue Type</mat-label>
+            <mat-select [(ngModel)]="callLog.issueType" name="issueType">
+              <mat-option value="B">🐛 Bug</mat-option>
+              <mat-option value="S">🎧 Support</mat-option>
+              <mat-option value="C">🔄 Change</mat-option>
+              <mat-option value="K">⚙️ Backend</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Priority</mat-label>
+            <mat-select [(ngModel)]="callLog.priority" name="priority">
+              <mat-option value="H">🔴 High</mat-option>
+              <mat-option value="M">🟡 Medium</mat-option>
+              <mat-option value="L">🟢 Low</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Status</mat-label>
+            <mat-select [(ngModel)]="callLog.status" name="status">
+              <mat-option value="O">Open</mat-option>
+              <mat-option value="P">In Progress</mat-option>
+              <mat-option value="D">Pending</mat-option>
+              <mat-option value="C">Closed</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Reported To</mat-label>
+            <mat-select [(ngModel)]="callLog.reportedTo" name="reportedTo">
+              <mat-option [value]="null">— None —</mat-option>
+              @for (user of users; track user.key) {
+                <mat-option [value]="+user.key">{{ user.value }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Solved By</mat-label>
+            <mat-select [(ngModel)]="callLog.solvedBy" name="solvedBy">
+              <mat-option [value]="null">— None —</mat-option>
+              @for (user of users; track user.key) {
+                <mat-option [value]="+user.key">{{ user.value }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Release Date</mat-label>
+            <input matInput type="date" [(ngModel)]="callLog.releaseDate" name="releaseDate">
+          </mat-form-field>
+
+          <!-- Issue description — full width -->
+          <mat-form-field appearance="outline" class="col-span-full">
+            <mat-label>Issue Reported</mat-label>
+            <input matInput [(ngModel)]="callLog.issueReported" name="issueReported"
+                   placeholder="Brief description of the issue">
+          </mat-form-field>
+
+          <!-- Notes — full width -->
+          <mat-form-field appearance="outline" class="col-span-full">
+            <mat-label>Description / Notes</mat-label>
+            <textarea matInput [(ngModel)]="callLog.description" name="description"
+                      placeholder="Detailed notes about this call…"
+                      rows="3"></textarea>
+          </mat-form-field>
+
+          <!-- Is Released -->
+          <div class="checkbox-row">
+            <mat-checkbox [(ngModel)]="callLog.isReleased" name="isReleased">
+              <span class="checkbox-label">Is Released?</span>
+            </mat-checkbox>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button mat-button class="ghost-btn" (click)="screen = 'incoming'">
+          <mat-icon>arrow_back</mat-icon>
+          Back
+        </button>
         @if (logMode === 'live') {
-          <button mat-raised-button class="start-call-btn"
-                  [disabled]="!officeUserName || !officeLevel" (click)="startCall()">
-            <mat-icon>play_arrow</mat-icon>
-            Start Timer &amp; Take Call
+          <button mat-raised-button class="end-call-btn" (click)="endCall()">
+            <mat-icon>call_end</mat-icon>
+            End Call & Review
           </button>
         } @else {
-          <button mat-raised-button class="start-call-btn manual"
-                  [disabled]="!officeUserName || !officeLevel || !callLog.callStartTime || !callLog.callEndTime"
-                  (click)="startManual()">
-            <mat-icon>edit_note</mat-icon>
-            Continue to Fill Details
+          <button mat-raised-button class="primary-btn" (click)="endCall()">
+            <mat-icon>arrow_forward</mat-icon>
+            Review & Save
           </button>
         }
       </div>
-    }
 
-    <!-- ── SCREEN 2: Call Active — fill details while on call ── -->
-    @if (screen === 'active') {
+    </div>
+  }
+
+  <!-- ══════════════════════════════════
+       SCREEN 3 — Review & Save
+  ═══════════════════════════════════ -->
+  @if (screen === 'review') {
+    <div class="form-page-header">
       <div>
-
-        <!-- Live timer banner -->
-        <div class="live-banner" [class.manual-banner]="logMode === 'manual'">
-          @if (logMode === 'live') {
-            <div class="live-indicator">
-              <span class="live-dot"></span>
-              <span class="live-text">LIVE</span>
-            </div>
-            <div class="live-timer">{{ timerDisplay }}</div>
-          } @else {
-            <div class="live-indicator">
-              <mat-icon style="color:#1565c0;font-size:18px;width:18px;height:18px">edit_note</mat-icon>
-              <span class="manual-text">PAST CALL</span>
-            </div>
-            <div class="live-timer manual-time">{{ callLog.callStartTime }} → {{ callLog.callEndTime }}</div>
-          }
-          <div class="live-office">
-            <mat-icon>business</mat-icon>
-            {{ officeUserName }} &nbsp;·&nbsp; {{ officeLevelLabel }}
-          </div>
-          <div class="live-actions">
-            @if (logMode === 'live') {
-              @if (timerState === 'running') {
-                <button mat-icon-button class="live-btn pause-btn" title="Pause" (click)="timerPause()">
-                  <mat-icon>pause</mat-icon>
-                </button>
-              }
-              @if (timerState === 'paused') {
-                <span class="paused-badge">Paused</span>
-                <button mat-icon-button class="live-btn resume-btn" title="Resume" (click)="timerResume()">
-                  <mat-icon>play_arrow</mat-icon>
-                </button>
-              }
-              <button mat-raised-button class="end-call-btn" (click)="endCall()">
-                <mat-icon>call_end</mat-icon>
-                End Call
-              </button>
-            } @else {
-              <button mat-raised-button class="end-call-btn manual-end" (click)="endCall()">
-                <mat-icon>arrow_forward</mat-icon>
-                Review &amp; Save
-              </button>
-            }
-          </div>
-        </div>
-
-        <form #f="ngForm">
-          <h3 class="section-title">Issue Details</h3>
-          <div class="grid">
-            <mat-form-field appearance="outline" class="two-column">
-              <mat-label>Issue Reported</mat-label>
-              <input matInput [(ngModel)]="callLog.issueReported" name="issueReported"
-                     required placeholder="Describe the issue…" />
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Date</mat-label>
-              <input matInput type="date" [(ngModel)]="callLog.callDate" name="callDate" required />
-            </mat-form-field>
-          </div>
-
-          <h3 class="section-title">Issue Type</h3>
-          <div class="chip-group">
-            <div class="type-chip bug"     [class.selected]="callLog.issueType==='B'" (click)="callLog.issueType='B'">🐛 Bug</div>
-            <div class="type-chip support" [class.selected]="callLog.issueType==='S'" (click)="callLog.issueType='S'">🎧 Support</div>
-            <div class="type-chip change"  [class.selected]="callLog.issueType==='C'" (click)="callLog.issueType='C'">🔄 Change</div>
-            <div class="type-chip backend" [class.selected]="callLog.issueType==='K'" (click)="callLog.issueType='K'">⚙️ Backend</div>
-          </div>
-
-          <h3 class="section-title">Priority</h3>
-          <div class="priority-group">
-            <div class="priority-pill high"   [class.selected]="callLog.priority==='H'" (click)="callLog.priority='H'">🔴 High</div>
-            <div class="priority-pill medium" [class.selected]="callLog.priority==='M'" (click)="callLog.priority='M'">🟡 Medium</div>
-            <div class="priority-pill low"    [class.selected]="callLog.priority==='L'" (click)="callLog.priority='L'">🟢 Low</div>
-          </div>
-
-          <div class="grid" style="margin-top:18px">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Description</mat-label>
-              <textarea matInput rows="3" [(ngModel)]="callLog.description"
-                        name="description" placeholder="Any extra context…"></textarea>
-            </mat-form-field>
-          </div>
-
-          <h3 class="section-title">Reporting</h3>
-          <div class="grid">
-            <mat-form-field appearance="outline">
-              <mat-label>Reported To</mat-label>
-              <mat-select [(ngModel)]="callLog.reportedTo" name="reportedTo" required>
-                <mat-option *ngFor="let user of users" [value]="user.key">{{ user.value }}</mat-option>
-              </mat-select>
-            </mat-form-field>
-            <mat-form-field appearance="outline">
-              <mat-label>Solved By</mat-label>
-              <mat-select [(ngModel)]="callLog.solvedBy" name="solvedBy">
-                <mat-option *ngFor="let user of users" [value]="user.key">{{ user.value }}</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-
-          <h3 class="section-title">Status</h3>
-          <div class="status-group">
-            <div class="status-pill open"     [class.selected]="callLog.status==='O'" (click)="callLog.status='O'">Open</div>
-            <div class="status-pill progress" [class.selected]="callLog.status==='P'" (click)="callLog.status='P'">In Progress</div>
-            <div class="status-pill pending"  [class.selected]="callLog.status==='D'" (click)="callLog.status='D'">Pending</div>
-            <div class="status-pill closed"   [class.selected]="callLog.status==='C'" (click)="callLog.status='C'">Closed</div>
-          </div>
-        </form>
+        <h2>Review & Save</h2>
+        <div class="form-page-subtitle">Confirm details before saving</div>
       </div>
-    }
+    </div>
 
-    <!-- ── SCREEN 3: Review & Save ── -->
-    @if (screen === 'review') {
-      <div>
+    <div class="form-card">
 
-        <div class="review-banner">
-          <mat-icon class="review-icon">check_circle</mat-icon>
-          <div>
-            <div class="review-title">Call Ended</div>
-            <div class="review-meta">
-              {{ officeUserName }} &nbsp;·&nbsp;
-              {{ callLog.callStartTime }} → {{ callLog.callEndTime }} &nbsp;·&nbsp;
-              Active: {{ activeTimeDisplay }}
-            </div>
-          </div>
+      <!-- Duration summary banner -->
+      <div class="review-banner">
+        <div class="review-banner-item">
+          <span class="review-banner-label">Duration</span>
+          <span class="review-banner-value">{{ activeTimeDisplay || '—' }}</span>
         </div>
-
-        <div class="summary-grid">
-          <div class="summary-item">
-            <span class="summary-label">Issue</span>
-            <span class="summary-value">{{ callLog.issueReported || '—' }}</span>
-          </div>
-          <div class="summary-item">
-            <span class="summary-label">Date</span>
-            <span class="summary-value">{{ callLog.callDate }}</span>
-          </div>
-          <div class="summary-item">
-            <span class="summary-label">Type</span>
-            <span class="type-chip {{ typeClass }} selected small">{{ typeLabel }}</span>
-          </div>
-          <div class="summary-item">
-            <span class="summary-label">Priority</span>
-            <span class="priority-pill {{ priorityClass }} selected small">{{ priorityLabel }}</span>
-          </div>
-          <div class="summary-item">
-            <span class="summary-label">Status</span>
-            <span class="status-pill {{ statusClass }} selected small">{{ statusLabel }}</span>
-          </div>
+        <div class="review-banner-divider"></div>
+        <div class="review-banner-item">
+          <span class="review-banner-label">Start</span>
+          <span class="review-banner-value mono">{{ callLog.callStartTime }}</span>
         </div>
-
-        <form #g="ngForm">
-          <h3 class="section-title" style="margin-top:20px">Release Information</h3>
-          <div class="grid">
-            <mat-form-field appearance="outline">
-              <mat-label>Is Released</mat-label>
-              <mat-select [(ngModel)]="callLog.isReleased" name="isReleased">
-                <mat-option [value]="true">Yes</mat-option>
-                <mat-option [value]="false">No</mat-option>
-              </mat-select>
-            </mat-form-field>
-            @if (callLog.isReleased) {
-              <mat-form-field appearance="outline">
-                <mat-label>Release Date</mat-label>
-                <input matInput type="date" [(ngModel)]="callLog.releaseDate" name="releaseDate" />
-              </mat-form-field>
-            }
-          </div>
-
-          <div class="action-buttons">
-            <button mat-stroked-button type="button" class="back-step-btn" (click)="screen = 'active'">
-              ← Back to Edit
-            </button>
-            <button mat-raised-button class="primary-btn" type="button" (click)="saveCallLog()">
-              ✓ Save Call Log
-            </button>
-          </div>
-        </form>
+        <div class="review-banner-divider"></div>
+        <div class="review-banner-item">
+          <span class="review-banner-label">End</span>
+          <span class="review-banner-value mono">{{ callLog.callEndTime }}</span>
+        </div>
+        <div class="review-banner-divider"></div>
+        <div class="review-banner-item">
+          <span class="review-banner-label">Date</span>
+          <span class="review-banner-value mono">{{ callLog.callDate }}</span>
+        </div>
       </div>
-    }
 
-  </mat-card>
+      <!-- Summary grid -->
+      <div class="review-grid">
+
+        <div class="review-item">
+          <span class="review-label">Office</span>
+          <span class="review-value">{{ officeUserName || '—' }}</span>
+        </div>
+
+        <div class="review-item">
+          <span class="review-label">Level</span>
+          <span class="review-value">{{ officeLevelLabel || '—' }}</span>
+        </div>
+
+        <div class="review-item">
+          <span class="review-label">Type</span>
+          <span class="review-value">
+            <span class="type-badge" [ngClass]="'type-' + callLog.issueType">{{ typeLabel }}</span>
+          </span>
+        </div>
+
+        <div class="review-item">
+          <span class="review-label">Priority</span>
+          <span class="review-value">
+            <span class="priority-chip" [ngClass]="priorityClass">{{ priorityLabel }}</span>
+          </span>
+        </div>
+
+        <div class="review-item">
+          <span class="review-label">Status</span>
+          <span class="review-value">
+            <span class="status-badge" [ngClass]="'status-' + statusClass">{{ statusLabel }}</span>
+          </span>
+        </div>
+
+        <div class="review-item">
+          <span class="review-label">Is Released</span>
+          <span class="review-value">{{ callLog.isReleased ? 'Yes' : 'No' }}</span>
+        </div>
+
+        <div class="review-item col-span-full">
+          <span class="review-label">Issue Reported</span>
+          <span class="review-value">{{ callLog.issueReported || '—' }}</span>
+        </div>
+
+        @if (callLog.description) {
+          <div class="review-item col-span-full">
+            <span class="review-label">Description</span>
+            <span class="review-value">{{ callLog.description }}</span>
+          </div>
+        }
+
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button mat-button class="ghost-btn" (click)="screen = 'active'">
+          <mat-icon>edit</mat-icon>
+          Edit
+        </button>
+        <button mat-raised-button class="primary-btn" (click)="saveCallLog()">
+          <mat-icon>save</mat-icon>
+          Save Call Log
+        </button>
+      </div>
+
+    </div>
+  }
+
 </div>

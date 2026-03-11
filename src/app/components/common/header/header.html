@@ -1,5 +1,22 @@
-<mat-toolbar color="primary" class="header">
+<!-- header.html -->
+<mat-toolbar class="header">
 
-  <h3 id="title">CLS - Call Logging System</h3>
+  <!-- Hamburger toggle -->
+  <button mat-icon-button class="menu-btn" (click)="menuClick.emit()" aria-label="Toggle menu">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <!-- Brand -->
+  <div class="header-brand">
+    <div class="header-logomark">CLS</div>
+    <span class="header-title">
+      Call <span class="accent">Logging</span> System
+    </span>
+  </div>
+
+  <span class="header-spacer"></span>
+
+  <!-- Version badge -->
+  <span class="header-badge">v1.0.0</span>
 
 </mat-toolbar>

@@ -1,0 +1,137 @@
+<!-- login.html -->
+<div class="login-page">
+
+  <!-- Decorative rings -->
+  <div class="deco deco-1"></div>
+  <div class="deco deco-2"></div>
+  <div class="deco deco-3"></div>
+  <div class="deco deco-4"></div>
+
+  <!-- ══ LEFT — Branding ══ -->
+  <div class="login-left">
+    <div class="left-content">
+
+      <div class="brand-logo">CLS</div>
+
+      <h1 class="brand-title">
+        Call Logging<br>
+        <span class="brand-title-accent">System</span>
+      </h1>
+
+      <div class="brand-divider"></div>
+
+      <p class="brand-desc">
+        Track, manage and resolve support calls<br>
+        from all offices — fast and reliable.
+      </p>
+
+      <div class="feature-list">
+        <div class="feature-item">
+          <span class="feature-dot"></span>
+          <span>Live call timer with auto-logging</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-dot"></span>
+          <span>Real-time reports &amp; analytics</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-dot"></span>
+          <span>Multi-office &amp; multi-user support</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ RIGHT — White form card ══ -->
+  <div class="login-right">
+
+    <p class="form-eyebrow">Welcome back</p>
+    <h2 class="form-title">Sign in to CLS</h2>
+    <p class="form-subtitle">Enter your credentials to continue</p>
+
+    <form class="login-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+
+      <!-- Username -->
+      <div class="field-group">
+        <label class="field-label" for="username">Username</label>
+        <div class="field-wrap"
+             [class.focused]="usernameFocused"
+             [class.error]="isFieldInvalid('username')">
+          <span class="field-icon material-icons">person_outline</span>
+          <input id="username"
+                 type="text"
+                 class="field-input"
+                 placeholder="Enter your username"
+                 formControlName="username"
+                 autocomplete="username"
+                 (focus)="usernameFocused = true"
+                 (blur)="usernameFocused = false">
+        </div>
+        @if (isFieldInvalid('username')) {
+          <span class="field-error">
+            <span class="material-icons">error_outline</span>
+            Username is required
+          </span>
+        }
+      </div>
+
+      <!-- Password -->
+      <div class="field-group">
+        <label class="field-label" for="password">Password</label>
+        <div class="field-wrap"
+             [class.focused]="passwordFocused"
+             [class.error]="isFieldInvalid('password')">
+          <span class="field-icon material-icons">lock_outline</span>
+          <input id="password"
+                 [type]="showPassword ? 'text' : 'password'"
+                 class="field-input"
+                 placeholder="Enter your password"
+                 formControlName="password"
+                 autocomplete="current-password"
+                 (focus)="passwordFocused = true"
+                 (blur)="passwordFocused = false">
+          <button type="button" class="toggle-password"
+                  (click)="showPassword = !showPassword" tabindex="-1">
+            <span class="material-icons">
+              {{ showPassword ? 'visibility_off' : 'visibility' }}
+            </span>
+          </button>
+        </div>
+        @if (isFieldInvalid('password')) {
+          <span class="field-error">
+            <span class="material-icons">error_outline</span>
+            Password is required
+          </span>
+        }
+      </div>
+
+      <!-- Error banner -->
+      @if (loginError) {
+        <div class="error-banner">
+          <span class="material-icons">warning_amber</span>
+          {{ loginError }}
+        </div>
+      }
+
+      <!-- Submit -->
+      <button type="submit" class="submit-btn"
+              [class.loading]="isLoading" [disabled]="isLoading">
+        @if (isLoading) {
+          <span class="spinner"></span>
+          Signing in…
+        } @else {
+          <span class="material-icons">login</span>
+          Sign In
+        }
+      </button>
+
+    </form>
+
+    <div class="form-footer">
+      © {{ currentYear }} Call Logging System
+    </div>
+
+  </div>
+
+</div>

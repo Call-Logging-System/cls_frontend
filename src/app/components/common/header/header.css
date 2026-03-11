@@ -1,11 +1,107 @@
+/* ═══════════════════════════════════════
+   header.css
+═══════════════════════════════════════ */
+
+/* The mat-toolbar host */
 .header {
-  background-color: var(--cls-primary);
-  color: white;
+  height: 56px !important;
+  min-height: 56px !important;
+  background-color: var(--cls-primary) !important;
+  padding: 0 18px !important;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.20);
+  position: relative;
+  z-index: 100;
 }
 
-#title {
-    color: white;
-    font-size: 1em;
-    margin-left: 16px;
-    font-weight: 500;
+/* Amber accent line at the bottom of the header */
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--cls-accent) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+/* Hamburger menu toggle button */
+.menu-btn {
+  color: rgba(255, 255, 255, 0.65) !important;
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: var(--cls-radius-sm) !important;
+  transition: background 0.15s, color 0.15s !important;
+  flex-shrink: 0;
+}
+.menu-btn:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #fff !important;
+}
+.menu-btn mat-icon {
+  font-size: 20px !important;
+  width: 20px !important;
+  height: 20px !important;
+  line-height: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Brand group: logomark + title */
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+/* Amber square logomark */
+.header-logomark {
+  width: 28px;
+  height: 28px;
+  background: var(--cls-accent);
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--cls-primary);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: -0.3px;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+/* App title */
+.header-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.2px;
+  line-height: 1;
+}
+.header-title .accent {
+  color: var(--cls-accent);
+}
+
+/* Pushes version badge to the right */
+.header-spacer {
+  flex: 1;
+}
+
+/* Version badge */
+.header-badge {
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  color: rgba(255, 255, 255, 0.80);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
 }

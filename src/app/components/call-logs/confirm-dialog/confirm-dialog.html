@@ -1,0 +1,29 @@
+<!-- confirm-dialog.html -->
+<div class="dialog-container">
+
+  <!-- Icon header -->
+  <div class="dialog-icon-wrap">
+    <mat-icon class="dialog-icon">delete_outline</mat-icon>
+  </div>
+
+  <!-- Text -->
+  <h2 class="dialog-title">Delete Call Log</h2>
+  <p class="dialog-message">
+    Are you sure you want to delete the call log for
+    <strong>"{{ data.issue }}"</strong>?
+    <br>
+    <span class="dialog-sub">This action cannot be undone.</span>
+  </p>
+
+  <!-- Actions -->
+  <div class="dialog-actions">
+    <button mat-button class="ghost-btn" (click)="onCancel()">
+      Cancel
+    </button>
+    <button mat-raised-button class="danger-btn" (click)="onConfirm()">
+      <mat-icon>delete</mat-icon>
+      Delete
+    </button>
+  </div>
+
+</div>

@@ -1,100 +1,164 @@
+<!-- call-logs.html -->
 <div class="table-wrapper">
-  <div class="table-header">
-    <h2>Call Logs</h2>
 
-    <button mat-raised-button class="primary-btn" (click)="openAddLogForm()">Add Call Log</button>
+  <!-- ─── Page header ─── -->
+  <div class="table-header">
+    <div class="page-title-group">
+      <h2>Call Logs</h2>
+      <div class="page-subtitle">All support calls</div>
+    </div>
+    <div class="table-actions">
+      <!-- Search -->
+      <div class="search-wrap">
+        <mat-icon>search</mat-icon>
+        <input
+          type="text"
+          placeholder="Search logs…"
+          (input)="dataSource.filter = $any($event.target).value.trim().toLowerCase()">
+      </div>
+      <!-- Add button -->
+      <button mat-raised-button class="primary-btn" (click)="openAddLogForm()">
+        <mat-icon>add</mat-icon>
+        Add Call Log
+      </button>
+    </div>
   </div>
 
-  <table mat-table [dataSource]="dataSource" matSort class="cls-table">
-    <ng-container matColumnDef="date">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
-      <td mat-cell *matCellDef="let element">
-        {{ element.date }}
-      </td>
-    </ng-container>
+  <!-- ─── Stat cards ─── -->
+  <div class="stats-row">
+    <div class="stat-card s-open">
+      <div class="stat-icon-wrap"><mat-icon>radio_button_unchecked</mat-icon></div>
+      <div class="stat-value">{{ getCount('O') }}</div>
+      <div class="stat-label">Open</div>
+    </div>
+    <div class="stat-card s-progress">
+      <div class="stat-icon-wrap"><mat-icon>pending</mat-icon></div>
+      <div class="stat-value">{{ getCount('P') }}</div>
+      <div class="stat-label">In Progress</div>
+    </div>
+    <div class="stat-card s-pending">
+      <div class="stat-icon-wrap"><mat-icon>hourglass_empty</mat-icon></div>
+      <div class="stat-value">{{ getCount('D') }}</div>
+      <div class="stat-label">Pending</div>
+    </div>
+    <div class="stat-card s-closed">
+      <div class="stat-icon-wrap"><mat-icon>check_circle</mat-icon></div>
+      <div class="stat-value">{{ getCount('C') }}</div>
+      <div class="stat-label">Closed</div>
+    </div>
+  </div>
 
-    <ng-container matColumnDef="issue">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Issue</th>
-      <td mat-cell *matCellDef="let element">
-        {{ element.issue }}
-      </td>
-    </ng-container>
+  <!-- ─── Table card ─── -->
+  <div class="cls-table-card">
 
-    <ng-container matColumnDef="type">
-      <th mat-header-cell *matHeaderCellDef>Type</th>
-      <td mat-cell *matCellDef="let element">
-        @if (element.type === 'B') {
-          Bug
-        } @else if (element.type === 'S') {
-          Support
-        } @else if (element.type === 'C') {
-          Change
-        } @else if (element.type === 'K') {
-          Backend
-        }
-      </td>
-    </ng-container>
+    <!-- Table toolbar -->
+    <div class="cls-table-toolbar">
+      <div class="cls-table-title-wrap">
+        <span class="cls-table-title">All Calls</span>
+        <span class="cls-record-count">{{ callLogs().length }} records</span>
+      </div>
+    </div>
 
-    <ng-container matColumnDef="reportedBy">
-      <th mat-header-cell *matHeaderCellDef>Reported By</th>
-      <td mat-cell *matCellDef="let element">
-        {{ element.reportedBy }}
-      </td>
-    </ng-container>
+    <!-- Material table -->
+    <table mat-table [dataSource]="dataSource" matSort class="cls-table">
 
-    <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef>Status</th>
-      <td mat-cell *matCellDef="let element">
-        <span
-          class="status-badge"
-          [ngClass]="{
-            'status-open': element.status === 'O',
-            'status-progress': element.status === 'P',
-            'status-pending': element.status === 'D',
-            'status-closed': element.status === 'C',
-          }"
-        >
-          {{ statusMap[element.status] }}
-        </span>
-      </td>
-    </ng-container>
+      <!-- Date -->
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+        <td mat-cell *matCellDef="let element">
+          <span class="cell-date">{{ element.date }}</span>
+        </td>
+      </ng-container>
 
-    <ng-container matColumnDef="duration">
-      <th mat-header-cell *matHeaderCellDef>Duration</th>
-      <td mat-cell *matCellDef="let element">
-        {{ formatDuration(element.duration) }}
-      </td>
-    </ng-container>
+      <!-- Issue -->
+      <ng-container matColumnDef="issue">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Issue</th>
+        <td mat-cell *matCellDef="let element">
+          <span class="cell-issue">{{ element.issue }}</span>
+        </td>
+      </ng-container>
 
-    <ng-container matColumnDef="edit">
-      <th mat-header-cell *matHeaderCellDef>Edit</th>
-      <td mat-cell *matCellDef="let element">
-        <button mat-icon-button class="edit-btn">
-          <mat-icon>edit</mat-icon>
-        </button>
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="delete">
-      <th mat-header-cell *matHeaderCellDef>Delete</th>
-      <td mat-cell *matCellDef="let element">
-        <button mat-icon-button class="delete-btn" (click)="openDeleteDialog(element)">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </td>
-    </ng-container>
+      <!-- Type -->
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef>Type</th>
+        <td mat-cell *matCellDef="let element">
+          <span class="type-badge" [ngClass]="'type-' + element.type">
+            @if (element.type === 'B') { Bug }
+            @else if (element.type === 'S') { Support }
+            @else if (element.type === 'C') { Change }
+            @else if (element.type === 'K') { Backend }
+          </span>
+        </td>
+      </ng-container>
 
-    <tr class="mat-row no-data-row" *matNoDataRow>
-      <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-        <div class="no-data-message">
-          <mat-icon>inbox</mat-icon>
-          <span>No records found</span>
-        </div>
-      </td>
-    </tr>
+      <!-- Reported By -->
+      <ng-container matColumnDef="reportedBy">
+        <th mat-header-cell *matHeaderCellDef>Reported By</th>
+        <td mat-cell *matCellDef="let element">{{ element.reportedBy }}</td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </table>
+      <!-- Status -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let element">
+          <span class="status-badge"
+            [ngClass]="{
+              'status-open':     element.status === 'O',
+              'status-progress': element.status === 'P',
+              'status-pending':  element.status === 'D',
+              'status-closed':   element.status === 'C'
+            }">
+            {{ statusMap[element.status] }}
+          </span>
+        </td>
+      </ng-container>
 
-  <mat-paginator [pageSize]="5"></mat-paginator>
+      <!-- Duration -->
+      <ng-container matColumnDef="duration">
+        <th mat-header-cell *matHeaderCellDef>Duration</th>
+        <td mat-cell *matCellDef="let element">
+          <span class="cell-duration">{{ formatDuration(element.duration) }}</span>
+        </td>
+      </ng-container>
+
+      <!-- Edit -->
+      <ng-container matColumnDef="edit">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button class="edit-btn" aria-label="Edit">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <!-- Delete -->
+      <ng-container matColumnDef="delete">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button class="delete-btn"
+                  (click)="openDeleteDialog(element)"
+                  aria-label="Delete">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <!-- No data -->
+      <tr class="mat-row no-data-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+          <div class="no-data-message">
+            <mat-icon>inbox</mat-icon>
+            <span>No records found</span>
+          </div>
+        </td>
+      </tr>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <!-- Paginator -->
+    <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+
+  </div>
 </div>

@@ -1,25 +1,24 @@
-<app-header (menuClick)="drawer.toggle()"></app-header>
+<!-- app.html -->
 
-<mat-sidenav-container class="sidenav-container">
+<!-- ── Show full shell only when NOT on login page ── -->
+@if (!isLoginRoute()) {
+  <app-header (menuClick)="drawer.toggle()"></app-header>
 
-  <mat-sidenav
-    #drawer
-    mode="side"
-    opened
-    class="sidenav">
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav #drawer mode="side" opened class="sidenav">
+      <app-menubar></app-menubar>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <div class="content-wrapper">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
 
-    <app-menubar></app-menubar>
+  <app-footer></app-footer>
+}
 
-  </mat-sidenav>
-
-  <mat-sidenav-content>
-
-    <div class="content-wrapper">
-      <router-outlet></router-outlet>
-    </div>
-
-  </mat-sidenav-content>
-
-</mat-sidenav-container>
-
-<app-footer></app-footer>
+<!-- ── Login page renders standalone, no shell ── -->
+@if (isLoginRoute()) {
+  <router-outlet></router-outlet>
+}

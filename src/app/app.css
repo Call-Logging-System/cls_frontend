@@ -1,29 +1,42 @@
+/* ═══════════════════════════════════════
+   app.css
+═══════════════════════════════════════ */
+
 :host {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: var(--cls-bg);
-  overflow-y: auto;
+  overflow: hidden;
 }
 
+/* Fills ALL space between header and footer */
 .sidenav-container {
   flex: 1;
-  background-color: var(--cls-bg);
+  min-height: 0;          /* critical — without this flex:1 won't shrink */
+  background-color: var(--cls-bg) !important;
 }
 
+/* Force Material to give the sidenav panel full height */
 .sidenav {
   width: 220px;
-  background-color: var(--cls-bg);
+  background-color: var(--cls-sidenav-bg) !important;
+  border-right: none !important;
 }
 
 mat-sidenav-content {
-  background-color: var(--cls-bg);
-  flex-direction: column;
+  background-color: var(--cls-bg) !important;
 }
 
 .content-wrapper {
-  flex: 1;
+  height: 100%;
   overflow-y: auto;
   background-color: var(--cls-bg);
+  padding-bottom: 38px; /* footer height clearance */
+  scrollbar-width: thin;
+  scrollbar-color: var(--cls-border) transparent;
 }
-
+.content-wrapper::-webkit-scrollbar { width: 6px; }
+.content-wrapper::-webkit-scrollbar-thumb {
+  background: var(--cls-border);
+  border-radius: 3px;
+}

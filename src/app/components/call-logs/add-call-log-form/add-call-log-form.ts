@@ -1,12 +1,15 @@
+// add-call-log-form.ts  — only the saveCallLog() method changes; full file shown for clarity
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, NgZone, OnDestroy, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CallLogService } from '../../../services/call-log/call-log.service';
 
@@ -15,15 +18,19 @@ type TimerState = 'idle' | 'running' | 'paused' | 'stopped';
 
 @Component({
   selector: 'app-add-call-log-form',
+  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
     MatCardModule,
     MatIconModule,
+    MatCheckboxModule,
+    MatSnackBarModule,
   ],
   templateUrl: './add-call-log-form.html',
   styleUrl: './add-call-log-form.css',
@@ -86,8 +93,7 @@ export class AddCallLogForm implements OnInit, OnDestroy {
     return `${this.pad(date.getHours())}:${this.pad(date.getMinutes())}:${this.pad(date.getSeconds())}`;
   }
 
-  // ── Call flow actions ──
-
+  // ── Timer internals ──
   private startTimer() {
     clearInterval(this.intervalId);
     this.lastTick = Date.now();
@@ -99,7 +105,6 @@ export class AddCallLogForm implements OnInit, OnDestroy {
     }, 1000);
   }
 
-  /** Screen 1 → Start timer → go to Screen 2 */
   startCall() {
     this.startDate = new Date();
     this.elapsed = 0;
@@ -110,7 +115,6 @@ export class AddCallLogForm implements OnInit, OnDestroy {
     this.screen = 'active';
   }
 
-  /** Manual mode — skip timer, go straight to form */
   startManual() {
     this.timerState = 'stopped';
     if (this.callLog.callStartTime && this.callLog.callEndTime) {
@@ -136,18 +140,14 @@ export class AddCallLogForm implements OnInit, OnDestroy {
     this.startTimer();
   }
 
-  /** End call → stop timer → go to Screen 3 */
   endCall() {
     clearInterval(this.intervalId);
     this.timerState = 'stopped';
-
     if (this.logMode === 'live') {
-      // ✅ Live mode: capture current time as end time
       const endDate = new Date();
       this.callLog.callEndTime = this.toTimeStr(endDate);
       this.activeTimeDisplay = this.formatMs(this.elapsed - this.pausedMs);
     } else {
-      // ✅ Manual mode: end time already entered by user, just calculate duration
       const toSeconds = (t: string) => {
         const parts = t.split(':').map(Number);
         return parts[0] * 3600 + parts[1] * 60 + (parts[2] ?? 0);
@@ -155,11 +155,10 @@ export class AddCallLogForm implements OnInit, OnDestroy {
       const diffMs = (toSeconds(this.callLog.callEndTime) - toSeconds(this.callLog.callStartTime)) * 1000;
       this.activeTimeDisplay = diffMs > 0 ? this.formatMs(diffMs) : '—';
     }
-
     this.screen = 'review';
   }
 
-  // ── Summary labels for review screen ──
+  // ── Labels ──
   get typeLabel(): string {
     return { B: '🐛 Bug', S: '🎧 Support', C: '🔄 Change', K: '⚙️ Backend' }[this.callLog.issueType] ?? '—';
   }
@@ -179,16 +178,22 @@ export class AddCallLogForm implements OnInit, OnDestroy {
     return { O: 'open', P: 'progress', D: 'pending', C: 'closed' }[this.callLog.status] ?? '';
   }
 
-  // ── Save ──
+  // ── Save with snackbar ──
   saveCallLog() {
     const payload = {
       ...this.callLog,
       officeUserName: this.officeUserName,
       officeLevel: this.officeLevel,
     };
+
     this.callLogService.saveCallLog(payload).subscribe({
-      next: () => this.router.navigate(['/call-logs']),
-      error: (err) => console.error('Error saving call log', err),
+      next: () => {
+        this.showSnackbar('Call log saved successfully.', 'success');
+        this.router.navigate(['/call-logs']);
+      },
+      error: () => {
+        this.showSnackbar('Failed to save call log. Please try again.', 'error');
+      },
     });
   }
 
@@ -196,12 +201,23 @@ export class AddCallLogForm implements OnInit, OnDestroy {
     this.router.navigate(['/call-logs']);
   }
 
-  // ── Lifecycle ──
-  private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
+  // ── Snackbar helper ──
+  showSnackbar(message: string, type: 'success' | 'error' | 'info') {
+    this.snackBar.open(message, 'Dismiss', {
+      duration: 3500,
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+      panelClass: [`cls-snackbar-${type}`],
+    });
+  }
+
+  // ── DI ──
+  private readonly route          = inject(ActivatedRoute);
+  private readonly router         = inject(Router);
   private readonly callLogService = inject(CallLogService);
-  private readonly ngZone = inject(NgZone);
-  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly ngZone         = inject(NgZone);
+  private readonly cdr            = inject(ChangeDetectorRef);
+  private readonly snackBar       = inject(MatSnackBar);
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
@@ -210,7 +226,7 @@ export class AddCallLogForm implements OnInit, OnDestroy {
     });
     this.callLogService.getUsersDropdown().subscribe({
       next: (data) => (this.users = data),
-      error: (err) => console.error('Error loading users', err),
+      error: () => this.showSnackbar('Failed to load users.', 'error'),
     });
   }
 

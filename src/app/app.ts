@@ -1,16 +1,41 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { Header } from "./components/common/header/header";
-import { Footer } from "./components/common/footer/footer";
-import { MatSidenavContainer, MatSidenav, MatSidenavContent } from "@angular/material/sidenav";
-import { Menubar } from "./components/common/menubar/menubar";
+// app.ts
+import { Component, inject, signal } from '@angular/core';
+import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { Header } from './components/common/header/header';
+import { Footer } from './components/common/footer/footer';
+import { Menubar } from './components/common/menubar/menubar';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, Footer, MatSidenavContainer, MatSidenav, Menubar, MatSidenavContent],
+  standalone: true,
+  imports: [
+    RouterOutlet,
+    MatSidenavModule,
+    Header,
+    Footer,
+    Menubar,
+  ],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
 export class App {
-  protected readonly title = signal('cls_frontend');
+  private readonly router = inject(Router);
+
+  // Signal that updates on every route change
+  private currentUrl = signal(this.router.url);
+
+  constructor() {
+    this.router.events
+      .pipe(filter(e => e instanceof NavigationEnd))
+      .subscribe((e: any) => {
+        this.currentUrl.set(e.urlAfterRedirects);
+      });
+  }
+
+  isLoginRoute(): boolean {
+    const url = this.currentUrl();
+    return url === '/login' || url === '/' || url === '';
+  }
 }

@@ -1,24 +1,240 @@
-/* You can add global styles to this file, and also import other style files */
+/* ═══════════════════════════════════════
+   styles.css  —  CLS Global Styles
+═══════════════════════════════════════ */
+
 html, body {
   height: 100%;
   margin: 0;
   overflow: hidden;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
+/* ─── Shared primary button (used across all components) ─── */
 .primary-btn {
   background-color: var(--cls-primary) !important;
   color: #fff !important;
-  font-weight: bold;
-  border-radius: 4px !important;
-  height: 40px;
-  padding: 0 20px;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  border-radius: var(--cls-radius-sm) !important;
+  height: 36px;
+  padding: 0 16px;
   cursor: pointer !important;
-   transition: all 0.2s ease !important;
-   border: none;
+  transition: all 0.15s ease !important;
+  border: none;
+  box-shadow: 0 1px 3px rgba(28, 63, 110, 0.28) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
 }
 
 .primary-btn:hover {
   background-color: var(--cls-primary-hover) !important;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2) !important;
+  box-shadow: 0 3px 9px rgba(28, 63, 110, 0.32) !important;
   transform: translateY(-1px) !important;
+}
+
+/* ─── Ghost / secondary button ─── */
+.ghost-btn {
+  background: transparent !important;
+  color: var(--cls-text-secondary) !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  border-radius: var(--cls-radius-sm) !important;
+  height: 36px;
+  padding: 0 16px;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  border: 1px solid var(--cls-border) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+}
+
+.ghost-btn:hover {
+  background: var(--cls-bg) !important;
+  color: var(--cls-text-primary) !important;
+}
+
+/* ─── Icon buttons (edit / delete) ─── */
+.edit-btn {
+  color: var(--cls-primary) !important;
+  border-radius: var(--cls-radius-sm) !important;
+  transition: background 0.15s !important;
+}
+.edit-btn:hover {
+  background-color: var(--cls-primary-light) !important;
+}
+
+.delete-btn {
+  color: #C0392B !important;
+  border-radius: var(--cls-radius-sm) !important;
+  transition: background 0.15s !important;
+}
+.delete-btn:hover {
+  background-color: #FEE2E2 !important;
+}
+
+/* ─── Status badges (shared across list + form) ─── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.status-badge::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.status-open     { background: var(--cls-open-bg);     color: var(--cls-open-text); }
+.status-open::before     { background: var(--cls-open-text); }
+.status-progress { background: var(--cls-progress-bg); color: var(--cls-progress-text); }
+.status-progress::before { background: var(--cls-progress-text); }
+.status-pending  { background: var(--cls-pending-bg);  color: var(--cls-pending-text); }
+.status-pending::before  { background: var(--cls-pending-text); }
+.status-closed   { background: var(--cls-closed-bg);   color: var(--cls-closed-text); }
+.status-closed::before   { background: var(--cls-closed-text); }
+
+/* ─── Type badges ─── */
+.type-badge {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.2px;
+}
+.type-B { background: var(--cls-bug-bg);     color: var(--cls-bug-text); }
+.type-S { background: var(--cls-support-bg); color: var(--cls-support-text); }
+.type-C { background: var(--cls-change-bg);  color: var(--cls-change-text); }
+.type-K { background: var(--cls-backend-bg); color: var(--cls-backend-text); }
+
+/* ─── No-data empty state ─── */
+.no-data-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--cls-text-muted);
+  font-size: 13px;
+  padding: 40px 0;
+}
+.no-data-message mat-icon {
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+  opacity: 0.35;
+}
+
+/* ═══════════════════════════════════════════════════
+   APPEND these to the bottom of your styles.css
+   (Global snackbar + dialog overrides)
+═══════════════════════════════════════════════════ */
+
+/* ─── Snackbar base ─── */
+.mdc-snackbar__surface {
+  border-radius: var(--cls-radius-sm) !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  min-width: 280px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18) !important;
+  padding: 0 !important;
+}
+
+.mdc-snackbar__label {
+  padding: 12px 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+/* Add icon via ::before on the label */
+.cls-snackbar-success .mdc-snackbar__label::before,
+.cls-snackbar-error   .mdc-snackbar__label::before,
+.cls-snackbar-info    .mdc-snackbar__label::before {
+  font-family: 'Material Icons';
+  font-size: 18px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* ─── Success snackbar ─── */
+.cls-snackbar-success .mdc-snackbar__surface {
+  background: #166534 !important;
+  border-left: 4px solid #4ADE80 !important;
+}
+.cls-snackbar-success .mdc-snackbar__label {
+  color: #ffffff !important;
+}
+.cls-snackbar-success .mdc-snackbar__label::before {
+  content: 'check_circle';
+  color: #4ADE80;
+}
+.cls-snackbar-success .mat-mdc-snack-bar-action {
+  color: rgba(255, 255, 255, 0.70) !important;
+}
+
+/* ─── Error snackbar ─── */
+.cls-snackbar-error .mdc-snackbar__surface {
+  background: #7F1D1D !important;
+  border-left: 4px solid #F87171 !important;
+}
+.cls-snackbar-error .mdc-snackbar__label {
+  color: #ffffff !important;
+}
+.cls-snackbar-error .mdc-snackbar__label::before {
+  content: 'error';
+  color: #F87171;
+}
+.cls-snackbar-error .mat-mdc-snack-bar-action {
+  color: rgba(255, 255, 255, 0.70) !important;
+}
+
+/* ─── Info snackbar ─── */
+.cls-snackbar-info .mdc-snackbar__surface {
+  background: #1C3F6E !important;
+  border-left: 4px solid #60A5FA !important;
+}
+.cls-snackbar-info .mdc-snackbar__label {
+  color: #ffffff !important;
+}
+.cls-snackbar-info .mdc-snackbar__label::before {
+  content: 'info';
+  color: #60A5FA;
+}
+.cls-snackbar-info .mat-mdc-snack-bar-action {
+  color: rgba(255, 255, 255, 0.70) !important;
+}
+
+/* ─── Dismiss button shared ─── */
+.cls-snackbar-success .mat-mdc-snack-bar-action button,
+.cls-snackbar-error   .mat-mdc-snack-bar-action button,
+.cls-snackbar-info    .mat-mdc-snack-bar-action button {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.3px !important;
+}
+
+/* ─── Dialog panel ─── */
+.cls-dialog .mat-mdc-dialog-container {
+  border-radius: var(--cls-radius-lg) !important;
+  overflow: hidden !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22) !important;
+  padding: 0 !important;
+}
+
+.cls-dialog .mdc-dialog__surface {
+  border-radius: var(--cls-radius-lg) !important;
+  padding: 0 !important;
 }

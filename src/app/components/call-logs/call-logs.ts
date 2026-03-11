@@ -1,39 +1,48 @@
+// call-logs.ts
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, effect, inject, signal, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { CallLog } from '../../models/call-log/call-log.model';
 import { CallLogService } from '../../services/call-log/call-log.service';
+import { ConfirmDialog } from './confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-call-logs',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDialogModule,
+    MatSnackBarModule,
+  ],
   templateUrl: './call-logs.html',
-  styleUrls: ['./call-logs.css'],
-  imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatIconModule],
+  styleUrl: './call-logs.css',
 })
 export class CallLogs implements AfterViewInit {
+
   callLogs = signal<CallLog[]>([]);
 
   private readonly callLogService = inject(CallLogService);
-  private readonly dialog = inject(MatDialog);
-  private readonly router = inject(Router);
+  private readonly router          = inject(Router);
+  private readonly dialog          = inject(MatDialog);
+  private readonly snackBar        = inject(MatSnackBar);
 
   displayedColumns: string[] = [
-    'date',
-    'issue',
-    'type',
-    'reportedBy',
-    'status',
-    'duration',
-    'edit',
-    'delete',
+    'date', 'issue', 'type', 'reportedBy', 'status', 'duration', 'edit', 'delete',
   ];
 
-  statusMap: any = {
+  statusMap: Record<string, string> = {
     O: 'Open',
     P: 'In Progress',
     D: 'Pending',
@@ -43,9 +52,7 @@ export class CallLogs implements AfterViewInit {
   dataSource = new MatTableDataSource<CallLog>();
 
   constructor() {
-    effect(() => {
-      this.dataSource.data = this.callLogs();
-    });
+    effect(() => { this.dataSource.data = this.callLogs(); });
   }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -54,7 +61,6 @@ export class CallLogs implements AfterViewInit {
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-
     this.loadCallLogs();
   }
 
@@ -70,33 +76,51 @@ export class CallLogs implements AfterViewInit {
           status: item.status,
           duration: item.timeTakenMinutes,
         }));
-
         this.callLogs.set(mappedData);
       },
-      error: (err) => {
-        console.error('Error loading call logs', err);
-      },
+      error: () => this.showSnackbar('Failed to load call logs.', 'error'),
     });
+  }
+
+  /** Count logs by status — used by stat cards */
+  getCount(status: string): number {
+    return this.callLogs().filter(log => log.status === status).length;
   }
 
   openAddLogForm() {
     this.router.navigate(['/add-call-log']);
   }
 
+  /** ── Delete with confirmation dialog ── */
   openDeleteDialog(element: CallLog) {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete the call log for "${element.issue}"?`,
-    );
-    if (confirmed) {
+    const ref = this.dialog.open(ConfirmDialog, {
+      width: '420px',
+      panelClass: 'cls-dialog',       // for global dialog styling
+      disableClose: true,             // must click a button, not backdrop
+      data: { issue: element.issue },
+    });
+
+    ref.afterClosed().subscribe((confirmed: boolean) => {
+      if (!confirmed) return;
+
       this.callLogService.deleteCallLog(element.id).subscribe({
         next: () => {
           this.callLogs.update((logs) => logs.filter((log) => log.id !== element.id));
+          this.showSnackbar('Call log deleted successfully.', 'success');
         },
-        error: (err) => {
-          console.error('Error deleting call log', err);
-        },
+        error: () => this.showSnackbar('Failed to delete call log.', 'error'),
       });
-    }
+    });
+  }
+
+  /** ── Snackbar helper ── */
+  showSnackbar(message: string, type: 'success' | 'error' | 'info') {
+    this.snackBar.open(message, 'Dismiss', {
+      duration: 3500,
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+      panelClass: [`cls-snackbar-${type}`],
+    });
   }
 
   formatDuration(minutes: number): string {
