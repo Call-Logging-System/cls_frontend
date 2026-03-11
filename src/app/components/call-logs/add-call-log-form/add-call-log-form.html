@@ -1,6 +1,5 @@
 <!-- add-call-log-form.html -->
 <div class="form-wrapper">
-
   <!-- ══════════════════════════════════
        SCREEN 1 — Incoming Call
   ═══════════════════════════════════ -->
@@ -10,7 +9,9 @@
         <h2>New Call Log</h2>
         <div class="form-page-subtitle">
           {{ officeUserName || '—' }}
-          @if (officeLevelLabel) { · {{ officeLevelLabel }} }
+          @if (officeLevelLabel) {
+            · {{ officeLevelLabel }}
+          }
         </div>
       </div>
       <button mat-button class="ghost-btn" (click)="goBack()">
@@ -20,7 +21,6 @@
     </div>
 
     <div class="form-card">
-
       <!-- Mode toggle -->
       <div class="mode-toggle">
         <button class="mode-btn" [class.active]="logMode === 'live'" (click)="logMode = 'live'">
@@ -37,11 +37,14 @@
       <div class="form-section">
         <div class="form-section-title">Office Details</div>
         <div class="form-grid-2">
-
           <mat-form-field appearance="outline">
             <mat-label>Office Username</mat-label>
-            <input matInput [(ngModel)]="officeUserName" name="officeUserName"
-                   placeholder="e.g. mumbai_office">
+            <input
+              matInput
+              [(ngModel)]="officeUserName"
+              name="officeUserName"
+              placeholder="e.g. mumbai_office"
+            />
             <mat-icon matSuffix>business</mat-icon>
           </mat-form-field>
 
@@ -53,7 +56,6 @@
               <mat-option [value]="4">Range</mat-option>
             </mat-select>
           </mat-form-field>
-
         </div>
       </div>
 
@@ -64,7 +66,12 @@
             <mat-icon class="phone-icon">call</mat-icon>
           </div>
           <p class="incoming-label">Incoming call ready to log</p>
-          <button mat-raised-button class="primary-btn start-btn" (click)="startCall()">
+          <button
+            mat-raised-button
+            class="primary-btn start-btn"
+            (click)="startCall()"
+            [disabled]="!officeUserName.trim() || !officeLevel"
+          >
             <mat-icon>play_arrow</mat-icon>
             Start Call Timer
           </button>
@@ -76,35 +83,48 @@
         <div class="form-section">
           <div class="form-section-title">Call Timing</div>
           <div class="form-grid-2">
-
             <mat-form-field appearance="outline">
               <mat-label>Call Date</mat-label>
-              <input matInput type="date" [(ngModel)]="callLog.callDate" name="callDate">
+              <input matInput type="date" [(ngModel)]="callLog.callDate" name="callDate" />
             </mat-form-field>
 
             <div></div>
 
             <mat-form-field appearance="outline">
               <mat-label>Start Time</mat-label>
-              <input matInput type="time" [(ngModel)]="callLog.callStartTime" name="callStartTime">
+              <input
+                matInput
+                type="time"
+                [(ngModel)]="callLog.callStartTime"
+                name="callStartTime"
+              />
             </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>End Time</mat-label>
-              <input matInput type="time" [(ngModel)]="callLog.callEndTime" name="callEndTime">
+              <input matInput type="time" [(ngModel)]="callLog.callEndTime" name="callEndTime" />
             </mat-form-field>
-
           </div>
         </div>
 
         <div class="form-actions">
-          <button mat-raised-button class="primary-btn" (click)="startManual()">
+          <button
+            mat-raised-button
+            class="primary-btn"
+            (click)="startManual()"
+            [disabled]="
+              !officeUserName.trim() ||
+              !officeLevel ||
+              !callLog.callDate ||
+              !callLog.callStartTime ||
+              !callLog.callEndTime
+            "
+          >
             <mat-icon>arrow_forward</mat-icon>
             Continue to Form
           </button>
         </div>
       }
-
     </div>
   }
 
@@ -117,7 +137,9 @@
         <h2>Active Call</h2>
         <div class="form-page-subtitle">
           {{ officeUserName || '—' }}
-          @if (officeLevelLabel) { · {{ officeLevelLabel }} }
+          @if (officeLevelLabel) {
+            · {{ officeLevelLabel }}
+          }
         </div>
       </div>
 
@@ -127,12 +149,22 @@
           <span class="timer-dot" [class.paused]="timerState === 'paused'"></span>
           <span class="timer-display">{{ timerDisplay }}</span>
           @if (timerState === 'running') {
-            <button mat-icon-button class="timer-ctrl-btn" (click)="timerPause()" matTooltip="Pause">
+            <button
+              mat-icon-button
+              class="timer-ctrl-btn"
+              (click)="timerPause()"
+              matTooltip="Pause"
+            >
               <mat-icon>pause</mat-icon>
             </button>
           }
           @if (timerState === 'paused') {
-            <button mat-icon-button class="timer-ctrl-btn" (click)="timerResume()" matTooltip="Resume">
+            <button
+              mat-icon-button
+              class="timer-ctrl-btn"
+              (click)="timerResume()"
+              matTooltip="Resume"
+            >
               <mat-icon>play_arrow</mat-icon>
             </button>
           }
@@ -141,12 +173,10 @@
     </div>
 
     <div class="form-card">
-
       <!-- ── Issue Info ── -->
       <div class="form-section">
         <div class="form-section-title">Issue Info</div>
         <div class="form-grid">
-
           <mat-form-field appearance="outline">
             <mat-label>Issue Type</mat-label>
             <mat-select [(ngModel)]="callLog.issueType" name="issueType">
@@ -198,22 +228,30 @@
 
           <mat-form-field appearance="outline">
             <mat-label>Release Date</mat-label>
-            <input matInput type="date" [(ngModel)]="callLog.releaseDate" name="releaseDate">
+            <input matInput type="date" [(ngModel)]="callLog.releaseDate" name="releaseDate" />
           </mat-form-field>
 
           <!-- Issue description — full width -->
           <mat-form-field appearance="outline" class="col-span-full">
             <mat-label>Issue Reported</mat-label>
-            <input matInput [(ngModel)]="callLog.issueReported" name="issueReported"
-                   placeholder="Brief description of the issue">
+            <input
+              matInput
+              [(ngModel)]="callLog.issueReported"
+              name="issueReported"
+              placeholder="Brief description of the issue"
+            />
           </mat-form-field>
 
           <!-- Notes — full width -->
           <mat-form-field appearance="outline" class="col-span-full">
             <mat-label>Description / Notes</mat-label>
-            <textarea matInput [(ngModel)]="callLog.description" name="description"
-                      placeholder="Detailed notes about this call…"
-                      rows="3"></textarea>
+            <textarea
+              matInput
+              [(ngModel)]="callLog.description"
+              name="description"
+              placeholder="Detailed notes about this call…"
+              rows="3"
+            ></textarea>
           </mat-form-field>
 
           <!-- Is Released -->
@@ -222,7 +260,6 @@
               <span class="checkbox-label">Is Released?</span>
             </mat-checkbox>
           </div>
-
         </div>
       </div>
 
@@ -244,7 +281,6 @@
           </button>
         }
       </div>
-
     </div>
   }
 
@@ -260,7 +296,6 @@
     </div>
 
     <div class="form-card">
-
       <!-- Duration summary banner -->
       <div class="review-banner">
         <div class="review-banner-item">
@@ -286,7 +321,6 @@
 
       <!-- Summary grid -->
       <div class="review-grid">
-
         <div class="review-item">
           <span class="review-label">Office</span>
           <span class="review-value">{{ officeUserName || '—' }}</span>
@@ -334,7 +368,6 @@
             <span class="review-value">{{ callLog.description }}</span>
           </div>
         }
-
       </div>
 
       <!-- Actions -->
@@ -348,8 +381,6 @@
           Save Call Log
         </button>
       </div>
-
     </div>
   }
-
 </div>

@@ -30,16 +30,22 @@ import { ConfirmDialog } from './confirm-dialog/confirm-dialog';
   styleUrl: './call-logs.css',
 })
 export class CallLogs implements AfterViewInit {
-
   callLogs = signal<CallLog[]>([]);
 
   private readonly callLogService = inject(CallLogService);
-  private readonly router          = inject(Router);
-  private readonly dialog          = inject(MatDialog);
-  private readonly snackBar        = inject(MatSnackBar);
+  private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
 
   displayedColumns: string[] = [
-    'date', 'issue', 'type', 'reportedBy', 'status', 'duration', 'edit', 'delete',
+    'date',
+    'issue',
+    'type',
+    'reportedBy',
+    'status',
+    'duration',
+    'edit',
+    'delete',
   ];
 
   statusMap: Record<string, string> = {
@@ -52,7 +58,9 @@ export class CallLogs implements AfterViewInit {
   dataSource = new MatTableDataSource<CallLog>();
 
   constructor() {
-    effect(() => { this.dataSource.data = this.callLogs(); });
+    effect(() => {
+      this.dataSource.data = this.callLogs();
+    });
   }
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -84,7 +92,7 @@ export class CallLogs implements AfterViewInit {
 
   /** Count logs by status — used by stat cards */
   getCount(status: string): number {
-    return this.callLogs().filter(log => log.status === status).length;
+    return this.callLogs().filter((log) => log.status === status).length;
   }
 
   openAddLogForm() {
@@ -95,8 +103,8 @@ export class CallLogs implements AfterViewInit {
   openDeleteDialog(element: CallLog) {
     const ref = this.dialog.open(ConfirmDialog, {
       width: '420px',
-      panelClass: 'cls-dialog',       // for global dialog styling
-      disableClose: true,             // must click a button, not backdrop
+      panelClass: 'cls-dialog', // for global dialog styling
+      disableClose: true, // must click a button, not backdrop
       data: { issue: element.issue },
     });
 
@@ -129,5 +137,9 @@ export class CallLogs implements AfterViewInit {
     const h = Math.floor(minutes / 60);
     const m = minutes % 60;
     return m > 0 ? `${h}h ${m}m` : `${h}h`;
+  }
+
+  openEditForm(id: number): void {
+    this.router.navigate(['/edit-call-log', id]);
   }
 }

@@ -238,3 +238,13 @@ html, body {
   border-radius: var(--cls-radius-lg) !important;
   padding: 0 !important;
 }
+
+button[disabled],
+button.mat-mdc-raised-button[disabled] {
+  background: var(--cls-border) !important;
+  color: var(--cls-text-muted) !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+  transform: none !important;
+  opacity: 0.6;
+}

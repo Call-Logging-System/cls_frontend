@@ -1,236 +1,228 @@
-// add-call-log-form.ts  — only the saveCallLog() method changes; full file shown for clarity
+// add-call-log-form.ts
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, NgZone, OnDestroy, OnInit } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CallLogService } from '../../../services/call-log/call-log.service';
-
-type Screen = 'incoming' | 'active' | 'review';
-type TimerState = 'idle' | 'running' | 'paused' | 'stopped';
 
 @Component({
   selector: 'app-add-call-log-form',
   standalone: true,
   imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatCardModule,
-    MatIconModule,
-    MatCheckboxModule,
-    MatSnackBarModule,
+    CommonModule, FormsModule,
+    MatButtonModule, MatIconModule,
+    MatFormFieldModule, MatInputModule,
+    MatSelectModule, MatCheckboxModule,
+    MatTooltipModule, MatSnackBarModule,
   ],
   templateUrl: './add-call-log-form.html',
   styleUrl: './add-call-log-form.css',
 })
 export class AddCallLogForm implements OnInit, OnDestroy {
 
-  // ── Navigation ──
-  screen: Screen = 'incoming';
+  private readonly router     = inject(Router);
+  private readonly route      = inject(ActivatedRoute);
+  private readonly callLogSvc = inject(CallLogService);
+  private readonly snackBar   = inject(MatSnackBar);
+
+  // ── Edit mode ──────────────────────────────────
+  isEditMode    = false;
+  editId: number | null = null;
+  isLoadingEdit = false;
+
+  // ── Screen & mode ──────────────────────────────
+  screen:  'incoming' | 'active' | 'review' = 'incoming';
   logMode: 'live' | 'manual' = 'live';
 
-  // ── Office ──
+  // ── Office fields ──────────────────────────────
   officeUserName = '';
-  officeLevel: number = 0;
+  officeLevel: number | null = null;
 
   get officeLevelLabel(): string {
     const map: Record<number, string> = { 2: 'Circle', 3: 'Division', 4: 'Range' };
-    return map[this.officeLevel] ?? '';
+    return this.officeLevel ? (map[this.officeLevel] ?? '') : '';
   }
 
-  // ── Form data ──
-  callLog = {
-    officeUserName: '',
-    officeLevel: 0,
-    callDate: new Date().toISOString().split('T')[0],
-    callStartTime: '',
-    callEndTime: '',
-    description: '',
-    isReleased: false,
-    issueReported: '',
-    issueType: '',
-    priority: '',
-    releaseDate: null as string | null,
-    reportedTo: null as number | null,
-    solvedBy: null as number | null,
-    status: '',
-  };
-
+  // ── Users dropdown ─────────────────────────────
   users: { key: number; value: string }[] = [];
 
-  // ── Timer ──
-  timerState: TimerState = 'idle';
-  timerDisplay = '00:00:00';
-  activeTimeDisplay = '';
+  // ── Call log data object ───────────────────────
+  callLog: any = {
+    callDate: '', callStartTime: '', callEndTime: '',
+    issueType: '', priority: '', status: 'O',
+    issueReported: '', description: '',
+    reportedTo: null, solvedBy: null,
+    releaseDate: null, isReleased: false,
+  };
 
-  private elapsed = 0;
-  private pausedMs = 0;
-  private lastTick = 0;
-  private pauseStart = 0;
-  private startDate: Date | null = null;
-  private intervalId: any = null;
+  // ── Timer ──────────────────────────────────────
+  timerState: 'idle' | 'running' | 'paused' = 'idle';
+  timerSeconds  = 0;
+  timerInterval: any = null;
+  pausedSeconds = 0;
 
-  private pad = (n: number) => String(n).padStart(2, '0');
-
-  private formatMs(ms: number): string {
-    const s = Math.floor(ms / 1000);
-    return `${this.pad(Math.floor(s / 3600))}:${this.pad(Math.floor((s % 3600) / 60))}:${this.pad(s % 60)}`;
+  get timerDisplay(): string {
+    const h = Math.floor(this.timerSeconds / 3600);
+    const m = Math.floor((this.timerSeconds % 3600) / 60);
+    const s = this.timerSeconds % 60;
+    return h > 0
+      ? `${this.pad(h)}:${this.pad(m)}:${this.pad(s)}`
+      : `${this.pad(m)}:${this.pad(s)}`;
   }
 
-  private toTimeStr(date: Date): string {
-    return `${this.pad(date.getHours())}:${this.pad(date.getMinutes())}:${this.pad(date.getSeconds())}`;
+  get activeTimeDisplay(): string {
+    const active = this.timerSeconds - this.pausedSeconds;
+    const m = Math.floor(active / 60);
+    const s = active % 60;
+    return m > 0 ? `${m}m ${s}s` : `${s}s`;
   }
 
-  // ── Timer internals ──
-  private startTimer() {
-    clearInterval(this.intervalId);
-    this.lastTick = Date.now();
-    this.intervalId = setInterval(() => {
-      this.elapsed += Date.now() - this.lastTick;
-      this.lastTick = Date.now();
-      this.timerDisplay = this.formatMs(this.elapsed - this.pausedMs);
-      this.cdr.markForCheck();
-    }, 1000);
-  }
+  private pad = (n: number) => n.toString().padStart(2, '0');
 
-  startCall() {
-    this.startDate = new Date();
-    this.elapsed = 0;
-    this.pausedMs = 0;
-    this.callLog.callStartTime = this.toTimeStr(this.startDate);
-    this.timerState = 'running';
-    this.startTimer();
-    this.screen = 'active';
-  }
+  // ── Labels ─────────────────────────────────────
+  get typeLabel():     string { return ({ B:'Bug', S:'Support', C:'Change', K:'Backend' } as any)[this.callLog.issueType] ?? '—'; }
+  get priorityLabel(): string { return ({ H:'High', M:'Medium', L:'Low' } as any)[this.callLog.priority] ?? '—'; }
+  get priorityClass(): string { return ({ H:'high', M:'medium', L:'low' } as any)[this.callLog.priority] ?? ''; }
+  get statusLabel():   string { return ({ O:'Open', P:'In Progress', D:'Pending', C:'Closed' } as any)[this.callLog.status] ?? '—'; }
+  get statusClass():   string { return ({ O:'open', P:'progress', D:'pending', C:'closed' } as any)[this.callLog.status] ?? ''; }
 
-  startManual() {
-    this.timerState = 'stopped';
-    if (this.callLog.callStartTime && this.callLog.callEndTime) {
-      const toSeconds = (t: string) => {
-        const parts = t.split(':').map(Number);
-        return parts[0] * 3600 + parts[1] * 60 + (parts[2] ?? 0);
-      };
-      const diffMs = (toSeconds(this.callLog.callEndTime) - toSeconds(this.callLog.callStartTime)) * 1000;
-      this.activeTimeDisplay = diffMs > 0 ? this.formatMs(diffMs) : '—';
+  // ── Lifecycle ──────────────────────────────────
+  ngOnInit(): void {
+    this.callLogSvc.getUsersDropdown().subscribe({
+      next: (data) => this.users = data,
+      error: (err) => console.error('Error loading users', err),
+    });
+
+    // Check for edit mode via route param /edit-call-log/:id
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.isEditMode = true;
+      this.editId     = +id;
+      this.loadCallLog(this.editId);
     }
+  }
+
+  ngOnDestroy(): void { this.clearTimer(); }
+
+  // ── Load existing record ────────────────────────
+  private loadCallLog(id: number): void {
+    this.isLoadingEdit = true;
+    this.callLogSvc.getCallLogById(id).subscribe({
+      next: (data: any) => {
+        this.officeUserName = data.officeUserName ?? '';
+        this.officeLevel    = data.officeLevel    ?? null;
+        this.callLog = {
+          callDate:      data.callDate      ?? '',
+          callStartTime: data.callStartTime ?? '',
+          callEndTime:   data.callEndTime   ?? '',
+          issueType:     data.issueType     ?? '',
+          priority:      data.priority      ?? '',
+          status:        data.status        ?? 'O',
+          issueReported: data.issueReported ?? '',
+          description:   data.description   ?? '',
+          reportedTo:    data.reportedTo    ?? null,
+          solvedBy:      data.solvedBy      ?? null,
+          releaseDate:   data.releaseDate   ?? null,
+          isReleased:    data.isReleased    ?? false,
+        };
+        // Skip screen 1, open directly on active form
+        this.logMode = 'manual';
+        this.screen  = 'active';
+        this.isLoadingEdit = false;
+      },
+      error: (err) => {
+        console.error('Load error', err);
+        this.isLoadingEdit = false;
+        this.showSnackbar('Failed to load call log.', 'error');
+        this.router.navigate(['/call-logs']);
+      },
+    });
+  }
+
+  // ── Timer controls ─────────────────────────────
+  startCall(): void {
+    const now = new Date();
+    this.callLog.callDate      = now.toISOString().split('T')[0];
+    this.callLog.callStartTime = now.toTimeString().slice(0, 5);
+    this.timerSeconds = 0;
+    this.pausedSeconds = 0;
+    this.timerState = 'running';
+    this.timerInterval = setInterval(() => this.timerSeconds++, 1000);
     this.screen = 'active';
   }
 
-  timerPause() {
-    clearInterval(this.intervalId);
-    this.pauseStart = Date.now();
+  startManual(): void { this.screen = 'active'; }
+
+  timerPause(): void {
+    clearInterval(this.timerInterval);
     this.timerState = 'paused';
   }
 
-  timerResume() {
-    this.pausedMs += Date.now() - this.pauseStart;
+  timerResume(): void {
     this.timerState = 'running';
-    this.startTimer();
+    this.timerInterval = setInterval(() => this.timerSeconds++, 1000);
   }
 
-  endCall() {
-    clearInterval(this.intervalId);
-    this.timerState = 'stopped';
+  endCall(): void {
     if (this.logMode === 'live') {
-      const endDate = new Date();
-      this.callLog.callEndTime = this.toTimeStr(endDate);
-      this.activeTimeDisplay = this.formatMs(this.elapsed - this.pausedMs);
-    } else {
-      const toSeconds = (t: string) => {
-        const parts = t.split(':').map(Number);
-        return parts[0] * 3600 + parts[1] * 60 + (parts[2] ?? 0);
-      };
-      const diffMs = (toSeconds(this.callLog.callEndTime) - toSeconds(this.callLog.callStartTime)) * 1000;
-      this.activeTimeDisplay = diffMs > 0 ? this.formatMs(diffMs) : '—';
+      clearInterval(this.timerInterval);
+      this.timerState = 'idle';
+      this.callLog.callEndTime = new Date().toTimeString().slice(0, 5);
     }
     this.screen = 'review';
   }
 
-  // ── Labels ──
-  get typeLabel(): string {
-    return { B: '🐛 Bug', S: '🎧 Support', C: '🔄 Change', K: '⚙️ Backend' }[this.callLog.issueType] ?? '—';
-  }
-  get typeClass(): string {
-    return { B: 'bug', S: 'support', C: 'change', K: 'backend' }[this.callLog.issueType] ?? '';
-  }
-  get priorityLabel(): string {
-    return { H: '🔴 High', M: '🟡 Medium', L: '🟢 Low' }[this.callLog.priority] ?? '—';
-  }
-  get priorityClass(): string {
-    return { H: 'high', M: 'medium', L: 'low' }[this.callLog.priority] ?? '';
-  }
-  get statusLabel(): string {
-    return { O: 'Open', P: 'In Progress', D: 'Pending', C: 'Closed' }[this.callLog.status] ?? '—';
-  }
-  get statusClass(): string {
-    return { O: 'open', P: 'progress', D: 'pending', C: 'closed' }[this.callLog.status] ?? '';
-  }
+  private clearTimer(): void { if (this.timerInterval) clearInterval(this.timerInterval); }
 
-  // ── Save with snackbar ──
-  saveCallLog() {
+  // ── Save / Update ──────────────────────────────
+  saveCallLog(): void {
     const payload = {
-      ...this.callLog,
       officeUserName: this.officeUserName,
-      officeLevel: this.officeLevel,
+      officeLevel:    this.officeLevel,
+      ...this.callLog,
     };
 
-    this.callLogService.saveCallLog(payload).subscribe({
-      next: () => {
-        this.showSnackbar('Call log saved successfully.', 'success');
-        this.router.navigate(['/call-logs']);
-      },
-      error: () => {
-        this.showSnackbar('Failed to save call log. Please try again.', 'error');
-      },
-    });
+    if (this.isEditMode && this.editId !== null) {
+      this.callLogSvc.updateCallLog(this.editId, payload).subscribe({
+        next: () => {
+          this.showSnackbar('Call log updated successfully.', 'success');
+          this.router.navigate(['/call-logs']);
+        },
+        error: (err) => {
+          console.error('Update error', err);
+          this.showSnackbar('Failed to update call log.', 'error');
+        },
+      });
+    } else {
+      this.callLogSvc.saveCallLog(payload).subscribe({
+        next: () => {
+          this.showSnackbar('Call log saved successfully.', 'success');
+          this.router.navigate(['/call-logs']);
+        },
+        error: (err) => {
+          console.error('Save error', err);
+          this.showSnackbar('Failed to save call log.', 'error');
+        },
+      });
+    }
   }
 
-  goBack() {
-    this.router.navigate(['/call-logs']);
-  }
+  goBack(): void { this.router.navigate(['/call-logs']); }
 
-  // ── Snackbar helper ──
-  showSnackbar(message: string, type: 'success' | 'error' | 'info') {
+  private showSnackbar(message: string, type: 'success' | 'error' | 'info'): void {
     this.snackBar.open(message, 'Dismiss', {
-      duration: 3500,
+      duration: 3000,
       horizontalPosition: 'right',
       verticalPosition: 'top',
       panelClass: [`cls-snackbar-${type}`],
     });
-  }
-
-  // ── DI ──
-  private readonly route          = inject(ActivatedRoute);
-  private readonly router         = inject(Router);
-  private readonly callLogService = inject(CallLogService);
-  private readonly ngZone         = inject(NgZone);
-  private readonly cdr            = inject(ChangeDetectorRef);
-  private readonly snackBar       = inject(MatSnackBar);
-
-  ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
-      if (params['officeUserName']) this.officeUserName = params['officeUserName'];
-      if (params['officeLevel'])    this.officeLevel = +params['officeLevel'];
-    });
-    this.callLogService.getUsersDropdown().subscribe({
-      next: (data) => (this.users = data),
-      error: () => this.showSnackbar('Failed to load users.', 'error'),
-    });
-  }
-
-  ngOnDestroy(): void {
-    clearInterval(this.intervalId);
   }
 }

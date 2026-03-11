@@ -22,4 +22,5 @@ export const routes: Routes = [
     path: 'add-call-log',
     component: AddCallLogForm,
   },
+  { path: 'edit-call-log/:id', component: AddCallLogForm },
 ];
