@@ -300,7 +300,7 @@
       <div class="review-banner">
         <div class="review-banner-item">
           <span class="review-banner-label">Duration</span>
-          <span class="review-banner-value">{{ activeTimeDisplay || '—' }}</span>
+          <span class="review-banner-value">{{ finalDuration || '—' }}</span>
         </div>
         <div class="review-banner-divider"></div>
         <div class="review-banner-item">
@@ -372,7 +372,7 @@
 
       <!-- Actions -->
       <div class="form-actions">
-        <button mat-button class="ghost-btn" (click)="screen = 'active'">
+        <button mat-button class="ghost-btn" (click)="backToEdit()">
           <mat-icon>edit</mat-icon>
           Edit
         </button>

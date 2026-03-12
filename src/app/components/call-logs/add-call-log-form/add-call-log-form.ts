@@ -131,7 +131,7 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   startCall(): void {
     const now = new Date();
     this.callLog.callDate = now.toISOString().split('T')[0];
-    this.callLog.callStartTime = now.toTimeString().slice(0, 5);
+    this.callLog.callStartTime = now.toTimeString().slice(0, 8);
     this.timerSeconds = 0;
     this.pausedSeconds = 0;
     this.timerState = 'running';
@@ -159,11 +159,16 @@ export class AddCallLogForm implements OnInit, OnDestroy {
     }, 1000);
   }
 
+  finalDuration = ''; // add this property
+
   endCall(): void {
     if (this.logMode === 'live') {
       clearInterval(this.timerInterval);
+      this.timerInterval = null;
       this.timerState = 'idle';
-      this.callLog.callEndTime = new Date().toTimeString().slice(0, 5);
+      this.callLog.callStartTime = this.callLog.callStartTime; // already set
+      this.callLog.callEndTime = new Date().toTimeString().slice(0, 8); // ✅ HH:MM:SS
+      this.finalDuration = this.activeTimeDisplay;
     }
     this.screen = 'review';
   }
@@ -202,5 +207,17 @@ export class AddCallLogForm implements OnInit, OnDestroy {
       verticalPosition: 'top',
       panelClass: [`cls-snackbar-${type}`],
     });
+  }
+
+  backToEdit(): void {
+    if (this.logMode === 'live') {
+      // Resume the timer where it left off
+      this.timerState = 'running';
+      this.timerInterval = setInterval(() => {
+        this.timerSeconds++;
+        this.cdr.detectChanges();
+      }, 1000);
+    }
+    this.screen = 'active';
   }
 }
