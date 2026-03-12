@@ -1,6 +1,6 @@
 // add-call-log-form.ts
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -17,23 +17,28 @@ import { CallLogService } from '../../../services/call-log/call-log.service';
   selector: 'app-add-call-log-form',
   standalone: true,
   imports: [
-    CommonModule, FormsModule,
-    MatButtonModule, MatIconModule,
-    MatFormFieldModule, MatInputModule,
-    MatSelectModule, MatCheckboxModule,
-    MatTooltipModule, MatSnackBarModule,
+    CommonModule,
+    FormsModule,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatCheckboxModule,
+    MatTooltipModule,
+    MatSnackBarModule,
   ],
   templateUrl: './add-call-log-form.html',
   styleUrl: './add-call-log-form.css',
 })
 export class AddCallLogForm implements OnInit, OnDestroy {
-
-  private readonly router     = inject(Router);
+  private readonly router = inject(Router);
   private readonly callLogSvc = inject(CallLogService);
-  private readonly snackBar   = inject(MatSnackBar);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   // ── Screen & mode ──────────────────────────────
-  screen:  'incoming' | 'active' | 'review' = 'incoming';
+  screen: 'incoming' | 'active' | 'review' = 'incoming';
   logMode: 'live' | 'manual' = 'live';
 
   // ── Office fields ──────────────────────────────
@@ -50,16 +55,23 @@ export class AddCallLogForm implements OnInit, OnDestroy {
 
   // ── Call log data object ───────────────────────
   callLog: any = {
-    callDate: '', callStartTime: '', callEndTime: '',
-    issueType: '', priority: '', status: 'O',
-    issueReported: '', description: '',
-    reportedTo: null, solvedBy: null,
-    releaseDate: null, isReleased: false,
+    callDate: '',
+    callStartTime: '',
+    callEndTime: '',
+    issueType: '',
+    priority: '',
+    status: 'O',
+    issueReported: '',
+    description: '',
+    reportedTo: null,
+    solvedBy: null,
+    releaseDate: null,
+    isReleased: false,
   };
 
   // ── Timer ──────────────────────────────────────
   timerState: 'idle' | 'running' | 'paused' = 'idle';
-  timerSeconds  = 0;
+  timerSeconds = 0;
   timerInterval: any = null;
   pausedSeconds = 0;
 
@@ -67,9 +79,7 @@ export class AddCallLogForm implements OnInit, OnDestroy {
     const h = Math.floor(this.timerSeconds / 3600);
     const m = Math.floor((this.timerSeconds % 3600) / 60);
     const s = this.timerSeconds % 60;
-    return h > 0
-      ? `${this.pad(h)}:${this.pad(m)}:${this.pad(s)}`
-      : `${this.pad(m)}:${this.pad(s)}`;
+    return h > 0 ? `${this.pad(h)}:${this.pad(m)}:${this.pad(s)}` : `${this.pad(m)}:${this.pad(s)}`;
   }
 
   get activeTimeDisplay(): string {
@@ -82,35 +92,59 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   private pad = (n: number) => n.toString().padStart(2, '0');
 
   // ── Labels ─────────────────────────────────────
-  get typeLabel():     string { return ({ B:'Bug', S:'Support', C:'Change', K:'Backend' } as any)[this.callLog.issueType] ?? '—'; }
-  get priorityLabel(): string { return ({ H:'High', M:'Medium', L:'Low' } as any)[this.callLog.priority] ?? '—'; }
-  get priorityClass(): string { return ({ H:'high', M:'medium', L:'low' } as any)[this.callLog.priority] ?? ''; }
-  get statusLabel():   string { return ({ O:'Open', P:'In Progress', D:'Pending', C:'Closed' } as any)[this.callLog.status] ?? '—'; }
-  get statusClass():   string { return ({ O:'open', P:'progress', D:'pending', C:'closed' } as any)[this.callLog.status] ?? ''; }
+  get typeLabel(): string {
+    return (
+      ({ B: 'Bug', S: 'Support', C: 'Change', K: 'Backend' } as any)[this.callLog.issueType] ?? '—'
+    );
+  }
+  get priorityLabel(): string {
+    return ({ H: 'High', M: 'Medium', L: 'Low' } as any)[this.callLog.priority] ?? '—';
+  }
+  get priorityClass(): string {
+    return ({ H: 'high', M: 'medium', L: 'low' } as any)[this.callLog.priority] ?? '';
+  }
+  get statusLabel(): string {
+    return (
+      ({ O: 'Open', P: 'In Progress', D: 'Pending', C: 'Closed' } as any)[this.callLog.status] ??
+      '—'
+    );
+  }
+  get statusClass(): string {
+    return (
+      ({ O: 'open', P: 'progress', D: 'pending', C: 'closed' } as any)[this.callLog.status] ?? ''
+    );
+  }
 
   // ── Lifecycle ──────────────────────────────────
   ngOnInit(): void {
     this.callLogSvc.getUsersDropdown().subscribe({
-      next: (data) => this.users = data,
+      next: (data) => (this.users = data),
       error: () => this.showSnackbar('Failed to load users.', 'error'),
     });
   }
 
-  ngOnDestroy(): void { this.clearTimer(); }
+  ngOnDestroy(): void {
+    this.clearTimer();
+  }
 
   // ── Timer controls ─────────────────────────────
   startCall(): void {
     const now = new Date();
-    this.callLog.callDate      = now.toISOString().split('T')[0];
+    this.callLog.callDate = now.toISOString().split('T')[0];
     this.callLog.callStartTime = now.toTimeString().slice(0, 5);
-    this.timerSeconds  = 0;
+    this.timerSeconds = 0;
     this.pausedSeconds = 0;
-    this.timerState    = 'running';
-    this.timerInterval = setInterval(() => this.timerSeconds++, 1000);
+    this.timerState = 'running';
+    this.timerInterval = setInterval(() => {
+      this.timerSeconds++;
+      this.cdr.detectChanges(); // ✅ force view update every tick
+    }, 1000);
     this.screen = 'active';
   }
 
-  startManual(): void { this.screen = 'active'; }
+  startManual(): void {
+    this.screen = 'active';
+  }
 
   timerPause(): void {
     clearInterval(this.timerInterval);
@@ -118,8 +152,11 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   }
 
   timerResume(): void {
-    this.timerState    = 'running';
-    this.timerInterval = setInterval(() => this.timerSeconds++, 1000);
+    this.timerState = 'running';
+    this.timerInterval = setInterval(() => {
+      this.timerSeconds++;
+      this.cdr.detectChanges(); // ✅ force view update every tick
+    }, 1000);
   }
 
   endCall(): void {
@@ -131,13 +168,15 @@ export class AddCallLogForm implements OnInit, OnDestroy {
     this.screen = 'review';
   }
 
-  private clearTimer(): void { if (this.timerInterval) clearInterval(this.timerInterval); }
+  private clearTimer(): void {
+    if (this.timerInterval) clearInterval(this.timerInterval);
+  }
 
   // ── Save ───────────────────────────────────────
   saveCallLog(): void {
     const payload = {
       officeUserName: this.officeUserName,
-      officeLevel:    this.officeLevel,
+      officeLevel: this.officeLevel,
       ...this.callLog,
     };
 
@@ -152,7 +191,9 @@ export class AddCallLogForm implements OnInit, OnDestroy {
     });
   }
 
-  goBack(): void { this.router.navigate(['/call-logs']); }
+  goBack(): void {
+    this.router.navigate(['/call-logs']);
+  }
 
   private showSnackbar(message: string, type: 'success' | 'error' | 'info'): void {
     this.snackBar.open(message, 'Dismiss', {
