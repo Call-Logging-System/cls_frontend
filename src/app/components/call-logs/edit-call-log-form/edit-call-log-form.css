@@ -1,0 +1,183 @@
+/* ═══════════════════════════════════════
+   edit-call-log-form.css
+   Shares the same design language as add-call-log-form.css
+═══════════════════════════════════════ */
+
+/* ─── Page wrapper ─── */
+.form-wrapper {
+  padding: 22px;
+  padding-bottom: 60px;
+  background: var(--cls-bg);
+  min-height: 100%;
+}
+
+/* ─── Page header ─── */
+.form-page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.form-page-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--cls-text-primary);
+  margin: 0;
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.form-page-subtitle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--cls-text-muted);
+  margin-top: 3px;
+}
+
+/* ─── Edit badge ─── */
+.edit-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--cls-accent);
+  color: var(--cls-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  vertical-align: middle;
+}
+.edit-badge mat-icon {
+  font-size: 12px !important;
+  width: 12px !important;
+  height: 12px !important;
+  line-height: 12px !important;
+}
+
+/* ─── Card ─── */
+.form-card {
+  background: var(--cls-surface);
+  border: 1px solid var(--cls-border);
+  border-radius: var(--cls-radius-lg);
+  padding: 22px 24px;
+  box-shadow: var(--cls-shadow-sm);
+}
+
+/* ─── Section titles ─── */
+.form-section-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--cls-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--cls-border);
+}
+.form-section + .form-section { margin-top: 22px; }
+
+/* ─── Grids ─── */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+.col-span-full { grid-column: 1 / -1; }
+
+/* ─── Material field overrides ─── */
+mat-label {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: var(--cls-text-secondary) !important;
+}
+.mat-mdc-form-field { width: 100%; }
+.mat-mdc-form-field .mat-mdc-text-field-wrapper {
+  background-color: var(--cls-bg) !important;
+  border-radius: var(--cls-radius-sm) !important;
+}
+.mat-mdc-input-element,
+.mat-mdc-select-value-text {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 13px !important;
+  color: var(--cls-text-primary) !important;
+}
+.mdc-notched-outline__leading,
+.mdc-notched-outline__notch,
+.mdc-notched-outline__trailing {
+  border-color: var(--cls-border) !important;
+}
+.mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
+.mat-mdc-form-field.mat-focused .mdc-notched-outline__notch,
+.mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing {
+  border-color: var(--cls-primary) !important;
+  border-width: 1.5px !important;
+}
+textarea.mat-mdc-input-element {
+  min-height: 80px !important;
+  resize: vertical !important;
+}
+
+/* ─── Checkbox ─── */
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  padding-top: 6px;
+}
+.checkbox-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cls-text-secondary);
+}
+
+/* ─── Form actions ─── */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--cls-border);
+}
+
+/* ─── Disabled button state ─── */
+button[disabled],
+button.mat-mdc-raised-button[disabled] {
+  background: var(--cls-border) !important;
+  color: var(--cls-text-muted) !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+  transform: none !important;
+  opacity: 0.6;
+}
+
+/* ─── Loading state ─── */
+.edit-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 80px 0;
+  color: var(--cls-text-muted);
+  font-size: 13px;
+}
+.edit-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--cls-border);
+  border-top-color: var(--cls-primary);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }

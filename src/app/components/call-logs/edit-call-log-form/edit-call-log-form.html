@@ -1,0 +1,179 @@
+<!-- edit-call-log-form.html -->
+<div class="form-wrapper">
+
+  <!-- ─── Page header ─── -->
+  <div class="form-page-header">
+    <div>
+      <h2>
+        Edit Call Log
+        <span class="edit-badge"><mat-icon>edit</mat-icon> #{{ editId }}</span>
+      </h2>
+      <div class="form-page-subtitle">
+        {{ officeUserName || '—' }}
+        @if (officeLevelLabel) { · {{ officeLevelLabel }} }
+      </div>
+    </div>
+    <button mat-button class="ghost-btn" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Back
+    </button>
+  </div>
+
+  <!-- ─── Loading state ─── -->
+  @if (isLoading) {
+    <div class="edit-loading">
+      <div class="edit-spinner"></div>
+      <span>Loading call log…</span>
+    </div>
+  }
+
+  <!-- ─── Form card ─── -->
+  @if (!isLoading) {
+    <div class="form-card">
+
+      <!-- Office Details -->
+      <div class="form-section">
+        <div class="form-section-title">Office Details</div>
+        <div class="form-grid-2">
+
+          <mat-form-field appearance="outline">
+            <mat-label>Office Username</mat-label>
+            <input matInput [(ngModel)]="officeUserName" name="officeUserName"
+                   placeholder="e.g. mumbai_office">
+            <mat-icon matSuffix>business</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Office Level</mat-label>
+            <mat-select [(ngModel)]="officeLevel" name="officeLevel">
+              <mat-option [value]="2">Circle</mat-option>
+              <mat-option [value]="3">Division</mat-option>
+              <mat-option [value]="4">Range</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+        </div>
+      </div>
+
+      <!-- Call Timing -->
+      <div class="form-section">
+        <div class="form-section-title">Call Timing</div>
+        <div class="form-grid-2">
+
+          <mat-form-field appearance="outline">
+            <mat-label>Call Date</mat-label>
+            <input matInput type="date" [(ngModel)]="callLog.callDate" name="callDate">
+          </mat-form-field>
+
+          <div></div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Start Time</mat-label>
+            <input matInput type="time" [(ngModel)]="callLog.callStartTime" name="callStartTime">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>End Time</mat-label>
+            <input matInput type="time" [(ngModel)]="callLog.callEndTime" name="callEndTime">
+          </mat-form-field>
+
+        </div>
+      </div>
+
+      <!-- Issue Info -->
+      <div class="form-section">
+        <div class="form-section-title">Issue Info</div>
+        <div class="form-grid">
+
+          <mat-form-field appearance="outline">
+            <mat-label>Issue Type</mat-label>
+            <mat-select [(ngModel)]="callLog.issueType" name="issueType">
+              <mat-option value="B">🐛 Bug</mat-option>
+              <mat-option value="S">🎧 Support</mat-option>
+              <mat-option value="C">🔄 Change</mat-option>
+              <mat-option value="K">⚙️ Backend</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Priority</mat-label>
+            <mat-select [(ngModel)]="callLog.priority" name="priority">
+              <mat-option value="H">🔴 High</mat-option>
+              <mat-option value="M">🟡 Medium</mat-option>
+              <mat-option value="L">🟢 Low</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Status</mat-label>
+            <mat-select [(ngModel)]="callLog.status" name="status">
+              <mat-option value="O">Open</mat-option>
+              <mat-option value="P">In Progress</mat-option>
+              <mat-option value="D">Pending</mat-option>
+              <mat-option value="C">Closed</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Reported To</mat-label>
+            <mat-select [(ngModel)]="callLog.reportedTo" name="reportedTo">
+              <mat-option [value]="null">— None —</mat-option>
+              @for (user of users; track user.key) {
+                <mat-option [value]="+user.key">{{ user.value }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Solved By</mat-label>
+            <mat-select [(ngModel)]="callLog.solvedBy" name="solvedBy">
+              <mat-option [value]="null">— None —</mat-option>
+              @for (user of users; track user.key) {
+                <mat-option [value]="+user.key">{{ user.value }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Release Date</mat-label>
+            <input matInput type="date" [(ngModel)]="callLog.releaseDate" name="releaseDate">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="col-span-full">
+            <mat-label>Issue Reported</mat-label>
+            <input matInput [(ngModel)]="callLog.issueReported" name="issueReported"
+                   placeholder="Brief description of the issue">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="col-span-full">
+            <mat-label>Description / Notes</mat-label>
+            <textarea matInput [(ngModel)]="callLog.description" name="description"
+                      placeholder="Detailed notes about this call…"
+                      rows="3"></textarea>
+          </mat-form-field>
+
+          <div class="checkbox-row">
+            <mat-checkbox [(ngModel)]="callLog.isReleased" name="isReleased">
+              <span class="checkbox-label">Is Released?</span>
+            </mat-checkbox>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button mat-button class="ghost-btn" (click)="goBack()">
+          <mat-icon>close</mat-icon>
+          Cancel
+        </button>
+        <button mat-raised-button class="primary-btn" (click)="saveCallLog()">
+          <mat-icon>save</mat-icon>
+          Save Changes
+        </button>
+      </div>
+
+    </div>
+  }
+
+</div>

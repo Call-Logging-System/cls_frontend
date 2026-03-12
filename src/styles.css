@@ -59,21 +59,21 @@ html, body {
 
 /* ─── Icon buttons (edit / delete) ─── */
 .edit-btn {
-  color: var(--cls-primary) !important;
-  border-radius: var(--cls-radius-sm) !important;
-  transition: background 0.15s !important;
+  color: var(--cls-text-secondary) !important;
+  transition: color 0.15s, transform 0.15s;
 }
 .edit-btn:hover {
-  background-color: var(--cls-primary-light) !important;
+  color: var(--cls-primary) !important;
+  transform: translateY(-1px);
 }
 
 .delete-btn {
-  color: #C0392B !important;
-  border-radius: var(--cls-radius-sm) !important;
-  transition: background 0.15s !important;
+  color: #c0392b !important;
+  transition: color 0.15s, transform 0.15s;
 }
 .delete-btn:hover {
-  background-color: #FEE2E2 !important;
+  color: #c0392b !important;
+  transform: translateY(-1px);
 }
 
 /* ─── Status badges (shared across list + form) ─── */

@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { CallLogs } from './components/call-logs/call-logs';
 import { AddCallLogForm } from './components/call-logs/add-call-log-form/add-call-log-form';
 import { Login } from './components/login/login';
+import { EditCallLogForm } from './components/call-logs/edit-call-log-form/edit-call-log-form';
 
 export const routes: Routes = [
   {
@@ -22,5 +23,5 @@ export const routes: Routes = [
     path: 'add-call-log',
     component: AddCallLogForm,
   },
-  { path: 'edit-call-log/:id', component: AddCallLogForm },
+  { path: 'edit-call-log/:id', component: EditCallLogForm },
 ];

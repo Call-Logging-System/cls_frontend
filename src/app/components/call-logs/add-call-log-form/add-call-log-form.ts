@@ -10,7 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { CallLogService } from '../../../services/call-log/call-log.service';
 
 @Component({
@@ -29,14 +29,8 @@ import { CallLogService } from '../../../services/call-log/call-log.service';
 export class AddCallLogForm implements OnInit, OnDestroy {
 
   private readonly router     = inject(Router);
-  private readonly route      = inject(ActivatedRoute);
   private readonly callLogSvc = inject(CallLogService);
   private readonly snackBar   = inject(MatSnackBar);
-
-  // ── Edit mode ──────────────────────────────────
-  isEditMode    = false;
-  editId: number | null = null;
-  isLoadingEdit = false;
 
   // ── Screen & mode ──────────────────────────────
   screen:  'incoming' | 'active' | 'review' = 'incoming';
@@ -98,63 +92,20 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.callLogSvc.getUsersDropdown().subscribe({
       next: (data) => this.users = data,
-      error: (err) => console.error('Error loading users', err),
+      error: () => this.showSnackbar('Failed to load users.', 'error'),
     });
-
-    // Check for edit mode via route param /edit-call-log/:id
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.isEditMode = true;
-      this.editId     = +id;
-      this.loadCallLog(this.editId);
-    }
   }
 
   ngOnDestroy(): void { this.clearTimer(); }
-
-  // ── Load existing record ────────────────────────
-  private loadCallLog(id: number): void {
-    this.isLoadingEdit = true;
-    this.callLogSvc.getCallLogById(id).subscribe({
-      next: (data: any) => {
-        this.officeUserName = data.officeUserName ?? '';
-        this.officeLevel    = data.officeLevel    ?? null;
-        this.callLog = {
-          callDate:      data.callDate      ?? '',
-          callStartTime: data.callStartTime ?? '',
-          callEndTime:   data.callEndTime   ?? '',
-          issueType:     data.issueType     ?? '',
-          priority:      data.priority      ?? '',
-          status:        data.status        ?? 'O',
-          issueReported: data.issueReported ?? '',
-          description:   data.description   ?? '',
-          reportedTo:    data.reportedTo    ?? null,
-          solvedBy:      data.solvedBy      ?? null,
-          releaseDate:   data.releaseDate   ?? null,
-          isReleased:    data.isReleased    ?? false,
-        };
-        // Skip screen 1, open directly on active form
-        this.logMode = 'manual';
-        this.screen  = 'active';
-        this.isLoadingEdit = false;
-      },
-      error: (err) => {
-        console.error('Load error', err);
-        this.isLoadingEdit = false;
-        this.showSnackbar('Failed to load call log.', 'error');
-        this.router.navigate(['/call-logs']);
-      },
-    });
-  }
 
   // ── Timer controls ─────────────────────────────
   startCall(): void {
     const now = new Date();
     this.callLog.callDate      = now.toISOString().split('T')[0];
     this.callLog.callStartTime = now.toTimeString().slice(0, 5);
-    this.timerSeconds = 0;
+    this.timerSeconds  = 0;
     this.pausedSeconds = 0;
-    this.timerState = 'running';
+    this.timerState    = 'running';
     this.timerInterval = setInterval(() => this.timerSeconds++, 1000);
     this.screen = 'active';
   }
@@ -167,7 +118,7 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   }
 
   timerResume(): void {
-    this.timerState = 'running';
+    this.timerState    = 'running';
     this.timerInterval = setInterval(() => this.timerSeconds++, 1000);
   }
 
@@ -182,7 +133,7 @@ export class AddCallLogForm implements OnInit, OnDestroy {
 
   private clearTimer(): void { if (this.timerInterval) clearInterval(this.timerInterval); }
 
-  // ── Save / Update ──────────────────────────────
+  // ── Save ───────────────────────────────────────
   saveCallLog(): void {
     const payload = {
       officeUserName: this.officeUserName,
@@ -190,29 +141,15 @@ export class AddCallLogForm implements OnInit, OnDestroy {
       ...this.callLog,
     };
 
-    if (this.isEditMode && this.editId !== null) {
-      this.callLogSvc.updateCallLog(this.editId, payload).subscribe({
-        next: () => {
-          this.showSnackbar('Call log updated successfully.', 'success');
-          this.router.navigate(['/call-logs']);
-        },
-        error: (err) => {
-          console.error('Update error', err);
-          this.showSnackbar('Failed to update call log.', 'error');
-        },
-      });
-    } else {
-      this.callLogSvc.saveCallLog(payload).subscribe({
-        next: () => {
-          this.showSnackbar('Call log saved successfully.', 'success');
-          this.router.navigate(['/call-logs']);
-        },
-        error: (err) => {
-          console.error('Save error', err);
-          this.showSnackbar('Failed to save call log.', 'error');
-        },
-      });
-    }
+    this.callLogSvc.saveCallLog(payload).subscribe({
+      next: () => {
+        this.showSnackbar('Call log saved successfully.', 'success');
+        this.router.navigate(['/call-logs']);
+      },
+      error: () => {
+        this.showSnackbar('Failed to save call log.', 'error');
+      },
+    });
   }
 
   goBack(): void { this.router.navigate(['/call-logs']); }

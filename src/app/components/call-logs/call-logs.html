@@ -130,7 +130,7 @@
       <ng-container matColumnDef="edit">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let element">
-          <button class="edit-btn" (click)="openEditForm(element.id)">
+          <button mat-icon-button class="edit-btn" (click)="openEditForm(element.id)">
             <mat-icon>edit</mat-icon>
           </button>
         </td>

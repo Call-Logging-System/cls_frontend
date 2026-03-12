@@ -32,11 +32,12 @@ export class CallLogService {
     return this.http.post(this.baseUrl + 'delete', { id });
   }
 
-  getCallLogById(id: number): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/${id}`);
+  getCallLogById(payload: { id: number }): Observable<any> {
+    console.log('Fetching call log with payload:', payload);
+    return this.http.post<any>(`${this.baseUrl}` + 'get',payload);
   }
 
-  updateCallLog(id: number, payload: any): Observable<any> {
-    return this.http.put<any>(`${this.baseUrl}/${id}`, payload);
+  updateCallLog(payload: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}` + 'update', payload);
   }
 }
