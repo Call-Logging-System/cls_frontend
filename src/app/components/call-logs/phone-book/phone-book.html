@@ -1,0 +1,181 @@
+<!-- phone-book.html -->
+<div class="page-wrapper">
+
+  <!-- ── Page Header ── -->
+  <div class="page-header">
+    <div>
+      <h2 class="page-title">Phone Book</h2>
+      <p class="page-subtitle">All registered offices and their contact details</p>
+    </div>
+    <button class="primary-btn" (click)="openAddDialog()">
+      <span class="material-icons">add</span>
+      Add Office
+    </button>
+  </div>
+
+  <!-- ── Stat Cards ── -->
+  <div class="stat-cards">
+
+    <div class="stat-card">
+      <div class="stat-icon-wrap circle-icon">
+        <span class="material-icons">account_balance</span>
+      </div>
+      <div class="stat-count">{{ getCount('Circle') }}</div>
+      <div class="stat-label">CIRCLE</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon-wrap division-icon">
+        <span class="material-icons">corporate_fare</span>
+      </div>
+      <div class="stat-count">{{ getCount('Division') }}</div>
+      <div class="stat-label">DIVISION</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon-wrap range-icon">
+        <span class="material-icons">location_city</span>
+      </div>
+      <div class="stat-count">{{ getCount('Range') }}</div>
+      <div class="stat-label">RANGE</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon-wrap total-icon">
+        <span class="material-icons">contacts</span>
+      </div>
+      <div class="stat-count">{{ dataSource.data.length }}</div>
+      <div class="stat-label">TOTAL</div>
+    </div>
+
+  </div>
+
+  <!-- ── Table Card ── -->
+  <div class="table-card">
+
+    <!-- Search -->
+    <div class="table-toolbar">
+      <div class="search-wrap">
+        <span class="material-icons search-icon">search</span>
+        <input class="search-input"
+               placeholder="Search offices…"
+               (input)="applyFilter($event)">
+      </div>
+      <div class="toolbar-right">
+        <span class="record-count">{{ dataSource.filteredData.length }} offices</span>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <table mat-table [dataSource]="dataSource" matSort class="cls-table">
+
+        <!-- # -->
+        <ng-container matColumnDef="index">
+          <th mat-header-cell *matHeaderCellDef class="col-index">#</th>
+          <td mat-cell *matCellDef="let element; let i = index" class="col-index">
+            {{ i + 1 }}
+          </td>
+        </ng-container>
+
+        <!-- Office Name -->
+        <ng-container matColumnDef="officeName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Office Name</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="office-name-cell">
+              <div class="office-avatar">{{ element.officeName?.charAt(0) }}</div>
+              <span class="office-name">{{ element.officeName }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Level -->
+        <ng-container matColumnDef="officeLevel">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Level</th>
+          <td mat-cell *matCellDef="let element">
+            <span class="level-badge" [ngClass]="getLevelClass(element.officeLevel)">
+              {{ getLevelLabel(element.officeLevel) }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Contact Number -->
+        <ng-container matColumnDef="contactNumber">
+          <th mat-header-cell *matHeaderCellDef>Contact Number</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="contact-cell">
+              <span class="material-icons contact-icon">phone</span>
+              <span class="contact-number">{{ element.contactNumber || '—' }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Email -->
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef>Email</th>
+          <td mat-cell *matCellDef="let element">
+            @if (element.email) {
+              <div class="contact-cell">
+                <span class="material-icons contact-icon">mail_outline</span>
+                <span class="email-text">{{ element.email }}</span>
+              </div>
+            } @else {
+              <span class="no-value">—</span>
+            }
+          </td>
+        </ng-container>
+
+        <!-- Location -->
+        <ng-container matColumnDef="location">
+          <th mat-header-cell *matHeaderCellDef>Location</th>
+          <td mat-cell *matCellDef="let element">
+            @if (element.location) {
+              <div class="contact-cell">
+                <span class="material-icons contact-icon">place</span>
+                <span>{{ element.location }}</span>
+              </div>
+            } @else {
+              <span class="no-value">—</span>
+            }
+          </td>
+        </ng-container>
+
+        <!-- Actions -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="col-actions">Actions</th>
+          <td mat-cell *matCellDef="let element" class="col-actions">
+            <div class="action-btns">
+              <button class="edit-btn" (click)="openEditDialog(element)" matTooltip="Edit">
+                <span class="material-icons">edit</span>
+              </button>
+              <button class="delete-btn"  matTooltip="Delete">
+                <span class="material-icons">delete_outline</span>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
+
+        <!-- Empty state -->
+        <tr class="mat-row" *matNoDataRow>
+          <td [colSpan]="displayedColumns.length">
+            <div class="no-data-message">
+              <span class="material-icons">contacts</span>
+              <span>No offices found</span>
+            </div>
+          </td>
+        </tr>
+
+      </table>
+    </div>
+
+    <mat-paginator [pageSizeOptions]="[10, 25, 50]"
+                   showFirstLastButtons
+                   aria-label="Phone book pages">
+    </mat-paginator>
+
+  </div>
+
+</div>

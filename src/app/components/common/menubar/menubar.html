@@ -1,34 +1,35 @@
 <!-- menubar.html -->
 <div class="sidenav-inner">
-
   <span class="nav-section-label">Navigation</span>
 
   <mat-nav-list class="nav-list">
-
-    <a mat-list-item
-       routerLink="/call-logs"
-       routerLinkActive="active-link"
-       class="nav-item">
+    <a
+      mat-list-item
+      (click)="navigateTo('/call-logs')"
+      [class.active-link]="router.url === '/call-logs'"
+      class="nav-item"
+    >
       <mat-icon matListItemIcon>call</mat-icon>
       <span matListItemTitle>Call Logs</span>
     </a>
 
-    <!-- <a mat-list-item
-       routerLink="/reports"
-       routerLinkActive="active-link"
-       class="nav-item">
-      <mat-icon matListItemIcon>bar_chart</mat-icon>
-      <span matListItemTitle>Reports</span>
+    <a
+      mat-list-item
+      (click)="navigateTo('/phone-book')"
+      [class.active-link]="router.url === '/phone-book'"
+      class="nav-item"
+    >
+      <mat-icon matListItemIcon>contacts</mat-icon>
+      <span matListItemTitle>Phone Book</span>
     </a>
 
-    <a mat-list-item
+    <!--<a mat-list-item
        routerLink="/users"
        routerLinkActive="active-link"
        class="nav-item">
       <mat-icon matListItemIcon>people</mat-icon>
       <span matListItemTitle>Users</span>
     </a> -->
-
   </mat-nav-list>
 
   <!-- <span class="nav-section-label" style="margin-top: 8px">System</span>
@@ -45,17 +46,16 @@
 
   <!-- Logged-in user strip -->
   <div class="sidenav-user-section">
-  <div class="user-row">
-    <div class="avatar">R</div>
-    <div>
-      <div class="user-name">Rutvik</div>
-      <div class="user-role">Project Engineer</div>
+    <div class="user-row">
+      <div class="avatar">R</div>
+      <div>
+        <div class="user-name">Rutvik</div>
+        <div class="user-role">Project Engineer</div>
+      </div>
+      <!-- Logout button -->
+      <button class="logout-btn" (click)="logout()" matTooltip="Logout">
+        <mat-icon>logout</mat-icon>
+      </button>
     </div>
-    <!-- Logout button -->
-    <button class="logout-btn" (click)="logout()" matTooltip="Logout">
-      <mat-icon>logout</mat-icon>
-    </button>
   </div>
-</div>
-
 </div>

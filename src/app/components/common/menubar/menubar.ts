@@ -12,11 +12,15 @@ import { Router } from '@angular/router';
   styleUrl: './menubar.css',
 })
 export class Menubar {
-  private readonly router = inject(Router);
+  readonly router = inject(Router);
 
   logout(): void {
     // Clear any auth tokens here when you wire up AuthService
     // e.g. this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  navigateTo(path: string): void {
+    this.router.navigate([path]);
   }
 }

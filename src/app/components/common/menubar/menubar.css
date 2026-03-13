@@ -82,6 +82,12 @@
   color: inherit !important;
   font-size: 18px !important;
   opacity: 0.90;
+  width: 16px !important;
+  height: 16px !important;
+  line-height: 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 /* Item title */

@@ -27,12 +27,14 @@ export class App {
   private currentUrl = signal(this.router.url);
 
   constructor() {
-    this.router.events
-      .pipe(filter(e => e instanceof NavigationEnd))
-      .subscribe((e: any) => {
-        this.currentUrl.set(e.urlAfterRedirects);
-      });
-  }
+  this.router.events
+    .pipe(filter(e => e instanceof NavigationEnd))
+    .subscribe((e: any) => {
+      this.currentUrl.set(e.urlAfterRedirects);
+      console.log('URL changed to:', e.urlAfterRedirects); // ← add this
+      console.log('isLoginRoute:', this.isLoginRoute());    // ← add this
+    });
+}
 
   isLoginRoute(): boolean {
     const url = this.currentUrl();

@@ -1,7 +1,9 @@
 <!-- app.html -->
-
-<!-- ── Show full shell only when NOT on login page ── -->
-@if (!isLoginRoute()) {
+@if (isLoginRoute()) {
+  <!-- ── Login: no shell, bare outlet ── -->
+  <router-outlet></router-outlet>
+} @else {
+  <!-- ── App shell ── -->
   <app-header (menuClick)="drawer.toggle()"></app-header>
 
   <mat-sidenav-container class="sidenav-container">
@@ -16,9 +18,4 @@
   </mat-sidenav-container>
 
   <app-footer></app-footer>
-}
-
-<!-- ── Login page renders standalone, no shell ── -->
-@if (isLoginRoute()) {
-  <router-outlet></router-outlet>
 }
