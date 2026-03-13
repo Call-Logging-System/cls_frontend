@@ -43,15 +43,16 @@
 }
 
 /* Search input wrapper */
+/* ─── Search wrap — match phone-book style ─── */
 .search-wrap {
   display: flex;
   align-items: center;
-  gap: 7px;
-  background: var(--cls-surface);
+  gap: 8px;
+  background: var(--cls-bg);
   border: 1px solid var(--cls-border);
   border-radius: var(--cls-radius-sm);
-  padding: 0 11px;
-  height: 36px;
+  padding: 7px 12px;
+  width: 280px;
   transition:
     border-color 0.15s,
     box-shadow 0.15s;
@@ -59,25 +60,24 @@
 .search-wrap:focus-within {
   border-color: var(--cls-primary);
   box-shadow: 0 0 0 3px rgba(28, 63, 110, 0.08);
+  background: #fff;
 }
 .search-wrap mat-icon {
-  font-size: 16px;
-  color: var(--cls-text-muted);
+  font-size: 16px !important;
   width: 16px !important;
   height: 16px !important;
   line-height: 16px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+  color: var(--cls-text-muted);
+  flex-shrink: 0;
 }
 .search-wrap input {
+  flex: 1;
   border: none;
   outline: none;
   background: transparent;
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 13px;
   color: var(--cls-text-primary);
-  width: 150px;
 }
 .search-wrap input::placeholder {
   color: var(--cls-text-muted);
@@ -205,7 +205,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 20px;
+  padding: 14px 16px;
   border-bottom: 1px solid var(--cls-border);
 }
 

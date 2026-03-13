@@ -7,15 +7,6 @@
       <div class="page-subtitle">All support calls</div>
     </div>
     <div class="table-actions">
-      <!-- Search -->
-      <div class="search-wrap">
-        <mat-icon>search</mat-icon>
-        <input
-          type="text"
-          placeholder="Search logs…"
-          (input)="dataSource.filter = $any($event.target).value.trim().toLowerCase()"
-        />
-      </div>
       <!-- Add button -->
       <button mat-raised-button class="primary-btn" (click)="openAddLogForm()">
         <mat-icon>add</mat-icon>
@@ -51,10 +42,21 @@
   <!-- ─── Table card ─── -->
   <div class="cls-table-card">
     <!-- Table toolbar -->
+    <!-- ─── Table toolbar ─── (add search here) -->
     <div class="cls-table-toolbar">
       <div class="cls-table-title-wrap">
         <span class="cls-table-title">All Calls</span>
         <span class="cls-record-count">{{ callLogs().length }} records</span>
+      </div>
+
+      <!-- Search moved here -->
+      <div class="search-wrap">
+        <span class="material-icons">search</span>
+        <input
+          type="text"
+          placeholder="Search logs…"
+          (input)="dataSource.filter = $any($event.target).value.trim().toLowerCase()"
+        />
       </div>
     </div>
 

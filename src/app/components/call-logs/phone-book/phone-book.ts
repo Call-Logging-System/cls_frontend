@@ -1,6 +1,6 @@
 // phone-book.ts
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, inject, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, inject, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,17 +10,19 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
+import { OfficeModel } from '../../../models/office/office.model';
+import { CallLogService } from '../../../services/call-log/call-log.service';
 // import { PhoneBookService } from '../../services/phone-book/phone-book.service';
 // import { ConfirmDialog } from '../common/confirm-dialog/confirm-dialog';
 // import { PhoneBookFormDialog } from './phone-book-form-dialog/phone-book-form-dialog';
 
 export interface OfficeEntry {
-  id:            number;
-  officeName:    string;
-  officeLevel:   number;   // 2=Circle, 3=Division, 4=Range
+  id: number;
+  officeName: string;
+  officeLevel: number; // 2=Circle, 3=Division, 4=Range
   contactNumber: string;
-  email?:        string;
-  location?:     string;
+  email?: string;
+  location?: string;
 }
 
 @Component({
@@ -36,46 +38,54 @@ export interface OfficeEntry {
     MatTooltipModule,
     MatDialogModule,
     MatSnackBarModule,
-    RouterModule
+    RouterModule,
   ],
   templateUrl: './phone-book.html',
   styleUrl: './phone-book.css',
 })
 export class PhoneBook implements OnInit, AfterViewInit {
-
-  //private readonly phoneBookSvc = inject(PhoneBookService);
-  private readonly dialog       = inject(MatDialog);
-  private readonly snackBar     = inject(MatSnackBar);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly callLogService = inject(CallLogService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort)      sort!: MatSort;
+  @ViewChild(MatSort) sort!: MatSort;
 
   displayedColumns = [
-    'index', 'officeName', 'officeLevel',
-    'contactNumber', 'email', 'location', 'actions',
+    'index',
+    'officeUserName',
+    'officeLevel',
+    'contactNumber',
+    'alternateContactNumber',
+    'email',
+    'address',
+    'actions',
   ];
 
-  dataSource = new MatTableDataSource<OfficeEntry>([]);
+  dataSource = new MatTableDataSource<OfficeModel>([]);
 
   ngOnInit(): void {
-    //this.loadOffices();
+    this.loadOffices();
   }
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
-    this.dataSource.sort      = this.sort;
+    this.dataSource.sort = this.sort;
   }
 
-  // ── Load ───────────────────────────────────────────────
-  // loadOffices(): void {
-  //   this.phoneBookSvc.getOffices().subscribe({
-  //     next: (data) => this.dataSource.data = data,
-  //     error: (err) => {
-  //       console.error('Error loading offices', err);
-  //       this.showSnackbar('Failed to load offices.', 'error');
-  //     },
-  //   });
-  // }
+  loadOffices(): void {
+    this.callLogService.getOffices().subscribe({
+      next: (data: OfficeModel[]) => {
+        this.dataSource.data = data;
+        this.cdr.detectChanges(); // ← fixes NG0100
+      },
+      error: (err) => {
+        console.error('Error loading offices', err);
+        this.showSnackbar('Failed to load offices.', 'error');
+      },
+    });
+  }
 
   // ── Search ─────────────────────────────────────────────
   applyFilter(event: Event): void {
@@ -87,7 +97,7 @@ export class PhoneBook implements OnInit, AfterViewInit {
   // ── Stat card counts ───────────────────────────────────
   getCount(level: 'Circle' | 'Division' | 'Range'): number {
     const map = { Circle: 2, Division: 3, Range: 4 };
-    return this.dataSource.data.filter(o => o.officeLevel === map[level]).length;
+    return this.dataSource.data.filter((o: OfficeModel) => o.officeLevel === map[level]).length;
   }
 
   // ── Level helpers ──────────────────────────────────────

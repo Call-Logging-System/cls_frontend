@@ -40,4 +40,8 @@ export class CallLogService {
   updateCallLog(payload: any): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}` + 'update', payload);
   }
+
+  getOffices(): Observable<any[]> {
+    return this.http.get<any[]>(this.baseUrl + 'offices');
+  }
 }
