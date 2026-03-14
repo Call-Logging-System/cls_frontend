@@ -1,111 +1,9 @@
 /* ═══════════════════════════════════════
-   add-call-log-form.css
+   add-call-log-form.css  —  component-unique only
+   Page shell, form card, section titles, grids,
+   actions, badges, spinner → styles.css
+   Material field overrides → material-theme.scss
 ═══════════════════════════════════════ */
-
-/* ─── Page wrapper ─── */
-.form-wrapper {
-  padding: 22px;
-  padding-bottom: 60px;
-  background: var(--cls-bg);
-  min-height: 100%;
-}
-
-/* ─── Page header row ─── */
-.form-page-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-.form-page-header h2 {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--cls-text-primary);
-  margin: 0;
-  line-height: 1.2;
-}
-.form-page-subtitle {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: var(--cls-text-muted);
-  margin-top: 3px;
-}
-
-/* ─── Card ─── */
-.form-card {
-  background: var(--cls-surface);
-  border: 1px solid var(--cls-border);
-  border-radius: var(--cls-radius-lg);
-  padding: 22px 24px;
-  box-shadow: var(--cls-shadow-sm);
-}
-
-/* ─── Section titles ─── */
-.form-section-title {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  font-weight: 600;
-  color: var(--cls-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 14px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--cls-border);
-}
-.form-section + .form-section {
-  margin-top: 22px;
-}
-
-/* ─── Grids ─── */
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-}
-.form-grid-2 {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-}
-.col-span-full {
-  grid-column: 1 / -1;
-}
-
-/* ─── Material field overrides ─── */
-mat-label {
-  font-family: 'Plus Jakarta Sans', sans-serif !important;
-  font-size: 12px !important;
-  font-weight: 600 !important;
-  color: var(--cls-text-secondary) !important;
-}
-.mat-mdc-form-field {
-  width: 100%;
-}
-.mat-mdc-form-field .mat-mdc-text-field-wrapper {
-  background-color: var(--cls-bg) !important;
-  border-radius: var(--cls-radius-sm) !important;
-}
-.mat-mdc-input-element,
-.mat-mdc-select-value-text {
-  font-family: 'Plus Jakarta Sans', sans-serif !important;
-  font-size: 13px !important;
-  color: var(--cls-text-primary) !important;
-}
-.mdc-notched-outline__leading,
-.mdc-notched-outline__notch,
-.mdc-notched-outline__trailing {
-  border-color: var(--cls-border) !important;
-}
-.mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
-.mat-mdc-form-field.mat-focused .mdc-notched-outline__notch,
-.mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing {
-  border-color: var(--cls-primary) !important;
-  border-width: 1.5px !important;
-}
-textarea.mat-mdc-input-element {
-  min-height: 80px !important;
-  resize: vertical !important;
-}
 
 /* ─── Mode toggle (Live / Manual) ─── */
 .mode-toggle {
@@ -118,6 +16,7 @@ textarea.mat-mdc-input-element {
   padding: 4px;
   width: fit-content;
 }
+
 .mode-btn {
   display: inline-flex;
   align-items: center;
@@ -160,6 +59,7 @@ textarea.mat-mdc-input-element {
   gap: 18px;
   padding: 32px 0;
 }
+
 .phone-icon-wrap {
   width: 64px;
   height: 64px;
@@ -183,11 +83,13 @@ textarea.mat-mdc-input-element {
     box-shadow: 0 0 0 12px rgba(28, 63, 110, 0);
   }
 }
+
 .incoming-label {
   font-size: 14px;
   color: var(--cls-text-secondary);
   margin: 0;
 }
+
 .start-btn {
   padding: 0 28px !important;
   height: 42px !important;
@@ -205,6 +107,7 @@ textarea.mat-mdc-input-element {
   padding: 6px 14px 6px 10px;
   line-height: 1;
 }
+
 .timer-dot {
   width: 8px;
   height: 8px;
@@ -226,6 +129,7 @@ textarea.mat-mdc-input-element {
     opacity: 0.3;
   }
 }
+
 .timer-display {
   font-family: 'JetBrains Mono', monospace;
   font-size: 15px;
@@ -233,15 +137,15 @@ textarea.mat-mdc-input-element {
   color: #ffffff;
   letter-spacing: 1px;
   min-width: 72px;
-  line-height: 1; /* ✅ align with dot */
+  line-height: 1;
   vertical-align: middle;
 }
+
 .timer-ctrl-btn {
   color: rgba(255, 255, 255, 0.8) !important;
   width: 28px !important;
   height: 28px !important;
-  line-height: 1 !important; /* ✅ fix icon vertical offset */
-  display: inline-flex !important; /* ✅ ensures icon centers inside button */
+  display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
 }
@@ -250,31 +154,9 @@ textarea.mat-mdc-input-element {
 }
 .timer-ctrl-btn mat-icon {
   font-size: 18px !important;
-  line-height: 1 !important; /* ✅ icon text baseline fix */
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-}
-
-/* ─── End call button ─── */
-.end-call-btn {
-  background: #c0392b !important;
-  color: #fff !important;
-  font-family: 'Plus Jakarta Sans', sans-serif !important;
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  border-radius: var(--cls-radius-sm) !important;
-  height: 36px;
-  padding: 0 16px;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 5px !important;
-  transition: all 0.15s !important;
-}
-.end-call-btn:hover {
-  background: #a93226 !important;
-  box-shadow: 0 3px 9px rgba(192, 57, 43, 0.35) !important;
-  transform: translateY(-1px) !important;
 }
 
 /* ─── Review banner ─── */
@@ -285,14 +167,15 @@ textarea.mat-mdc-input-element {
   border-radius: var(--cls-radius-md);
   padding: 16px 24px;
   margin-bottom: 22px;
-  gap: 0;
 }
+
 .review-banner-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   flex: 1;
 }
+
 .review-banner-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 9px;
@@ -302,6 +185,7 @@ textarea.mat-mdc-input-element {
   letter-spacing: 1px;
   margin-bottom: 4px;
 }
+
 .review-banner-value {
   font-size: 18px;
   font-weight: 700;
@@ -312,6 +196,7 @@ textarea.mat-mdc-input-element {
   font-family: 'JetBrains Mono', monospace;
   font-size: 15px;
 }
+
 .review-banner-divider {
   width: 1px;
   height: 36px;
@@ -326,11 +211,13 @@ textarea.mat-mdc-input-element {
   gap: 14px 20px;
   margin-bottom: 4px;
 }
+
 .review-item {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
+
 .review-label {
   font-family: 'JetBrains Mono', monospace;
   font-size: 9.5px;
@@ -339,94 +226,9 @@ textarea.mat-mdc-input-element {
   text-transform: uppercase;
   letter-spacing: 0.8px;
 }
+
 .review-value {
   font-size: 13px;
   font-weight: 500;
   color: var(--cls-text-primary);
-}
-
-/* ─── Priority chips ─── */
-.priority-chip {
-  display: inline-block;
-  font-size: 11.5px;
-  font-weight: 600;
-  padding: 3px 10px;
-  border-radius: 20px;
-}
-.priority-chip.high {
-  background: #fee2e2;
-  color: #991b1b;
-}
-.priority-chip.medium {
-  background: #fef9c3;
-  color: #a16207;
-}
-.priority-chip.low {
-  background: #dcfce7;
-  color: #166534;
-}
-
-/* ─── Checkbox ─── */
-.checkbox-row {
-  display: flex;
-  align-items: center;
-  padding-top: 6px;
-}
-.checkbox-label {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--cls-text-secondary);
-}
-
-/* ─── Form actions ─── */
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 10px;
-  margin-top: 22px;
-  padding-top: 16px;
-  border-top: 1px solid var(--cls-border);
-}
-
-/* ─── Edit mode loading state ─── */
-.edit-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  padding: 80px 0;
-  color: var(--cls-text-muted);
-  font-size: 13px;
-}
-.edit-spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid var(--cls-border);
-  border-top-color: var(--cls-primary);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* ─── Edit mode header badge ─── */
-.edit-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: var(--cls-accent);
-  color: var(--cls-primary);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 3px 10px;
-  border-radius: 20px;
-  margin-left: 10px;
-  vertical-align: middle;
-  letter-spacing: 0.5px;
 }

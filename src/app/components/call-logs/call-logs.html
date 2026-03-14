@@ -1,13 +1,12 @@
 <!-- call-logs.html -->
-<div class="table-wrapper">
+<div class="cls-page-wrapper">
   <!-- ─── Page header ─── -->
-  <div class="table-header">
-    <div class="page-title-group">
-      <h2>Call Logs</h2>
-      <div class="page-subtitle">All support calls</div>
+  <div class="cls-page-header">
+    <div>
+      <h2 class="cls-page-title">Call Logs</h2>
+      <div class="cls-page-subtitle">All support calls</div>
     </div>
     <div class="table-actions">
-      <!-- Add button -->
       <button mat-raised-button class="primary-btn" (click)="openAddLogForm()">
         <mat-icon>add</mat-icon>
         Add Call Log
@@ -16,42 +15,39 @@
   </div>
 
   <!-- ─── Stat cards ─── -->
-  <div class="stats-row">
-    <div class="stat-card s-open">
-      <div class="stat-icon-wrap"><mat-icon>radio_button_unchecked</mat-icon></div>
-      <div class="stat-value">{{ getCount('O') }}</div>
-      <div class="stat-label">Open</div>
+  <div class="cls-stats-row">
+    <div class="cls-stat-card cls-stat-sky">
+      <div class="cls-stat-icon"><mat-icon>radio_button_unchecked</mat-icon></div>
+      <div class="cls-stat-value">{{ getCount('O') }}</div>
+      <div class="cls-stat-label">Open</div>
     </div>
-    <div class="stat-card s-progress">
-      <div class="stat-icon-wrap"><mat-icon>pending</mat-icon></div>
-      <div class="stat-value">{{ getCount('P') }}</div>
-      <div class="stat-label">In Progress</div>
+    <div class="cls-stat-card cls-stat-purple">
+      <div class="cls-stat-icon"><mat-icon>pending</mat-icon></div>
+      <div class="cls-stat-value">{{ getCount('P') }}</div>
+      <div class="cls-stat-label">In Progress</div>
     </div>
-    <div class="stat-card s-pending">
-      <div class="stat-icon-wrap"><mat-icon>hourglass_empty</mat-icon></div>
-      <div class="stat-value">{{ getCount('D') }}</div>
-      <div class="stat-label">Pending</div>
+    <div class="cls-stat-card cls-stat-amber">
+      <div class="cls-stat-icon"><mat-icon>hourglass_empty</mat-icon></div>
+      <div class="cls-stat-value">{{ getCount('D') }}</div>
+      <div class="cls-stat-label">Pending</div>
     </div>
-    <div class="stat-card s-closed">
-      <div class="stat-icon-wrap"><mat-icon>check_circle</mat-icon></div>
-      <div class="stat-value">{{ getCount('C') }}</div>
-      <div class="stat-label">Closed</div>
+    <div class="cls-stat-card cls-stat-green">
+      <div class="cls-stat-icon"><mat-icon>check_circle</mat-icon></div>
+      <div class="cls-stat-value">{{ getCount('C') }}</div>
+      <div class="cls-stat-label">Closed</div>
     </div>
   </div>
 
   <!-- ─── Table card ─── -->
   <div class="cls-table-card">
-    <!-- Table toolbar -->
-    <!-- ─── Table toolbar ─── (add search here) -->
+    <!-- Toolbar -->
     <div class="cls-table-toolbar">
       <div class="cls-table-title-wrap">
         <span class="cls-table-title">All Calls</span>
         <span class="cls-record-count">{{ callLogs().length }} records</span>
       </div>
-
-      <!-- Search moved here -->
-      <div class="search-wrap">
-        <span class="material-icons">search</span>
+      <div class="cls-search-wrap">
+        <mat-icon>search</mat-icon>
         <input
           type="text"
           placeholder="Search logs…"
@@ -114,9 +110,8 @@
               'status-pending': element.status === 'D',
               'status-closed': element.status === 'C',
             }"
+            >{{ statusMap[element.status] }}</span
           >
-            {{ statusMap[element.status] }}
-          </span>
         </td>
       </ng-container>
 
@@ -154,9 +149,9 @@
       </ng-container>
 
       <!-- No data -->
-      <tr class="mat-row no-data-row" *matNoDataRow>
+      <tr class="mat-row" *matNoDataRow>
         <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-          <div class="no-data-message">
+          <div class="cls-no-data">
             <mat-icon>inbox</mat-icon>
             <span>No records found</span>
           </div>
@@ -167,7 +162,6 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
 
-    <!-- Paginator -->
     <mat-paginator
       [pageSize]="10"
       [pageSizeOptions]="[5, 10, 25]"

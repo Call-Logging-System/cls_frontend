@@ -3,8 +3,8 @@ import { Routes } from '@angular/router';
 import { AddCallLogForm } from './components/call-logs/add-call-log-form/add-call-log-form';
 import { CallLogs } from './components/call-logs/call-logs';
 import { EditCallLogForm } from './components/call-logs/edit-call-log-form/edit-call-log-form';
-import { PhoneBook } from './components/call-logs/phone-book/phone-book';
 import { Login } from './components/login/login';
+import { PhoneBook } from './components/phone-book/phone-book';
 
 export const routes: Routes = [
   {

@@ -1,16 +1,17 @@
 <!-- edit-call-log-form.html -->
-<div class="form-wrapper">
-
+<div class="cls-page-wrapper">
   <!-- ─── Page header ─── -->
-  <div class="form-page-header">
+  <div class="cls-page-header">
     <div>
-      <h2>
+      <h2 class="cls-page-title">
         Edit Call Log
         <span class="edit-badge"><mat-icon>edit</mat-icon> #{{ editId }}</span>
       </h2>
-      <div class="form-page-subtitle">
+      <div class="cls-page-subtitle">
         {{ officeUserName || '—' }}
-        @if (officeLevelLabel) { · {{ officeLevelLabel }} }
+        @if (officeLevelLabel) {
+          · {{ officeLevelLabel }}
+        }
       </div>
     </div>
     <button mat-button class="ghost-btn" (click)="goBack()">
@@ -21,25 +22,27 @@
 
   <!-- ─── Loading state ─── -->
   @if (isLoading) {
-    <div class="edit-loading">
-      <div class="edit-spinner"></div>
+    <div class="cls-loading-state">
+      <div class="cls-spinner"></div>
       <span>Loading call log…</span>
     </div>
   }
 
   <!-- ─── Form card ─── -->
   @if (!isLoading) {
-    <div class="form-card">
-
+    <div class="cls-form-card">
       <!-- Office Details -->
-      <div class="form-section">
-        <div class="form-section-title">Office Details</div>
-        <div class="form-grid-2">
-
+      <div class="cls-form-section">
+        <div class="cls-form-section-title">Office Details</div>
+        <div class="cls-form-grid-2">
           <mat-form-field appearance="outline">
             <mat-label>Office Username</mat-label>
-            <input matInput [(ngModel)]="officeUserName" name="officeUserName"
-                   placeholder="e.g. mumbai_office">
+            <input
+              matInput
+              [(ngModel)]="officeUserName"
+              name="officeUserName"
+              placeholder="e.g. mumbai_office"
+            />
             <mat-icon matSuffix>business</mat-icon>
           </mat-form-field>
 
@@ -51,40 +54,36 @@
               <mat-option [value]="4">Range</mat-option>
             </mat-select>
           </mat-form-field>
-
         </div>
       </div>
 
       <!-- Call Timing -->
-      <div class="form-section">
-        <div class="form-section-title">Call Timing</div>
-        <div class="form-grid-2">
-
+      <div class="cls-form-section">
+        <div class="cls-form-section-title">Call Timing</div>
+        <div class="cls-form-grid-2">
           <mat-form-field appearance="outline">
             <mat-label>Call Date</mat-label>
-            <input matInput type="date" [(ngModel)]="callLog.callDate" name="callDate">
+            <input matInput type="date" [(ngModel)]="callLog.callDate" name="callDate" />
           </mat-form-field>
 
           <div></div>
 
           <mat-form-field appearance="outline">
             <mat-label>Start Time</mat-label>
-            <input matInput type="time" [(ngModel)]="callLog.callStartTime" name="callStartTime">
+            <input matInput type="time" [(ngModel)]="callLog.callStartTime" name="callStartTime" />
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>End Time</mat-label>
-            <input matInput type="time" [(ngModel)]="callLog.callEndTime" name="callEndTime">
+            <input matInput type="time" [(ngModel)]="callLog.callEndTime" name="callEndTime" />
           </mat-form-field>
-
         </div>
       </div>
 
       <!-- Issue Info -->
-      <div class="form-section">
-        <div class="form-section-title">Issue Info</div>
-        <div class="form-grid">
-
+      <div class="cls-form-section">
+        <div class="cls-form-section-title">Issue Info</div>
+        <div class="cls-form-grid">
           <mat-form-field appearance="outline">
             <mat-label>Issue Type</mat-label>
             <mat-select [(ngModel)]="callLog.issueType" name="issueType">
@@ -136,33 +135,40 @@
 
           <mat-form-field appearance="outline">
             <mat-label>Release Date</mat-label>
-            <input matInput type="date" [(ngModel)]="callLog.releaseDate" name="releaseDate">
+            <input matInput type="date" [(ngModel)]="callLog.releaseDate" name="releaseDate" />
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="col-span-full">
+          <mat-form-field appearance="outline" class="cls-col-full">
             <mat-label>Issue Reported</mat-label>
-            <input matInput [(ngModel)]="callLog.issueReported" name="issueReported"
-                   placeholder="Brief description of the issue">
+            <input
+              matInput
+              [(ngModel)]="callLog.issueReported"
+              name="issueReported"
+              placeholder="Brief description of the issue"
+            />
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="col-span-full">
+          <mat-form-field appearance="outline" class="cls-col-full">
             <mat-label>Description / Notes</mat-label>
-            <textarea matInput [(ngModel)]="callLog.description" name="description"
-                      placeholder="Detailed notes about this call…"
-                      rows="3"></textarea>
+            <textarea
+              matInput
+              [(ngModel)]="callLog.description"
+              name="description"
+              placeholder="Detailed notes about this call…"
+              rows="3"
+            ></textarea>
           </mat-form-field>
 
-          <div class="checkbox-row">
+          <div class="cls-checkbox-row">
             <mat-checkbox [(ngModel)]="callLog.isReleased" name="isReleased">
-              <span class="checkbox-label">Is Released?</span>
+              <span class="cls-checkbox-label">Is Released?</span>
             </mat-checkbox>
           </div>
-
         </div>
       </div>
 
       <!-- Actions -->
-      <div class="form-actions">
+      <div class="cls-form-actions">
         <button mat-button class="ghost-btn" (click)="goBack()">
           <mat-icon>close</mat-icon>
           Cancel
@@ -172,8 +178,6 @@
           Save Changes
         </button>
       </div>
-
     </div>
   }
-
 </div>

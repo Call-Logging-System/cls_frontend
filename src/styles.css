@@ -1,15 +1,65 @@
 /* ═══════════════════════════════════════
    styles.css  —  CLS Global Styles
+   All shared patterns live here.
+   Components only write what is truly
+   unique to them.
 ═══════════════════════════════════════ */
 
-html, body {
+/* ─── Reset & base ─── */
+html,
+body {
   height: 100%;
   margin: 0;
   overflow: hidden;
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-/* ─── Shared primary button (used across all components) ─── */
+/* ════════════════════════════════════════
+   PAGE SHELL PATTERNS
+   .cls-page-wrapper  — standard page padding
+   .cls-page-header   — title row + action button row
+   .cls-page-title    — h2 style
+   .cls-page-subtitle — monospace eyebrow / subtitle
+════════════════════════════════════════ */
+.cls-page-wrapper {
+  padding: 22px;
+  padding-bottom: 60px; /* clearance for fixed footer */
+  background: var(--cls-bg);
+  min-height: 100%;
+}
+
+.cls-page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.cls-page-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--cls-text-primary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.cls-page-subtitle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--cls-text-muted);
+  margin-top: 3px;
+}
+
+/* ════════════════════════════════════════
+   BUTTONS
+   .primary-btn  — navy filled
+   .ghost-btn    — transparent bordered
+   .danger-btn   — red filled (delete / destructive)
+   .edit-btn     — icon button, navy on hover
+   .delete-btn   — icon button, red
+════════════════════════════════════════ */
+
+/* — Primary — */
 .primary-btn {
   background-color: var(--cls-primary) !important;
   color: #fff !important;
@@ -27,14 +77,13 @@ html, body {
   align-items: center !important;
   gap: 5px !important;
 }
-
-.primary-btn:hover {
+.primary-btn:hover:not(:disabled) {
   background-color: var(--cls-primary-hover) !important;
   box-shadow: 0 3px 9px rgba(28, 63, 110, 0.32) !important;
   transform: translateY(-1px) !important;
 }
 
-/* ─── Ghost / secondary button ─── */
+/* — Ghost / secondary — */
 .ghost-btn {
   background: transparent !important;
   color: var(--cls-text-secondary) !important;
@@ -51,16 +100,59 @@ html, body {
   align-items: center !important;
   gap: 5px !important;
 }
-
-.ghost-btn:hover {
+.ghost-btn:hover:not(:disabled) {
   background: var(--cls-bg) !important;
   color: var(--cls-text-primary) !important;
 }
 
-/* ─── Icon buttons (edit / delete) ─── */
+/* — Danger (delete dialogs, end-call) — */
+.danger-btn {
+  background: #c0392b !important;
+  color: #fff !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  border-radius: var(--cls-radius-sm) !important;
+  height: 36px;
+  padding: 0 18px;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  transition: all 0.15s !important;
+  border: none;
+  box-shadow: 0 1px 3px rgba(192, 57, 43, 0.3) !important;
+  cursor: pointer !important;
+}
+.danger-btn:hover:not(:disabled) {
+  background: #a93226 !important;
+  box-shadow: 0 3px 9px rgba(192, 57, 43, 0.35) !important;
+  transform: translateY(-1px) !important;
+}
+.danger-btn mat-icon,
+.danger-btn .material-icons {
+  font-size: 15px !important;
+  width: 15px !important;
+  height: 15px !important;
+  line-height: 15px !important;
+}
+
+/* — Disabled state (all raised buttons) — */
+button[disabled],
+button.mat-mdc-raised-button[disabled] {
+  background: var(--cls-border) !important;
+  color: var(--cls-text-muted) !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+  transform: none !important;
+  opacity: 0.6;
+}
+
+/* — Row icon actions — */
 .edit-btn {
   color: var(--cls-text-secondary) !important;
-  transition: color 0.15s, transform 0.15s;
+  transition:
+    color 0.15s,
+    transform 0.15s;
 }
 .edit-btn:hover {
   color: var(--cls-primary) !important;
@@ -69,14 +161,21 @@ html, body {
 
 .delete-btn {
   color: #c0392b !important;
-  transition: color 0.15s, transform 0.15s;
+  transition:
+    color 0.15s,
+    transform 0.15s;
 }
 .delete-btn:hover {
-  color: #c0392b !important;
+  color: #a93226 !important;
   transform: translateY(-1px);
 }
 
-/* ─── Status badges (shared across list + form) ─── */
+/* ════════════════════════════════════════
+   BADGES & CHIPS
+   Status, type, priority, level — all shared.
+════════════════════════════════════════ */
+
+/* — Status badges — */
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -93,16 +192,36 @@ html, body {
   border-radius: 50%;
   flex-shrink: 0;
 }
-.status-open     { background: var(--cls-open-bg);     color: var(--cls-open-text); }
-.status-open::before     { background: var(--cls-open-text); }
-.status-progress { background: var(--cls-progress-bg); color: var(--cls-progress-text); }
-.status-progress::before { background: var(--cls-progress-text); }
-.status-pending  { background: var(--cls-pending-bg);  color: var(--cls-pending-text); }
-.status-pending::before  { background: var(--cls-pending-text); }
-.status-closed   { background: var(--cls-closed-bg);   color: var(--cls-closed-text); }
-.status-closed::before   { background: var(--cls-closed-text); }
+.status-open {
+  background: var(--cls-open-bg);
+  color: var(--cls-open-text);
+}
+.status-open::before {
+  background: var(--cls-open-text);
+}
+.status-progress {
+  background: var(--cls-progress-bg);
+  color: var(--cls-progress-text);
+}
+.status-progress::before {
+  background: var(--cls-progress-text);
+}
+.status-pending {
+  background: var(--cls-pending-bg);
+  color: var(--cls-pending-text);
+}
+.status-pending::before {
+  background: var(--cls-pending-text);
+}
+.status-closed {
+  background: var(--cls-closed-bg);
+  color: var(--cls-closed-text);
+}
+.status-closed::before {
+  background: var(--cls-closed-text);
+}
 
-/* ─── Type badges ─── */
+/* — Type badges — */
 .type-badge {
   display: inline-block;
   font-family: 'JetBrains Mono', monospace;
@@ -112,13 +231,305 @@ html, body {
   border-radius: 4px;
   letter-spacing: 0.2px;
 }
-.type-B { background: var(--cls-bug-bg);     color: var(--cls-bug-text); }
-.type-S { background: var(--cls-support-bg); color: var(--cls-support-text); }
-.type-C { background: var(--cls-change-bg);  color: var(--cls-change-text); }
-.type-K { background: var(--cls-backend-bg); color: var(--cls-backend-text); }
+.type-B {
+  background: var(--cls-bug-bg);
+  color: var(--cls-bug-text);
+}
+.type-S {
+  background: var(--cls-support-bg);
+  color: var(--cls-support-text);
+}
+.type-C {
+  background: var(--cls-change-bg);
+  color: var(--cls-change-text);
+}
+.type-K {
+  background: var(--cls-backend-bg);
+  color: var(--cls-backend-text);
+}
 
-/* ─── No-data empty state ─── */
-.no-data-message {
+/* — Priority chips — */
+.priority-chip {
+  display: inline-block;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.priority-chip.high {
+  background: #fee2e2;
+  color: #991b1b;
+}
+.priority-chip.medium {
+  background: #fef9c3;
+  color: #a16207;
+}
+.priority-chip.low {
+  background: #dcfce7;
+  color: #166534;
+}
+
+/* — Level badges (Phone Book) — */
+.level-badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+}
+.level-circle {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.level-division {
+  background: #f5f3ff;
+  color: #6d28d9;
+}
+.level-range {
+  background: #fffbeb;
+  color: #a16207;
+}
+
+/* — Edit badge (used in edit-form header) — */
+.edit-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--cls-accent);
+  color: var(--cls-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  vertical-align: middle;
+  margin-left: 8px;
+}
+.edit-badge mat-icon,
+.edit-badge .material-icons {
+  font-size: 12px !important;
+  width: 12px !important;
+  height: 12px !important;
+  line-height: 12px !important;
+}
+
+/* ════════════════════════════════════════
+   STAT CARDS
+   .cls-stats-row    — 4-col grid wrapper
+   .cls-stat-card    — individual card
+   Colour stripe set per card via modifier:
+   .cls-stat-blue / .cls-stat-purple /
+   .cls-stat-amber / .cls-stat-green
+════════════════════════════════════════ */
+.cls-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.cls-stat-card {
+  background: var(--cls-surface);
+  border: 1px solid var(--cls-border);
+  border-radius: var(--cls-radius-md);
+  padding: 15px 17px 13px;
+  box-shadow: var(--cls-shadow-sm);
+  position: relative;
+  overflow: hidden;
+  transition:
+    box-shadow 0.18s,
+    transform 0.18s;
+  cursor: default;
+}
+.cls-stat-card:hover {
+  box-shadow: var(--cls-shadow-md);
+  transform: translateY(-2px);
+}
+.cls-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: var(--cls-radius-md) var(--cls-radius-md) 0 0;
+}
+.cls-stat-blue::before {
+  background: #3b82f6;
+}
+.cls-stat-purple::before {
+  background: #8b5cf6;
+}
+.cls-stat-amber::before {
+  background: #f59e0b;
+}
+.cls-stat-green::before {
+  background: #22c55e;
+}
+.cls-stat-sky::before {
+  background: #0ea5e9;
+}
+
+/* Stat icon wrap */
+.cls-stat-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+.cls-stat-icon mat-icon,
+.cls-stat-icon .material-icons {
+  font-size: 17px !important;
+  width: 17px !important;
+  height: 17px !important;
+  line-height: 17px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+/* Icon tint variants */
+.cls-stat-blue .cls-stat-icon {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.cls-stat-purple .cls-stat-icon {
+  background: #f5f3ff;
+  color: #6d28d9;
+}
+.cls-stat-amber .cls-stat-icon {
+  background: #fffbeb;
+  color: #a16207;
+}
+.cls-stat-green .cls-stat-icon {
+  background: #ecfdf5;
+  color: #166534;
+}
+.cls-stat-sky .cls-stat-icon {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.cls-stat-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--cls-text-primary);
+  line-height: 1;
+}
+.cls-stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--cls-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  margin-top: 4px;
+}
+
+/* ════════════════════════════════════════
+   TABLE CARD CHROME
+   .cls-table-card     — outer card
+   .cls-table-toolbar  — top bar (title + search)
+   .cls-table-title-wrap
+   .cls-table-title
+   .cls-record-count
+════════════════════════════════════════ */
+.cls-table-card {
+  background: var(--cls-surface);
+  border: 1px solid var(--cls-border);
+  border-radius: var(--cls-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--cls-shadow-sm);
+}
+
+.cls-table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--cls-border);
+  gap: 12px;
+}
+
+.cls-table-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cls-table-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--cls-text-primary);
+}
+
+.cls-record-count {
+  background: var(--cls-bg);
+  border: 1px solid var(--cls-border);
+  color: var(--cls-text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+/* ════════════════════════════════════════
+   SEARCH INPUT
+   Drop .cls-search-wrap anywhere in a toolbar.
+════════════════════════════════════════ */
+.cls-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--cls-bg);
+  border: 1px solid var(--cls-border);
+  border-radius: var(--cls-radius-sm);
+  padding: 7px 12px;
+  width: 280px;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.cls-search-wrap:focus-within {
+  border-color: var(--cls-primary);
+  box-shadow: 0 0 0 3px rgba(28, 63, 110, 0.08);
+  background: #fff;
+}
+.cls-search-wrap mat-icon,
+.cls-search-wrap .material-icons {
+  font-size: 16px !important;
+  width: 16px !important;
+  height: 16px !important;
+  line-height: 16px !important;
+  color: var(--cls-text-muted);
+  flex-shrink: 0;
+}
+.cls-search-wrap input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  color: var(--cls-text-primary);
+}
+.cls-search-wrap input::placeholder {
+  color: var(--cls-text-muted);
+}
+
+/* ════════════════════════════════════════
+   NO-DATA EMPTY STATE
+   Works inside *matNoDataRow or any empty container.
+════════════════════════════════════════ */
+.cls-no-data {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -128,19 +539,256 @@ html, body {
   font-size: 13px;
   padding: 40px 0;
 }
-.no-data-message mat-icon {
-  font-size: 36px;
-  width: 36px;
-  height: 36px;
+.cls-no-data mat-icon,
+.cls-no-data .material-icons {
+  font-size: 36px !important;
+  width: 36px !important;
+  height: 36px !important;
   opacity: 0.35;
 }
 
-/* ═══════════════════════════════════════════════════
-   APPEND these to the bottom of your styles.css
-   (Global snackbar + dialog overrides)
-═══════════════════════════════════════════════════ */
+/* ════════════════════════════════════════
+   FORM CHROME
+   .cls-form-card       — white card wrapper
+   .cls-form-section    — section block with divider title
+   .cls-form-section-title
+   .cls-form-grid       — 3-col responsive grid
+   .cls-form-grid-2     — 2-col grid
+   .cls-col-full        — span all columns
+   .cls-form-actions    — right-aligned button row
+   .cls-checkbox-row    — checkbox alignment helper
+════════════════════════════════════════ */
+.cls-form-card {
+  background: var(--cls-surface);
+  border: 1px solid var(--cls-border);
+  border-radius: var(--cls-radius-lg);
+  padding: 22px 24px;
+  box-shadow: var(--cls-shadow-sm);
+}
 
-/* ─── Snackbar base ─── */
+.cls-form-section + .cls-form-section {
+  margin-top: 22px;
+}
+
+.cls-form-section-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--cls-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--cls-border);
+}
+
+.cls-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.cls-form-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.cls-col-full {
+  grid-column: 1 / -1;
+}
+
+.cls-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--cls-border);
+}
+
+.cls-checkbox-row {
+  display: flex;
+  align-items: center;
+  padding-top: 6px;
+}
+.cls-checkbox-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cls-text-secondary);
+}
+
+/* ════════════════════════════════════════
+   LOADING / SPINNER
+   .cls-loading-state — centered column loader
+   .cls-spinner       — spinning ring
+════════════════════════════════════════ */
+.cls-loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 80px 0;
+  color: var(--cls-text-muted);
+  font-size: 13px;
+}
+.cls-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--cls-border);
+  border-top-color: var(--cls-primary);
+  border-radius: 50%;
+  animation: cls-spin 0.7s linear infinite;
+}
+@keyframes cls-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ════════════════════════════════════════
+   CONFIRM / GENERIC DIALOG
+   .cls-dialog-container
+   .cls-dialog-icon-wrap  (+ colour modifiers)
+   .cls-dialog-title
+   .cls-dialog-message / .cls-dialog-sub
+   .cls-dialog-actions
+════════════════════════════════════════ */
+.cls-dialog-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 28px 24px;
+  max-width: 380px;
+  text-align: center;
+}
+
+.cls-dialog-icon-wrap {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+/* Colour variants */
+.cls-dialog-icon-wrap.danger {
+  background: #fee2e2;
+}
+.cls-dialog-icon-wrap.danger mat-icon,
+.cls-dialog-icon-wrap.danger .material-icons {
+  color: #c0392b !important;
+}
+
+.cls-dialog-icon-wrap.warning {
+  background: #fef9c3;
+}
+.cls-dialog-icon-wrap.warning mat-icon,
+.cls-dialog-icon-wrap.warning .material-icons {
+  color: #a16207 !important;
+}
+
+.cls-dialog-icon-wrap.info {
+  background: #dbeafe;
+}
+.cls-dialog-icon-wrap.info mat-icon,
+.cls-dialog-icon-wrap.info .material-icons {
+  color: #1d4ed8 !important;
+}
+
+.cls-dialog-icon-wrap mat-icon,
+.cls-dialog-icon-wrap .material-icons {
+  font-size: 28px !important;
+  width: 28px !important;
+  height: 28px !important;
+  line-height: 28px !important;
+}
+
+.cls-dialog-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--cls-text-primary);
+  margin: 0 0 10px;
+}
+
+.cls-dialog-message {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13.5px;
+  color: var(--cls-text-secondary);
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+.cls-dialog-message strong {
+  color: var(--cls-text-primary);
+  font-weight: 600;
+}
+
+.cls-dialog-sub {
+  font-size: 12px;
+  color: var(--cls-text-muted);
+  margin-top: 4px;
+  display: block;
+}
+
+.cls-dialog-actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  justify-content: center;
+}
+
+/* Material dialog panel override */
+.cls-dialog .mat-mdc-dialog-container {
+  border-radius: var(--cls-radius-lg) !important;
+  overflow: hidden !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22) !important;
+  padding: 0 !important;
+}
+.cls-dialog .mdc-dialog__surface {
+  border-radius: var(--cls-radius-lg) !important;
+  padding: 0 !important;
+}
+
+/* ════════════════════════════════════════
+   CONTACT CELL  (Phone Book rows, reusable anywhere)
+════════════════════════════════════════ */
+.cls-contact-cell {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.cls-contact-icon {
+  font-size: 15px !important;
+  width: 15px !important;
+  height: 15px !important;
+  line-height: 15px !important;
+  color: var(--cls-text-muted);
+  flex-shrink: 0;
+}
+.cls-contact-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  color: var(--cls-text-primary);
+  font-weight: 500;
+}
+.cls-email-text {
+  font-size: 12.5px;
+  color: var(--cls-primary);
+}
+.cls-no-value {
+  color: var(--cls-text-muted);
+  font-size: 13px;
+}
+
+/* ════════════════════════════════════════
+   SNACKBARS
+   Panels applied via MatSnackBar panelClass.
+   .cls-snackbar-success / -error / -info
+════════════════════════════════════════ */
 .mdc-snackbar__surface {
   border-radius: var(--cls-radius-sm) !important;
   font-family: 'Plus Jakarta Sans', sans-serif !important;
@@ -150,101 +798,75 @@ html, body {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18) !important;
   padding: 0 !important;
 }
-
 .mdc-snackbar__label {
   padding: 12px 16px !important;
   display: flex !important;
   align-items: center !important;
   gap: 10px !important;
 }
-
-/* Add icon via ::before on the label */
 .cls-snackbar-success .mdc-snackbar__label::before,
-.cls-snackbar-error   .mdc-snackbar__label::before,
-.cls-snackbar-info    .mdc-snackbar__label::before {
+.cls-snackbar-error .mdc-snackbar__label::before,
+.cls-snackbar-info .mdc-snackbar__label::before {
   font-family: 'Material Icons';
   font-size: 18px;
   line-height: 1;
   flex-shrink: 0;
 }
 
-/* ─── Success snackbar ─── */
+/* Success */
 .cls-snackbar-success .mdc-snackbar__surface {
   background: #166534 !important;
-  border-left: 4px solid #4ADE80 !important;
+  border-left: 4px solid #4ade80 !important;
 }
 .cls-snackbar-success .mdc-snackbar__label {
   color: #ffffff !important;
 }
 .cls-snackbar-success .mdc-snackbar__label::before {
   content: 'check_circle';
-  color: #4ADE80;
+  color: #4ade80;
 }
 .cls-snackbar-success .mat-mdc-snack-bar-action {
-  color: rgba(255, 255, 255, 0.70) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
 }
 
-/* ─── Error snackbar ─── */
+/* Error */
 .cls-snackbar-error .mdc-snackbar__surface {
-  background: #7F1D1D !important;
-  border-left: 4px solid #F87171 !important;
+  background: #7f1d1d !important;
+  border-left: 4px solid #f87171 !important;
 }
 .cls-snackbar-error .mdc-snackbar__label {
   color: #ffffff !important;
 }
 .cls-snackbar-error .mdc-snackbar__label::before {
   content: 'error';
-  color: #F87171;
+  color: #f87171;
 }
 .cls-snackbar-error .mat-mdc-snack-bar-action {
-  color: rgba(255, 255, 255, 0.70) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
 }
 
-/* ─── Info snackbar ─── */
+/* Info */
 .cls-snackbar-info .mdc-snackbar__surface {
-  background: #1C3F6E !important;
-  border-left: 4px solid #60A5FA !important;
+  background: #1c3f6e !important;
+  border-left: 4px solid #60a5fa !important;
 }
 .cls-snackbar-info .mdc-snackbar__label {
   color: #ffffff !important;
 }
 .cls-snackbar-info .mdc-snackbar__label::before {
   content: 'info';
-  color: #60A5FA;
+  color: #60a5fa;
 }
 .cls-snackbar-info .mat-mdc-snack-bar-action {
-  color: rgba(255, 255, 255, 0.70) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
 }
 
-/* ─── Dismiss button shared ─── */
+/* Shared action button text */
 .cls-snackbar-success .mat-mdc-snack-bar-action button,
-.cls-snackbar-error   .mat-mdc-snack-bar-action button,
-.cls-snackbar-info    .mat-mdc-snack-bar-action button {
+.cls-snackbar-error .mat-mdc-snack-bar-action button,
+.cls-snackbar-info .mat-mdc-snack-bar-action button {
   font-family: 'Plus Jakarta Sans', sans-serif !important;
   font-size: 12px !important;
   font-weight: 600 !important;
   letter-spacing: 0.3px !important;
-}
-
-/* ─── Dialog panel ─── */
-.cls-dialog .mat-mdc-dialog-container {
-  border-radius: var(--cls-radius-lg) !important;
-  overflow: hidden !important;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22) !important;
-  padding: 0 !important;
-}
-
-.cls-dialog .mdc-dialog__surface {
-  border-radius: var(--cls-radius-lg) !important;
-  padding: 0 !important;
-}
-
-button[disabled],
-button.mat-mdc-raised-button[disabled] {
-  background: var(--cls-border) !important;
-  color: var(--cls-text-muted) !important;
-  cursor: not-allowed !important;
-  box-shadow: none !important;
-  transform: none !important;
-  opacity: 0.6;
 }

@@ -1,17 +1,25 @@
+/* ═══════════════════════════════════════
+   material-theme.scss  —  CLS Material Theme
+   All @angular/material overrides live here.
+   Components should NOT repeat these.
+═══════════════════════════════════════ */
+
 @use '@angular/material' as mat;
 
 html {
   height: 100%;
-  @include mat.theme((
-    color: (
-      theme-type: light,
-      primary: mat.$blue-palette,
-      secondary: mat.$blue-palette,
-      tertiary: mat.$blue-palette,
-    ),
-    typography: 'Plus Jakarta Sans',
-    density: 0,
-  ));
+  @include mat.theme(
+    (
+      color: (
+        theme-type: light,
+        primary: mat.$blue-palette,
+        secondary: mat.$blue-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: 'Plus Jakarta Sans',
+      density: 0,
+    )
+  );
 }
 
 body {
@@ -23,70 +31,250 @@ body {
   height: 100%;
 }
 
-/* ─── Angular Material overrides ─── */
+/* ─── Toolbar ─── */
 :root {
-  @include mat.toolbar-overrides((
-    container-background-color: #1C3F6E,
-    container-text-color: white,
-  ));
+  @include mat.toolbar-overrides(
+    (
+      container-background-color: #1c3f6e,
+      container-text-color: white,
+    )
+  );
 }
 
-/* ─── CLS Design Tokens ─── */
+/* ════════════════════════════════════════
+   CLS DESIGN TOKENS
+════════════════════════════════════════ */
 :root {
   /* Brand */
-  --cls-primary:          #1C3F6E;
-  --cls-primary-hover:    #162F52;
-  --cls-primary-light:    #EBF1F9;
-  --cls-accent:           #F59E0B;
-  --cls-accent-hover:     #D97706;
+  --cls-primary: #1c3f6e;
+  --cls-primary-hover: #162f52;
+  --cls-primary-light: #ebf1f9;
+  --cls-accent: #f59e0b;
+  --cls-accent-hover: #d97706;
 
   /* Backgrounds */
-  --cls-bg:               #F0F4F8;
-  --cls-surface:          #FFFFFF;
-  --cls-table:            #FFFFFF;
-  --cls-hover:            #F5F8FB;
+  --cls-bg: #f0f4f8;
+  --cls-surface: #ffffff;
+  --cls-table: #ffffff;
+  --cls-hover: #f5f8fb;
 
   /* Sidenav */
-  --cls-sidenav-bg:       #1C3F6E;
-  --cls-sidenav-active:   rgba(245, 158, 11, 0.15);
-  --cls-sidenav-text:     rgba(255, 255, 255, 0.75);
+  --cls-sidenav-bg: #1c3f6e;
+  --cls-sidenav-active: rgba(245, 158, 11, 0.15);
+  --cls-sidenav-text: rgba(255, 255, 255, 0.75);
 
   /* Text */
-  --cls-text-primary:     #0F1E2E;
-  --cls-text-secondary:   #4A6080;
-  --cls-text-muted:       #8FA8C0;
+  --cls-text-primary: #0f1e2e;
+  --cls-text-secondary: #4a6080;
+  --cls-text-muted: #8fa8c0;
 
   /* Borders */
-  --cls-border:           #DDE5EE;
-  --cls-border-strong:    #C0CEDC;
+  --cls-border: #dde5ee;
+  --cls-border-strong: #c0cedc;
 
   /* Status colours */
-  --cls-open-bg:          #E0F2FE;
-  --cls-open-text:        #0369A1;
-  --cls-progress-bg:      #EDE9FE;
-  --cls-progress-text:    #6D28D9;
-  --cls-pending-bg:       #FEF9C3;
-  --cls-pending-text:     #A16207;
-  --cls-closed-bg:        #DCFCE7;
-  --cls-closed-text:      #166534;
+  --cls-open-bg: #e0f2fe;
+  --cls-open-text: #0369a1;
+  --cls-progress-bg: #ede9fe;
+  --cls-progress-text: #6d28d9;
+  --cls-pending-bg: #fef9c3;
+  --cls-pending-text: #a16207;
+  --cls-closed-bg: #dcfce7;
+  --cls-closed-text: #166534;
 
   /* Issue type badge colours */
-  --cls-bug-bg:           #FEE2E2;
-  --cls-bug-text:         #991B1B;
-  --cls-support-bg:       #DBEAFE;
-  --cls-support-text:     #1D4ED8;
-  --cls-change-bg:        #FCE7F3;
-  --cls-change-text:      #9D174D;
-  --cls-backend-bg:       #D1FAE5;
-  --cls-backend-text:     #065F46;
+  --cls-bug-bg: #fee2e2;
+  --cls-bug-text: #991b1b;
+  --cls-support-bg: #dbeafe;
+  --cls-support-text: #1d4ed8;
+  --cls-change-bg: #fce7f3;
+  --cls-change-text: #9d174d;
+  --cls-backend-bg: #d1fae5;
+  --cls-backend-text: #065f46;
 
   /* Shadows */
-  --cls-shadow-sm:  0 1px 3px rgba(28, 63, 110, 0.07), 0 1px 2px rgba(28, 63, 110, 0.05);
-  --cls-shadow-md:  0 4px 12px rgba(28, 63, 110, 0.10), 0 2px 4px rgba(28, 63, 110, 0.06);
-  --cls-shadow-lg:  0 8px 24px rgba(28, 63, 110, 0.14);
+  --cls-shadow-sm: 0 1px 3px rgba(28, 63, 110, 0.07), 0 1px 2px rgba(28, 63, 110, 0.05);
+  --cls-shadow-md: 0 4px 12px rgba(28, 63, 110, 0.1), 0 2px 4px rgba(28, 63, 110, 0.06);
+  --cls-shadow-lg: 0 8px 24px rgba(28, 63, 110, 0.14);
 
   /* Border radii */
-  --cls-radius-sm:  6px;
-  --cls-radius-md:  10px;
-  --cls-radius-lg:  14px;
+  --cls-radius-sm: 6px;
+  --cls-radius-md: 10px;
+  --cls-radius-lg: 14px;
+}
+
+/* ════════════════════════════════════════
+   MAT FORM FIELD
+   Applies globally — components need zero overrides.
+════════════════════════════════════════ */
+mat-label {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: var(--cls-text-secondary) !important;
+}
+
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+.mat-mdc-form-field .mat-mdc-text-field-wrapper {
+  background-color: var(--cls-bg) !important;
+  border-radius: var(--cls-radius-sm) !important;
+}
+
+.mat-mdc-input-element,
+.mat-mdc-select-value-text {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 13px !important;
+  color: var(--cls-text-primary) !important;
+}
+
+/* Outline border — resting */
+.mdc-notched-outline__leading,
+.mdc-notched-outline__notch,
+.mdc-notched-outline__trailing {
+  border-color: var(--cls-border) !important;
+}
+
+/* Outline border — focused */
+.mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
+.mat-mdc-form-field.mat-focused .mdc-notched-outline__notch,
+.mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing {
+  border-color: var(--cls-primary) !important;
+  border-width: 1.5px !important;
+}
+
+/* Textarea */
+textarea.mat-mdc-input-element {
+  min-height: 80px !important;
+  resize: vertical !important;
+}
+
+/* Suffix icon colour */
+.mat-mdc-form-field .mat-icon {
+  color: var(--cls-text-muted);
+}
+
+/* ════════════════════════════════════════
+   MAT TABLE
+   Applies to every mat-table in the app.
+════════════════════════════════════════ */
+
+/* Header row */
+.mat-mdc-header-row {
+  background-color: #f7fafd !important;
+}
+
+.mat-mdc-header-cell {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  color: var(--cls-text-muted) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  border-bottom: 1px solid var(--cls-border) !important;
+  padding: 10px 16px !important;
+  white-space: nowrap;
+  background: var(--cls-bg) !important;
+}
+
+/* Sort icon */
+.mat-sort-header-arrow {
+  color: var(--cls-text-muted) !important;
+}
+
+/* Data rows */
+.mat-mdc-row {
+  transition: background 0.12s !important;
+}
+.mat-mdc-row:hover {
+  background-color: var(--cls-hover) !important;
+}
+.mat-mdc-row:last-child .mat-mdc-cell {
+  border-bottom: none !important;
+}
+
+.mat-mdc-cell {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 13px !important;
+  color: var(--cls-text-primary) !important;
+  border-bottom: 1px solid #f2f5f8 !important;
+  padding: 11px 16px !important;
+  vertical-align: middle !important;
+}
+
+/* ════════════════════════════════════════
+   MAT PAGINATOR
+════════════════════════════════════════ */
+mat-paginator,
+.mat-mdc-paginator {
+  background: #fafbfd !important;
+  border-top: 1px solid var(--cls-border) !important;
+  border-radius: 0 0 var(--cls-radius-lg) var(--cls-radius-lg) !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 12px !important;
+  color: var(--cls-text-secondary) !important;
+}
+
+/* ════════════════════════════════════════
+   MAT CHECKBOX
+════════════════════════════════════════ */
+.mat-mdc-checkbox .mdc-checkbox__background {
+  border-color: var(--cls-border-strong) !important;
+}
+.mat-mdc-checkbox.mat-mdc-checkbox-checked .mdc-checkbox__background {
+  background-color: var(--cls-primary) !important;
+  border-color: var(--cls-primary) !important;
+}
+
+/* ════════════════════════════════════════
+   MAT SELECT PANEL
+════════════════════════════════════════ */
+.mat-mdc-select-panel {
+  border-radius: var(--cls-radius-sm) !important;
+  box-shadow: var(--cls-shadow-md) !important;
+}
+.mat-mdc-option {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 13px !important;
+  color: var(--cls-text-primary) !important;
+}
+.mat-mdc-option.mdc-list-item--selected {
+  background: var(--cls-primary-light) !important;
+  color: var(--cls-primary) !important;
+  font-weight: 600 !important;
+}
+.mat-mdc-option:hover:not(.mdc-list-item--selected) {
+  background: var(--cls-hover) !important;
+}
+
+/* ════════════════════════════════════════
+   MAT ICON BUTTON
+════════════════════════════════════════ */
+.mat-mdc-icon-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+.mat-mdc-icon-button .mat-icon {
+  font-size: 20px !important;
+  width: 20px !important;
+  height: 20px !important;
+  line-height: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* ════════════════════════════════════════
+   MAT TOOLTIP
+════════════════════════════════════════ */
+.mdc-tooltip__surface {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 12px !important;
+  background: var(--cls-primary) !important;
+  color: #fff !important;
+  border-radius: var(--cls-radius-sm) !important;
+  padding: 5px 10px !important;
 }
