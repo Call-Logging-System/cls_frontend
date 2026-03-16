@@ -1,12 +1,80 @@
-/* ═══════════════════════════════════════
-   edit-call-log-form.css  —  component-unique only
-   Page shell, form card, section titles, grids,
-   form fields, actions, spinner, badges
-   → all inherited from styles.css + material-theme.scss
-═══════════════════════════════════════ */
+/* ── Timer Row ─────────────────────────────────────── */
+.cls-timer-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  margin-top: 12px;
+  background: color-mix(in srgb, var(--cls-primary) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cls-primary) 18%, transparent);
+  border-radius: 10px;
+}
 
-/*
-  Nothing unique to this component at this time.
-  All styles are covered by global utilities.
-  Add component-specific overrides here as needed.
-*/
+.cls-timer-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 180px;
+}
+
+.cls-timer-display mat-icon {
+  color: var(--cls-accent);
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+}
+
+.cls-timer-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--cls-primary);
+  letter-spacing: 2px;
+}
+
+.cls-timer-label {
+  font-size: 0.75rem;
+  color: var(--cls-text-secondary);
+  margin-left: 4px;
+}
+
+.cls-timer-meta {
+  font-size: 0.85rem;
+  color: var(--cls-text-secondary);
+}
+
+.cls-timer-meta strong {
+  color: var(--cls-primary);
+}
+
+.cls-timer-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.timer-restart-btn {
+  border-color: var(--cls-primary) !important;
+  color: var(--cls-primary) !important;
+}
+
+.timer-restart-btn mat-icon,
+.timer-end-btn mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+  margin-right: 4px;
+}
+
+.timer-end-btn {
+  background-color: #c0392b !important;
+  color: white !important;
+}
+
+.timer-end-btn[disabled] {
+  opacity: 0.45 !important;
+}

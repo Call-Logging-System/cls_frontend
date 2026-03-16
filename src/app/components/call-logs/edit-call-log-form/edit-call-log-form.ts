@@ -45,6 +45,11 @@ export class EditCallLogForm implements OnInit {
   officeUserName = '';
   officeLevel: number | null = null;
 
+  existingTimeTakenMinutes = 0; // loaded from DB
+  currentSessionSeconds = 0; // seconds in active session
+  timerInterval: any = null;
+  isTimerRunning = false;
+
   get officeLevelLabel(): string {
     const map: Record<number, string> = { 2: 'Circle', 3: 'Division', 4: 'Range' };
     return this.officeLevel ? (map[this.officeLevel] ?? '') : '';
@@ -133,6 +138,7 @@ export class EditCallLogForm implements OnInit {
           releaseDate: data.releaseDate ?? null,
           isReleased: data.isReleased ?? false,
         };
+        this.existingTimeTakenMinutes = data.timeTakenMinutes ?? 0;
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -149,6 +155,7 @@ export class EditCallLogForm implements OnInit {
       id: this.editId,
       officeUserName: this.officeUserName,
       officeLevel: this.officeLevel,
+      timeTakenMinutes: this.existingTimeTakenMinutes,
       ...this.callLog,
     };
 
@@ -174,5 +181,48 @@ export class EditCallLogForm implements OnInit {
       verticalPosition: 'top',
       panelClass: [`cls-snackbar-${type}`],
     });
+  }
+
+  get currentSessionDisplay(): string {
+    const m = Math.floor(this.currentSessionSeconds / 60);
+    const s = this.currentSessionSeconds % 60;
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  }
+
+  get totalTimeTakenMinutes(): number {
+    return this.existingTimeTakenMinutes + Math.ceil(this.currentSessionSeconds / 60);
+  }
+
+  startTimer(): void {
+    if (this.isTimerRunning) return;
+    this.isTimerRunning = true;
+    this.currentSessionSeconds = 0; // reset session counter
+    this.timerInterval = setInterval(() => {
+      this.currentSessionSeconds++;
+      this.cdr.detectChanges();
+    }, 1000);
+  }
+
+  endCall(): void {
+    if (!this.isTimerRunning) return;
+    clearInterval(this.timerInterval);
+    this.timerInterval = null;
+    this.isTimerRunning = false;
+
+    // Accumulate session into existing total
+    this.existingTimeTakenMinutes += Math.ceil(this.currentSessionSeconds / 60);
+    this.currentSessionSeconds = 0;
+
+    // Update end time to now
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    this.callLog.callEndTime = `${hh}:${mm}`;
+
+    this.cdr.detectChanges();
+  }
+
+  ngOnDestroy(): void {
+    if (this.timerInterval) clearInterval(this.timerInterval);
   }
 }

@@ -60,7 +60,9 @@ export class PhoneBook implements OnInit, AfterViewInit {
     'alternateContactNumber',
     'email',
     'address',
-    'actions',
+    'edit',
+    'delete',
+
   ];
 
   dataSource = new MatTableDataSource<OfficeModel>([]);

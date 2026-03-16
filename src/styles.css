@@ -870,3 +870,31 @@ button.mat-mdc-raised-button[disabled] {
   font-weight: 600 !important;
   letter-spacing: 0.3px !important;
 }
+
+/* ════════════════════════════════════════
+   MATERIAL TABLE — global cell padding
+   Ensures both call-logs and phone-book
+   have identical column spacing.
+════════════════════════════════════════ */
+.cls-table.mat-mdc-table .mat-mdc-header-cell,
+.cls-table.mat-mdc-table .mat-mdc-cell {
+  padding: 0 16px !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 13px !important;
+}
+
+.cls-table.mat-mdc-table .mat-mdc-header-cell {
+  font-size: 10.5px !important;
+  font-weight: 600 !important;
+  color: var(--cls-text-muted) !important;
+  letter-spacing: 0.6px !important;
+  text-transform: uppercase !important;
+}
+
+.cls-table.mat-mdc-table .mat-mdc-row {
+  height: 52px !important;
+}
+
+.cls-table.mat-mdc-table .mat-mdc-row:hover .mat-mdc-cell {
+  background: var(--cls-bg) !important;
+}

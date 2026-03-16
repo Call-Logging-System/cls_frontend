@@ -56,9 +56,7 @@
       </div>
     </div>
 
-    <!-- Material table -->
     <table mat-table [dataSource]="dataSource" matSort class="cls-table">
-      <!-- Date -->
       <ng-container matColumnDef="date">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
         <td mat-cell *matCellDef="let element">
@@ -66,7 +64,6 @@
         </td>
       </ng-container>
 
-      <!-- Issue -->
       <ng-container matColumnDef="issue">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Issue</th>
         <td mat-cell *matCellDef="let element">
@@ -113,6 +110,16 @@
             >{{ statusMap[element.status] }}</span
           >
         </td>
+      </ng-container>
+
+      <ng-container matColumnDef="startTime">
+        <th mat-header-cell *matHeaderCellDef>Start Time</th>
+        <td mat-cell *matCellDef="let element">{{ element.callStartTime }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="endTime">
+        <th mat-header-cell *matHeaderCellDef>End Time</th>
+        <td mat-cell *matCellDef="let element">{{ element.callEndTime }}</td>
       </ng-container>
 
       <!-- Duration -->

@@ -20,13 +20,12 @@
 
 /* ─── Office name ─── */
 .office-name {
-  font-weight: 600;
   color: var(--cls-text-primary);
 }
 
 /* ─── Actions column ─── */
 .col-actions {
-  width: 90px !important;
+  width: 120px !important;  /* was 90px — matches two separate icon columns */
   text-align: center !important;
 }
 

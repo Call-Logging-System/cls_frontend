@@ -78,6 +78,49 @@
             <input matInput type="time" [(ngModel)]="callLog.callEndTime" name="callEndTime" />
           </mat-form-field>
         </div>
+        <div class="cls-timer-row">
+          <div class="cls-timer-display">
+            <mat-icon>timer</mat-icon>
+            <span class="cls-timer-time">{{ currentSessionDisplay }}</span>
+            <span class="cls-timer-label">
+              @if (isTimerRunning) {
+                Recording…
+              } @else {
+                Session idle
+              }
+            </span>
+          </div>
+
+          <div class="cls-timer-meta">
+            <span class="cls-timer-total">
+              Total: <strong>{{ existingTimeTakenMinutes }} min</strong>
+            </span>
+          </div>
+
+          <div class="cls-timer-actions">
+            <button
+              mat-stroked-button
+              class="timer-restart-btn"
+              [disabled]="isTimerRunning"
+              (click)="startTimer()"
+              matTooltip="Start a new call session"
+            >
+              <mat-icon>restart_alt</mat-icon>
+              Restart Timer
+            </button>
+
+            <button
+              mat-raised-button
+              class="timer-end-btn"
+              [disabled]="!isTimerRunning"
+              (click)="endCall()"
+              matTooltip="End call and record time"
+            >
+              <mat-icon>call_end</mat-icon>
+              End Call
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Issue Info -->

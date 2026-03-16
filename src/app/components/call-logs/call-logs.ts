@@ -43,6 +43,8 @@ export class CallLogs implements AfterViewInit {
     'type',
     'reportedBy',
     'status',
+    'startTime',
+    'endTime',
     'duration',
     'edit',
     'delete',
@@ -75,6 +77,7 @@ export class CallLogs implements AfterViewInit {
   loadCallLogs() {
     this.callLogService.getCallLogs().subscribe({
       next: (data: any[]) => {
+        console.log('Raw call logs from API:', data);
         const mappedData: CallLog[] = data.map((item) => ({
           id: item.id,
           date: item.callDate,
@@ -82,6 +85,8 @@ export class CallLogs implements AfterViewInit {
           type: item.issueType,
           reportedBy: item.reportedBy,
           status: item.status,
+          callStartTime: item.callStartTime,
+          callEndTime: item.callEndTime,
           duration: item.timeTakenMinutes,
         }));
         this.callLogs.set(mappedData);
