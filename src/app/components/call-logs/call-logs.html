@@ -7,6 +7,10 @@
       <div class="cls-page-subtitle">All support calls</div>
     </div>
     <div class="table-actions">
+      <button mat-stroked-button class="export-btn" (click)="exportToExcel()">
+        <mat-icon>download</mat-icon>
+        Export to Excel
+      </button>
       <button mat-raised-button class="primary-btn" (click)="openAddLogForm()">
         <mat-icon>add</mat-icon>
         Add Call Log

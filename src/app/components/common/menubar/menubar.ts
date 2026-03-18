@@ -14,12 +14,6 @@ import { Router } from '@angular/router';
 export class Menubar {
   readonly router = inject(Router);
 
-  logout(): void {
-    // Clear any auth tokens here when you wire up AuthService
-    // e.g. this.authService.logout();
-    this.router.navigate(['/login']);
-  }
-
   navigateTo(path: string): void {
     this.router.navigate([path]);
   }

@@ -39,3 +39,31 @@
 .mat-row.no-data-row {
   height: 130px;
 }
+
+/* ─── Export button ─── */
+.export-btn {
+  border-color: var(--cls-border-strong) !important;
+  color: var(--cls-text-secondary) !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  border-radius: var(--cls-radius-sm) !important;
+  height: 36px;
+  padding: 0 14px;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  transition: all 0.15s ease !important;
+  cursor: pointer !important;
+}
+.export-btn:hover {
+  background: #f0fdf4 !important;
+  border-color: #16a34a !important;
+  color: #16a34a !important;
+}
+.export-btn mat-icon {
+  font-size: 17px !important;
+  width: 17px !important;
+  height: 17px !important;
+  line-height: 17px !important;
+}

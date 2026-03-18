@@ -1,22 +1,19 @@
-<!-- header.html -->
 <mat-toolbar class="header">
-
-  <!-- Hamburger toggle -->
   <button mat-icon-button class="menu-btn" (click)="menuClick.emit()" aria-label="Toggle menu">
     <mat-icon>menu</mat-icon>
   </button>
 
-  <!-- Brand -->
   <div class="header-brand">
     <div class="header-logomark">CLS</div>
-    <span class="header-title">
-      Call <span class="accent">Logging</span> System
-    </span>
+    <span class="header-title"> Call <span class="accent">Logging</span> System </span>
   </div>
 
   <span class="header-spacer"></span>
 
-  <!-- Version badge -->
   <span class="header-badge">v1.0.0</span>
 
+  <button class="logout-btn" (click)="logout()" matTooltip="Logout" aria-label="Logout">
+    <mat-icon>logout</mat-icon>
+    Logout
+  </button>
 </mat-toolbar>

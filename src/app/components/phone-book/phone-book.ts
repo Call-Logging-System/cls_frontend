@@ -10,15 +10,16 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import { CallLogService } from '../../services/call-log/call-log.service';
 import { OfficeModel } from '../../models/office/office.model';
+import { CallLogService } from '../../services/call-log/call-log.service';
+import { ConfirmDialog } from '../call-logs/confirm-dialog/confirm-dialog';
 // import { PhoneBookService } from '../../services/phone-book/phone-book.service';
 // import { ConfirmDialog } from '../common/confirm-dialog/confirm-dialog';
 // import { PhoneBookFormDialog } from './phone-book-form-dialog/phone-book-form-dialog';
 
 export interface OfficeEntry {
   id: number;
-  officeName: string;
+  officeUserName: string;
   officeLevel: number; // 2=Circle, 3=Division, 4=Range
   contactNumber: string;
   email?: string;
@@ -59,7 +60,6 @@ export class PhoneBook implements OnInit, AfterViewInit {
     'contactNumber',
     'alternateContactNumber',
     'email',
-    'address',
     'edit',
     'delete',
 
@@ -80,7 +80,7 @@ export class PhoneBook implements OnInit, AfterViewInit {
     this.callLogService.getOffices().subscribe({
       next: (data: OfficeModel[]) => {
         this.dataSource.data = data;
-        this.cdr.detectChanges(); // ← fixes NG0100
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error loading offices', err);
@@ -142,30 +142,30 @@ export class PhoneBook implements OnInit, AfterViewInit {
   }
 
   // ── Delete ─────────────────────────────────────────────
-  // openDeleteDialog(office: OfficeEntry): void {
-  //   const ref = this.dialog.open(ConfirmDialog, {
-  //     width: '420px',
-  //     panelClass: 'cls-dialog',
-  //     disableClose: true,
-  //     data: { issue: office.officeName },
-  //   });
+  openDeleteDialog(office: OfficeEntry): void {
+    console.log('Delete dialog for office', office);
+    const ref = this.dialog.open(ConfirmDialog, {
+      width: '420px',
+      panelClass: 'cls-dialog',
+      disableClose: true,
+      data: { issue: office.officeUserName },
+    });
 
-  //   ref.afterClosed().subscribe((confirmed: boolean) => {
-  //     if (!confirmed) return;
-  //     this.phoneBookSvc.deleteOffice(office.id).subscribe({
-  //       next: () => {
-  //         this.showSnackbar('Office deleted successfully.', 'success');
-  //         this.loadOffices();
-  //       },
-  //       error: (err) => {
-  //         console.error('Delete error', err);
-  //         this.showSnackbar('Failed to delete office.', 'error');
-  //       },
-  //     });
-  //   });
-  // }
+    ref.afterClosed().subscribe((confirmed: boolean) => {
+      if (!confirmed) return;
+      this.callLogService.deleteOffice(office.id).subscribe({
+        next: () => {
+          this.showSnackbar('Office deleted successfully.', 'success');
+          this.loadOffices();
+        },
+        error: (err) => {
+          console.error('Delete error', err);
+          this.showSnackbar('Failed to delete office.', 'error');
+        },
+      });
+    });
+  }
 
-  // ── Snackbar ───────────────────────────────────────────
   private showSnackbar(message: string, type: 'success' | 'error' | 'info'): void {
     this.snackBar.open(message, 'Dismiss', {
       duration: 3000,

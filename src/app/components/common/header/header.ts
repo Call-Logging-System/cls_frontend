@@ -1,15 +1,23 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
-  imports: [MatToolbarModule, MatIconModule, MatButtonModule],
+  imports: [MatToolbarModule, MatIconModule, MatButtonModule, MatTooltipModule],
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
 export class Header {
   appName = 'CLS - Call Logging System';
   @Output() menuClick = new EventEmitter<void>();
+
+  private readonly router = inject(Router);
+
+  logout(): void {
+    this.router.navigate(['/login']);
+  }
 }

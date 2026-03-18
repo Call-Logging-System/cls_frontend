@@ -105,3 +105,35 @@
   border-radius: 20px;
   letter-spacing: 0.3px;
 }
+
+/* ─── Logout button ─── */
+.logout-btn {
+  margin-left: 10px;
+  background: #ef4444;
+  border: none;
+  cursor: pointer;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: var(--cls-radius-sm);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  letter-spacing: 0.2px;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.logout-btn:hover {
+  background: #dc2626;
+}
+
+.logout-btn mat-icon {
+  font-size: 15px !important;
+  width: 15px !important;
+  height: 15px !important;
+  line-height: 15px !important;
+}

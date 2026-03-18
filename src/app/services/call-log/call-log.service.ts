@@ -44,4 +44,8 @@ export class CallLogService {
   getOffices(): Observable<any[]> {
     return this.http.get<any[]>(this.baseUrl + 'offices');
   }
+
+  deleteOffice(id: number): Observable<any> {
+    return this.http.post(this.baseUrl + 'deleteOffice', { id });
+  }
 }

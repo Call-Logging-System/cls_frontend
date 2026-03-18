@@ -147,4 +147,6 @@ export class CallLogs implements AfterViewInit {
   openEditForm(id: number): void {
     this.router.navigate(['/edit-call-log', id]);
   }
+
+  exportToExcel(): void {}
 }
