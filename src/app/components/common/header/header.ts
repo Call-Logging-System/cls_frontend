@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -17,7 +18,9 @@ export class Header {
 
   private readonly router = inject(Router);
 
+  private readonly authService = inject(AuthService);
+
   logout(): void {
-    this.router.navigate(['/login']);
+    this.authService.logout();
   }
 }

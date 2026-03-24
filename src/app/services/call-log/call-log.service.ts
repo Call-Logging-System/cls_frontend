@@ -41,11 +41,4 @@ export class CallLogService {
     return this.http.post<any>(`${this.baseUrl}` + 'update', payload);
   }
 
-  getOffices(): Observable<any[]> {
-    return this.http.get<any[]>(this.baseUrl + 'offices');
-  }
-
-  deleteOffice(id: number): Observable<any> {
-    return this.http.post(this.baseUrl + 'deleteOffice', { id });
-  }
 }

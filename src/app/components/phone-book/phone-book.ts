@@ -13,6 +13,7 @@ import { RouterModule } from '@angular/router';
 import { OfficeModel } from '../../models/office/office.model';
 import { CallLogService } from '../../services/call-log/call-log.service';
 import { ConfirmDialog } from '../call-logs/confirm-dialog/confirm-dialog';
+import { PhoneBookService } from '../../services/phone-book/phone-book.service';
 // import { PhoneBookService } from '../../services/phone-book/phone-book.service';
 // import { ConfirmDialog } from '../common/confirm-dialog/confirm-dialog';
 // import { PhoneBookFormDialog } from './phone-book-form-dialog/phone-book-form-dialog';
@@ -47,7 +48,7 @@ export interface OfficeEntry {
 export class PhoneBook implements OnInit, AfterViewInit {
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
-  private readonly callLogService = inject(CallLogService);
+  private readonly phoneBookService = inject(PhoneBookService);
   private readonly cdr = inject(ChangeDetectorRef);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -61,7 +62,6 @@ export class PhoneBook implements OnInit, AfterViewInit {
     'alternateContactNumber',
     'email',
     'edit',
-    'delete',
 
   ];
 
@@ -77,7 +77,7 @@ export class PhoneBook implements OnInit, AfterViewInit {
   }
 
   loadOffices(): void {
-    this.callLogService.getOffices().subscribe({
+    this.phoneBookService.getOffices().subscribe({
       next: (data: OfficeModel[]) => {
         this.dataSource.data = data;
         this.cdr.detectChanges();
@@ -139,31 +139,6 @@ export class PhoneBook implements OnInit, AfterViewInit {
     //   if (result) this.loadOffices();
     // });
     console.log('Edit dialog — wire up PhoneBookFormDialog', office);
-  }
-
-  // ── Delete ─────────────────────────────────────────────
-  openDeleteDialog(office: OfficeEntry): void {
-    console.log('Delete dialog for office', office);
-    const ref = this.dialog.open(ConfirmDialog, {
-      width: '420px',
-      panelClass: 'cls-dialog',
-      disableClose: true,
-      data: { issue: office.officeUserName },
-    });
-
-    ref.afterClosed().subscribe((confirmed: boolean) => {
-      if (!confirmed) return;
-      this.callLogService.deleteOffice(office.id).subscribe({
-        next: () => {
-          this.showSnackbar('Office deleted successfully.', 'success');
-          this.loadOffices();
-        },
-        error: (err) => {
-          console.error('Delete error', err);
-          this.showSnackbar('Failed to delete office.', 'error');
-        },
-      });
-    });
   }
 
   private showSnackbar(message: string, type: 'success' | 'error' | 'info'): void {
