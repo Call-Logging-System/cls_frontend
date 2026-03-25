@@ -34,10 +34,10 @@
 
   <div class="sidenav-user-section">
     <div class="user-row">
-      <div class="avatar">R</div>
+      <div class="avatar">{{ authService.userName()?.charAt(0)?.toUpperCase() }}</div>
       <div>
-        <div class="user-name">Rutvik</div>
-        <div class="user-role">Project Engineer</div>
+        <div class="user-name">{{ authService.userName() }}</div>
+        <div class="user-role">{{ authService.userRole() != null ? roles[authService.userRole()! - 1] : '' }}</div>
       </div>
     </div>
   </div>
