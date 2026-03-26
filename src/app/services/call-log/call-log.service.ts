@@ -34,11 +34,20 @@ export class CallLogService {
 
   getCallLogById(payload: { id: number }): Observable<any> {
     console.log('Fetching call log with payload:', payload);
-    return this.http.post<any>(`${this.baseUrl}` + 'get',payload);
+    return this.http.post<any>(`${this.baseUrl}` + 'get', payload);
   }
 
   updateCallLog(payload: any): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}` + 'update', payload);
   }
 
+  exportAllCallLogs(): Observable<Blob> {
+    return this.http.post(
+      `${this.baseUrl}export/all`,
+      {},
+      {
+        responseType: 'blob',
+      },
+    );
+  }
 }

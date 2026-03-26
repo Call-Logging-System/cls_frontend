@@ -148,5 +148,21 @@ export class CallLogs implements AfterViewInit {
     this.router.navigate(['/edit-call-log', id]);
   }
 
-  exportToExcel(): void {}
+  exportToExcel(): void {
+    this.callLogService.exportAllCallLogs().subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `call-logs-${new Date().toISOString().slice(0, 10)}.xlsx`;
+        a.click();
+        URL.revokeObjectURL(url);
+        this.showSnackbar('Export downloaded successfully.', 'success');
+      },
+      error: (err) => {
+        console.error('Export error:', err);
+        this.showSnackbar('Export failed. Please try again.', 'error');
+      },
+    });
+  }
 }
