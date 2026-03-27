@@ -154,7 +154,7 @@ export class CallLogs implements AfterViewInit {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `call-logs-${new Date().toISOString().slice(0, 10)}.xlsx`;
+        a.download = `Forest_CallRegister_Updated.xlsx`;
         a.click();
         URL.revokeObjectURL(url);
         this.showSnackbar('Export downloaded successfully.', 'success');
