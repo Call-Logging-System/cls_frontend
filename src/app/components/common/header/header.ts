@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -11,10 +11,11 @@ import { AuthService } from '../../../services/auth/auth.service';
   imports: [MatToolbarModule, MatIconModule, MatButtonModule, MatTooltipModule],
   templateUrl: './header.html',
   styleUrl: './header.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Header {
   appName = 'CLS - Call Logging System';
-  @Output() menuClick = new EventEmitter<void>();
+  menuClick = output<void>();
 
   private readonly router = inject(Router);
 

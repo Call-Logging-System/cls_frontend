@@ -1,6 +1,6 @@
 // call-logs.ts
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, effect, inject, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, effect, inject, signal, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -28,6 +28,7 @@ import { ConfirmDialog } from './confirm-dialog/confirm-dialog';
   ],
   templateUrl: './call-logs.html',
   styleUrl: './call-logs.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CallLogs implements AfterViewInit {
   callLogs = signal<CallLog[]>([]);

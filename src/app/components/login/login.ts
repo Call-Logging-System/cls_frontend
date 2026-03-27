@@ -1,6 +1,6 @@
 // login.ts
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -12,6 +12,7 @@ import { AuthService } from '../../services/auth/auth.service';
   imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Login {
   private readonly fb = inject(FormBuilder);

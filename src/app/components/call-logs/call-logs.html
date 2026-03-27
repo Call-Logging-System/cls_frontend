@@ -79,7 +79,7 @@
       <ng-container matColumnDef="type">
         <th mat-header-cell *matHeaderCellDef>Type</th>
         <td mat-cell *matCellDef="let element">
-          <span class="type-badge" [ngClass]="'type-' + element.type">
+          <span class="type-badge" [class]="'type-' + element.type">
             @if (element.type === 'B') {
               Bug
             } @else if (element.type === 'S') {
@@ -105,12 +105,10 @@
         <td mat-cell *matCellDef="let element">
           <span
             class="status-badge"
-            [ngClass]="{
-              'status-open': element.status === 'O',
-              'status-progress': element.status === 'P',
-              'status-pending': element.status === 'D',
-              'status-closed': element.status === 'C',
-            }"
+            [class.status-open]="element.status === 'O'"
+            [class.status-progress]="element.status === 'P'"
+            [class.status-pending]="element.status === 'D'"
+            [class.status-closed]="element.status === 'C'"
             >{{ statusMap[element.status] }}</span
           >
         </td>

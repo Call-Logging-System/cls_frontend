@@ -1,6 +1,6 @@
 // edit-call-log-form.ts
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -30,6 +30,7 @@ import { CallLogService } from '../../../services/call-log/call-log.service';
   ],
   templateUrl: './edit-call-log-form.html',
   styleUrl: './edit-call-log-form.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditCallLogForm implements OnInit {
   private readonly router = inject(Router);

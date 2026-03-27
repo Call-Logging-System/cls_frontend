@@ -6,13 +6,8 @@
       <h2 class="cls-page-title">Phone Book</h2>
       <div class="cls-page-subtitle">All registered offices and their contact details</div>
     </div>
-    <!-- <button mat-raised-button class="primary-btn" (click)="openAddDialog()">
-      <mat-icon>add</mat-icon>
-      Add Office
-    </button> -->
   </div>
 
-  <!-- ── Stat Cards ── -->
   <div class="cls-stats-row">
     <div class="cls-stat-card cls-stat-blue">
       <div class="cls-stat-icon">
@@ -81,7 +76,7 @@
         <ng-container matColumnDef="officeLevel">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Level</th>
           <td mat-cell *matCellDef="let element">
-            <span class="level-badge" [ngClass]="getLevelClass(element.officeLevel)">
+            <span class="level-badge" [class]="getLevelClass(element.officeLevel)">
               {{ getLevelLabel(element.officeLevel) }}
             </span>
           </td>
@@ -102,11 +97,14 @@
         <ng-container matColumnDef="alternateContactNumber">
           <th mat-header-cell *matHeaderCellDef>Alt. Contact</th>
           <td mat-cell *matCellDef="let element">
-            <div class="cls-contact-cell" *ngIf="element.alternateContactNumber; else noAlt">
-              <span class="material-icons cls-contact-icon">phone</span>
-              <span class="cls-contact-number">{{ element.alternateContactNumber }}</span>
-            </div>
-            <ng-template #noAlt><span class="cls-no-value">—</span></ng-template>
+            @if (element.alternateContactNumber) {
+              <div class="cls-contact-cell">
+                <span class="material-icons cls-contact-icon">phone</span>
+                <span class="cls-contact-number">{{ element.alternateContactNumber }}</span>
+              </div>
+            } @else {
+              <span class="cls-no-value">—</span>
+            }
           </td>
         </ng-container>
 

@@ -1,6 +1,6 @@
 // phone-book.ts
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, inject, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -42,6 +42,7 @@ export interface OfficeEntry {
   ],
   templateUrl: './phone-book.html',
   styleUrl: './phone-book.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PhoneBook implements OnInit, AfterViewInit {
   private readonly dialog = inject(MatDialog);
