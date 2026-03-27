@@ -1,11 +1,11 @@
 // app.ts
 import { Component, inject, signal } from '@angular/core';
-import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { Header } from './components/common/header/header';
-import { Footer } from './components/common/footer/footer';
-import { Menubar } from './components/common/menubar/menubar';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { Footer } from './components/common/footer/footer';
+import { Header } from './components/common/header/header';
+import { Menubar } from './components/common/menubar/menubar';
 
 @Component({
   selector: 'app-root',
@@ -31,8 +31,6 @@ export class App {
     .pipe(filter(e => e instanceof NavigationEnd))
     .subscribe((e: any) => {
       this.currentUrl.set(e.urlAfterRedirects);
-      console.log('URL changed to:', e.urlAfterRedirects); // ← add this
-      console.log('isLoginRoute:', this.isLoginRoute());    // ← add this
     });
 }
 

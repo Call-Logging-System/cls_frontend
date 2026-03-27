@@ -27,7 +27,6 @@ export class AuthService {
   readonly userName = computed(() => this.currentUser()?.name ?? null);
 
   login(email: string, password: string): Observable<AuthUser> {
-    console.log('Attempting login with email:', email);
     return this.http
       .post<AuthUser>(
         `${this.API}/login`,

@@ -100,7 +100,6 @@ export class EditCallLogForm implements OnInit {
 
   // ── Lifecycle ──────────────────────────────────
   ngOnInit(): void {
-    console.log('Route params:', this.route.snapshot.paramMap.get('id'));
     console.log('Full URL:', this.router.url);
 
     this.callLogSvc.getUsersDropdown().subscribe({
@@ -120,7 +119,7 @@ export class EditCallLogForm implements OnInit {
   // ── Load existing record ────────────────────────
   private loadCallLog(id: number): void {
     this.isLoading = true;
-    this.callLogSvc.getCallLogById({ id }).subscribe({
+    this.callLogSvc.getCallLogById(id).subscribe({
       next: (data: any) => {
         this.officeUserName = data.officeUserName ?? '';
         this.officeLevel = data.officeLevel ?? null;

@@ -11,8 +11,6 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { OfficeModel } from '../../models/office/office.model';
-import { CallLogService } from '../../services/call-log/call-log.service';
-import { ConfirmDialog } from '../call-logs/confirm-dialog/confirm-dialog';
 import { PhoneBookService } from '../../services/phone-book/phone-book.service';
 // import { PhoneBookService } from '../../services/phone-book/phone-book.service';
 // import { ConfirmDialog } from '../common/confirm-dialog/confirm-dialog';
@@ -112,34 +110,6 @@ export class PhoneBook implements OnInit, AfterViewInit {
   }
 
   // ── Add ────────────────────────────────────────────────
-  openAddDialog(): void {
-    // Uncomment once PhoneBookFormDialog is created:
-    // const ref = this.dialog.open(PhoneBookFormDialog, {
-    //   width: '480px',
-    //   panelClass: 'cls-dialog',
-    //   disableClose: true,
-    //   data: { mode: 'add' },
-    // });
-    // ref.afterClosed().subscribe(result => {
-    //   if (result) this.loadOffices();
-    // });
-    console.log('Add dialog — wire up PhoneBookFormDialog');
-  }
-
-  // ── Edit ───────────────────────────────────────────────
-  openEditDialog(office: OfficeEntry): void {
-    // Uncomment once PhoneBookFormDialog is created:
-    // const ref = this.dialog.open(PhoneBookFormDialog, {
-    //   width: '480px',
-    //   panelClass: 'cls-dialog',
-    //   disableClose: true,
-    //   data: { mode: 'edit', office },
-    // });
-    // ref.afterClosed().subscribe(result => {
-    //   if (result) this.loadOffices();
-    // });
-    console.log('Edit dialog — wire up PhoneBookFormDialog', office);
-  }
 
   private showSnackbar(message: string, type: 'success' | 'error' | 'info'): void {
     this.snackBar.open(message, 'Dismiss', {

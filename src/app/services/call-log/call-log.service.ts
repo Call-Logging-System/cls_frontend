@@ -16,7 +16,6 @@ export class CallLogService {
   }
 
   saveOffice(payload: { userName: string; officeLevel: number | null }): Observable<any> {
-    console.log('Saving office with payload:', payload);
     return this.http.post(this.baseUrl + 'office/save', payload);
   }
 
@@ -29,12 +28,11 @@ export class CallLogService {
   }
 
   deleteCallLog(id: number): Observable<any> {
-    return this.http.post(this.baseUrl + 'delete', { id });
+    return this.http.post(this.baseUrl + 'delete', id);
   }
 
-  getCallLogById(payload: { id: number }): Observable<any> {
-    console.log('Fetching call log with payload:', payload);
-    return this.http.post<any>(`${this.baseUrl}` + 'get', payload);
+  getCallLogById(id: number ): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}` + 'get', id);
   }
 
   updateCallLog(payload: any): Observable<any> {

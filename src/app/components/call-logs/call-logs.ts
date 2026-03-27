@@ -77,7 +77,6 @@ export class CallLogs implements AfterViewInit {
   loadCallLogs() {
     this.callLogService.getCallLogs().subscribe({
       next: (data: any[]) => {
-        console.log('Raw call logs from API:', data);
         const mappedData: CallLog[] = data.map((item) => ({
           id: item.id,
           date: item.callDate,
