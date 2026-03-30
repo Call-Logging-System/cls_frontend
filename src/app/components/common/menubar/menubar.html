@@ -1,44 +1,28 @@
-<!-- menubar.html -->
 <div class="sidenav-inner">
-  <span class="nav-section-label">Navigation</span>
-
-  <mat-nav-list class="nav-list">
-    <a
-      mat-list-item
-      (click)="navigateTo('/call-logs')"
-      [class.active-link]="router.url === '/call-logs'"
-      class="nav-item"
-    >
-      <mat-icon matListItemIcon>call</mat-icon>
-      <span matListItemTitle>Call Logs</span>
+  <!-- Nav -->
+  <div class="nav-list">
+    <a class="nav-item" (click)="navigateTo('/call-logs')"
+       [class.active-link]="router.url === '/call-logs'">
+      <mat-icon>call</mat-icon>
+      <span class="nav-label">Call Logs</span>
     </a>
-
-    <a
-      mat-list-item
-      (click)="navigateTo('/phone-book')"
-      [class.active-link]="router.url === '/phone-book'"
-      class="nav-item"
-    >
-      <mat-icon matListItemIcon>contacts</mat-icon>
-      <span matListItemTitle>Phone Book</span>
+    <a class="nav-item" (click)="navigateTo('/phone-book')"
+       [class.active-link]="router.url === '/phone-book'">
+      <mat-icon>contacts</mat-icon>
+      <span class="nav-label">Phone Book</span>
     </a>
-
-    <a mat-list-item
-       (click)="navigateTo('/user-management')"
-      [class.active-link]="router.url === '/user-management'"
-       class="nav-item">
-      <mat-icon matListItemIcon>people</mat-icon>
-      <span matListItemTitle>Users</span>
+    <a class="nav-item" (click)="navigateTo('/user-management')"
+       [class.active-link]="router.url === '/user-management'">
+      <mat-icon>people</mat-icon>
+      <span class="nav-label">Users</span>
     </a>
-  </mat-nav-list>
+  </div>
 
+  <!-- Bottom user section -->
   <div class="sidenav-user-section">
-    <div class="user-row">
-      <div class="avatar">{{ authService.userName()?.charAt(0)?.toUpperCase() }}</div>
-      <div>
-        <div class="user-name">{{ authService.userName() }}</div>
-        <div class="user-role">{{ authService.userRole() != null ? roles[authService.userRole()! - 1] : '' }}</div>
-      </div>
+    <div class="avatar">{{ authService.userName()?.charAt(0)?.toUpperCase() }}</div>
+    <div class="user-role">
+      {{ authService.userRole() != null ? roles[authService.userRole()! - 1] : '' }}
     </div>
   </div>
 </div>

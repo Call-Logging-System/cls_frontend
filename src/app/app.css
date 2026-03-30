@@ -16,9 +16,8 @@
   background-color: var(--cls-bg) !important;
 }
 
-/* Force Material to give the sidenav panel full height */
 .sidenav {
-  width: 220px;
+  width: 98px;
   background-color: var(--cls-sidenav-bg) !important;
   border-right: none !important;
 }
