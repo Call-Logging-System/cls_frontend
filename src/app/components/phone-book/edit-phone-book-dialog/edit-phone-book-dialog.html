@@ -1,0 +1,89 @@
+<div class="epb-dialog">
+  <!-- Header -->
+  <div class="epb-header">
+    <div class="epb-header-info">
+      <span class="epb-office-name">{{ officeUserName }}</span>
+      <span class="epb-level-badge">{{ officeLevelLabel }}</span>
+    </div>
+    <button mat-icon-button class="epb-close-btn" (click)="cancel()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="epb-subtitle">Update contact details for this office</div>
+
+  <!-- Form -->
+  <div class="epb-body">
+    <div class="epb-row">
+      <mat-form-field appearance="outline" class="epb-field">
+        <mat-label>Contact Number</mat-label>
+        <input
+          matInput
+          [(ngModel)]="contactNumber"
+          name="contactNumber"
+          placeholder="Primary phone number"
+          maxlength="10"
+        />
+        <mat-icon matSuffix>phone</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="epb-field">
+        <mat-label>Alternate Contact</mat-label>
+        <input
+          matInput
+          [(ngModel)]="alternateContactNumber"
+          name="alternateContactNumber"
+          placeholder="Secondary phone number"
+          maxlength="10"
+        />
+        <mat-icon matSuffix>phone_in_talk</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="epb-field-full">
+      <mat-label>Email</mat-label>
+      <input
+        matInput
+        [(ngModel)]="email"
+        name="email"
+        type="email"
+        placeholder="office@example.com"
+      />
+      <mat-icon matSuffix>mail</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="epb-field-full">
+      <mat-label>Address</mat-label>
+      <textarea
+        matInput
+        [(ngModel)]="address"
+        name="address"
+        placeholder="Office address"
+        rows="2"
+      ></textarea>
+      <mat-icon matSuffix>location_on</mat-icon>
+    </mat-form-field>
+
+    <div class="epb-checkbox-row">
+      <mat-checkbox [(ngModel)]="isActive" name="isActive">
+        <span class="epb-checkbox-label">Active office</span>
+      </mat-checkbox>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="epb-actions">
+    <button mat-button class="ghost-btn" (click)="cancel()" [disabled]="isSaving">Cancel</button>
+    <button mat-raised-button class="primary-btn" (click)="save()" [disabled]="isSaving">
+      <span class="epb-btn-content">
+        @if (isSaving) {
+          <span class="epb-spinner"></span>
+          Saving…
+        } @else {
+          <mat-icon>save</mat-icon>
+          Save Changes
+        }
+      </span>
+    </button>
+  </div>
+</div>

@@ -1,6 +1,14 @@
 // phone-book.ts
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,6 +20,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { OfficeModel } from '../../models/office/office.model';
 import { PhoneBookService } from '../../services/phone-book/phone-book.service';
+import { EditPhoneBookDialog } from './edit-phone-book-dialog/edit-phone-book-dialog';
 // import { PhoneBookService } from '../../services/phone-book/phone-book.service';
 // import { ConfirmDialog } from '../common/confirm-dialog/confirm-dialog';
 // import { PhoneBookFormDialog } from './phone-book-form-dialog/phone-book-form-dialog';
@@ -61,7 +70,6 @@ export class PhoneBook implements OnInit, AfterViewInit {
     'alternateContactNumber',
     'email',
     'edit',
-
   ];
 
   dataSource = new MatTableDataSource<OfficeModel>([]);
@@ -118,6 +126,25 @@ export class PhoneBook implements OnInit, AfterViewInit {
       horizontalPosition: 'right',
       verticalPosition: 'top',
       panelClass: [`cls-snackbar-${type}`],
+    });
+  }
+
+  openEdit(office: any): void {
+    const ref = this.dialog.open(EditPhoneBookDialog, {
+      panelClass: 'cls-dialog',
+      data: office, // passes the full row object
+    });
+
+    ref.afterClosed().subscribe((saved) => {
+      if (saved) {
+        this.loadOffices(); // refresh your list
+        this.snackBar.open('Office updated successfully.', 'Dismiss', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['cls-snackbar-success'],
+        });
+      }
     });
   }
 }
