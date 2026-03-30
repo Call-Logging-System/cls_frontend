@@ -45,6 +45,7 @@ export class EditCallLogForm implements OnInit {
   // ── Office fields ──────────────────────────────
   officeUserName = '';
   officeLevel: number | null = null;
+  contactNumber = ''; 
 
   existingTimeTakenMinutes = 0; // loaded from DB
   currentSessionSeconds = 0; // seconds in active session
@@ -124,6 +125,7 @@ export class EditCallLogForm implements OnInit {
       next: (data: any) => {
         this.officeUserName = data.officeUserName ?? '';
         this.officeLevel = data.officeLevel ?? null;
+        this.contactNumber = data.contactNumber ?? '';
         this.callLog = {
           callDate: data.callDate ?? '',
           callStartTime: data.callStartTime ?? '',
@@ -155,6 +157,7 @@ export class EditCallLogForm implements OnInit {
       id: this.editId,
       officeUserName: this.officeUserName,
       officeLevel: this.officeLevel,
+      contactNumber: this.contactNumber,
       timeTakenMinutes: this.existingTimeTakenMinutes,
       ...this.callLog,
     };

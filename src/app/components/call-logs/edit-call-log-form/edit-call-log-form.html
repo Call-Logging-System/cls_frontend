@@ -54,6 +54,17 @@
               <mat-option [value]="4">Range</mat-option>
             </mat-select>
           </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Contact Number</mat-label>
+            <input
+              matInput
+              [(ngModel)]="contactNumber"
+              name="contactNumber"
+              placeholder="Not on record — enter manually"
+            />
+            <mat-icon matSuffix>phone</mat-icon>
+          </mat-form-field>
         </div>
       </div>
 

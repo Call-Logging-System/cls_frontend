@@ -14,4 +14,7 @@ export class PhoneBookService {
     return this.http.get<any[]>(this.baseUrl + 'offices');
   }
 
+  getOfficeByUserName(userName: string): Observable<any> {
+    return this.http.post<any>(this.baseUrl + 'getOfficeByUserName',  userName );
+  }
 }

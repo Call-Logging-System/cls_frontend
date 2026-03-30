@@ -11,6 +11,7 @@ export interface CallLog {
 export interface SaveCallLog {
   officeUserName: string;
   officeLevel: number;
+  contactNumber: string;
   callDate: string;
   callStartTime: string;
   callEndTime: string;

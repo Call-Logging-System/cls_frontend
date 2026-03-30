@@ -1,4 +1,3 @@
-<!-- add-call-log-form.html -->
 <div class="cls-page-wrapper">
   <!-- ══════════════════════════════════
        SCREEN 1 — Incoming Call
@@ -21,6 +20,15 @@
     </div>
 
     <div class="cls-form-card">
+      <!-- ── Lookup overlay ── -->
+      @if (isLookingUp) {
+        <div class="lookup-overlay">
+          <div class="lookup-overlay-spinner"></div>
+          <span class="lookup-overlay-text">Looking up office…</span>
+          <span class="lookup-overlay-sub">{{ officeUserName }}</span>
+        </div>
+      }
+
       <!-- Mode toggle -->
       <div class="mode-toggle">
         <button class="mode-btn" [class.active]="logMode === 'live'" (click)="logMode = 'live'">
@@ -70,7 +78,7 @@
             mat-raised-button
             class="primary-btn start-btn"
             (click)="startCall()"
-            [disabled]="!officeUserName.trim() || !officeLevel"
+            [disabled]="!officeUserName.trim() || !officeLevel || isLookingUp"
           >
             <mat-icon>play_arrow</mat-icon>
             Start Call Timer
@@ -117,7 +125,8 @@
               !officeLevel ||
               !callLog.callDate ||
               !callLog.callStartTime ||
-              !callLog.callEndTime
+              !callLog.callEndTime ||
+              isLookingUp
             "
           >
             <mat-icon>arrow_forward</mat-icon>
@@ -172,6 +181,30 @@
     </div>
 
     <div class="cls-form-card">
+      <!-- ── Office Details ── -->
+      <div class="cls-form-section">
+        <div class="cls-form-section-title">Office Details</div>
+        <div class="cls-form-grid-2">
+          <mat-form-field appearance="outline">
+            <mat-label>Office Username</mat-label>
+            <input matInput [value]="officeUserName" readonly />
+            <mat-icon matSuffix>business</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Contact Number</mat-label>
+            <input
+              matInput
+              [(ngModel)]="contactNumber"
+              name="contactNumber"
+              placeholder="Not on record — enter manually"
+            />
+            <mat-icon matSuffix>phone</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- ── Issue Info ── -->
       <div class="cls-form-section">
         <div class="cls-form-section-title">Issue Info</div>
         <div class="cls-form-grid">
@@ -318,6 +351,10 @@
         <div class="review-item">
           <span class="review-label">Office</span>
           <span class="review-value">{{ officeUserName || '—' }}</span>
+        </div>
+        <div class="review-item">
+          <span class="review-label">Contact</span>
+          <span class="review-value">{{ contactNumber || '—' }}</span>
         </div>
         <div class="review-item">
           <span class="review-label">Level</span>

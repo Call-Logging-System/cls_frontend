@@ -1,6 +1,12 @@
-// add-call-log-form.ts
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -12,6 +18,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { CallLogService } from '../../../services/call-log/call-log.service';
+import { PhoneBookService } from '../../../services/phone-book/phone-book.service';
 
 @Component({
   selector: 'app-add-call-log-form',
@@ -37,6 +44,7 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   private readonly callLogSvc = inject(CallLogService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly phoneBookSvc = inject(PhoneBookService);
 
   // ── Screen & mode ──────────────────────────────
   screen: 'incoming' | 'active' | 'review' = 'incoming';
@@ -45,6 +53,8 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   // ── Office fields ──────────────────────────────
   officeUserName = '';
   officeLevel: number | null = null;
+  contactNumber = '';
+  isLookingUp = false;
 
   get officeLevelLabel(): string {
     const map: Record<number, string> = { 2: 'Circle', 3: 'Division', 4: 'Range' };
@@ -75,6 +85,7 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   timerSeconds = 0;
   timerInterval: any = null;
   pausedSeconds = 0;
+  finalDuration = '';
 
   get timerDisplay(): string {
     const h = Math.floor(this.timerSeconds / 3600);
@@ -128,23 +139,53 @@ export class AddCallLogForm implements OnInit, OnDestroy {
     this.clearTimer();
   }
 
+  // ── Phone book lookup ──────────────────────────
+  private lookupAndProceed(next: () => void): void {
+    this.isLookingUp = true;
+    this.cdr.detectChanges();
+
+    const MIN_WAIT = 1500;
+    const started = Date.now();
+
+    const proceed = (contactNumber: string) => {
+      const elapsed = Date.now() - started;
+      const remaining = Math.max(0, MIN_WAIT - elapsed);
+
+      setTimeout(() => {
+        this.contactNumber = contactNumber;
+        next();
+        this.isLookingUp = false;
+        this.cdr.detectChanges();
+      }, remaining);
+    };
+
+    this.phoneBookSvc.getOfficeByUserName(this.officeUserName.trim()).subscribe({
+      next: (office) => proceed(office?.contactNumber ?? ''),
+      error: () => proceed(''),
+    });
+  }
+
   // ── Timer controls ─────────────────────────────
   startCall(): void {
-    const now = new Date();
-    this.callLog.callDate = now.toISOString().split('T')[0];
-    this.callLog.callStartTime = now.toTimeString().slice(0, 8);
-    this.timerSeconds = 0;
-    this.pausedSeconds = 0;
-    this.timerState = 'running';
-    this.timerInterval = setInterval(() => {
-      this.timerSeconds++;
-      this.cdr.detectChanges(); // ✅ force view update every tick
-    }, 1000);
-    this.screen = 'active';
+    this.lookupAndProceed(() => {
+      const now = new Date();
+      this.callLog.callDate = now.toISOString().split('T')[0];
+      this.callLog.callStartTime = now.toTimeString().slice(0, 8);
+      this.timerSeconds = 0;
+      this.pausedSeconds = 0;
+      this.timerState = 'running';
+      this.timerInterval = setInterval(() => {
+        this.timerSeconds++;
+        this.cdr.detectChanges();
+      }, 1000);
+      this.screen = 'active';
+    });
   }
 
   startManual(): void {
-    this.screen = 'active';
+    this.lookupAndProceed(() => {
+      this.screen = 'active';
+    });
   }
 
   timerPause(): void {
@@ -156,19 +197,16 @@ export class AddCallLogForm implements OnInit, OnDestroy {
     this.timerState = 'running';
     this.timerInterval = setInterval(() => {
       this.timerSeconds++;
-      this.cdr.detectChanges(); // ✅ force view update every tick
+      this.cdr.detectChanges();
     }, 1000);
   }
-
-  finalDuration = ''; // add this property
 
   endCall(): void {
     if (this.logMode === 'live') {
       clearInterval(this.timerInterval);
       this.timerInterval = null;
       this.timerState = 'idle';
-      this.callLog.callStartTime = this.callLog.callStartTime; // already set
-      this.callLog.callEndTime = new Date().toTimeString().slice(0, 8); // ✅ HH:MM:SS
+      this.callLog.callEndTime = new Date().toTimeString().slice(0, 8);
       this.finalDuration = this.activeTimeDisplay;
     }
     this.screen = 'review';
@@ -183,6 +221,7 @@ export class AddCallLogForm implements OnInit, OnDestroy {
     const payload = {
       officeUserName: this.officeUserName,
       officeLevel: this.officeLevel,
+      contactNumber: this.contactNumber,
       ...this.callLog,
     };
 
@@ -201,18 +240,8 @@ export class AddCallLogForm implements OnInit, OnDestroy {
     this.router.navigate(['/call-logs']);
   }
 
-  private showSnackbar(message: string, type: 'success' | 'error' | 'info'): void {
-    this.snackBar.open(message, 'Dismiss', {
-      duration: 3000,
-      horizontalPosition: 'right',
-      verticalPosition: 'top',
-      panelClass: [`cls-snackbar-${type}`],
-    });
-  }
-
   backToEdit(): void {
     if (this.logMode === 'live') {
-      // Resume the timer where it left off
       this.timerState = 'running';
       this.timerInterval = setInterval(() => {
         this.timerSeconds++;
@@ -220,5 +249,14 @@ export class AddCallLogForm implements OnInit, OnDestroy {
       }, 1000);
     }
     this.screen = 'active';
+  }
+
+  private showSnackbar(message: string, type: 'success' | 'error' | 'info'): void {
+    this.snackBar.open(message, 'Dismiss', {
+      duration: 3000,
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+      panelClass: [`cls-snackbar-${type}`],
+    });
   }
 }
