@@ -1,0 +1,94 @@
+.add-user-dialog {
+  width: 460px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Header ── */
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 22px 22px 18px;
+  border-bottom: 1px solid var(--cls-border);
+  position: relative;
+}
+
+.dialog-header-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: var(--cls-primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.dialog-header-icon .material-icons {
+  font-size: 20px;
+  color: var(--cls-primary);
+}
+
+.dialog-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--cls-text-primary);
+  margin: 0 0 2px;
+}
+.dialog-subtitle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--cls-text-muted);
+  margin: 0;
+}
+
+.close-btn {
+  position: absolute !important;
+  right: 14px;
+  top: 14px;
+  color: var(--cls-text-muted) !important;
+}
+.close-btn:hover {
+  color: var(--cls-text-primary) !important;
+}
+
+/* ── Body ── */
+.dialog-body {
+  padding: 20px 22px;
+}
+.dialog-body form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ── Role option row ── */
+.role-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.role-icon {
+  font-size: 16px !important;
+  color: var(--cls-text-muted);
+}
+
+/* ── Actions ── */
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 22px 20px;
+  border-top: 1px solid var(--cls-border);
+}
+
+/* ── Inline spinner inside button ── */
+.btn-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: cls-spin 0.7s linear infinite;
+  display: inline-block;
+}

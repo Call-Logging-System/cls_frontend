@@ -23,13 +23,13 @@
       <span matListItemTitle>Phone Book</span>
     </a>
 
-    <!--<a mat-list-item
-       routerLink="/users"
-       routerLinkActive="active-link"
+    <a mat-list-item
+       (click)="navigateTo('/user-management')"
+      [class.active-link]="router.url === '/user-management'"
        class="nav-item">
       <mat-icon matListItemIcon>people</mat-icon>
       <span matListItemTitle>Users</span>
-    </a> -->
+    </a>
   </mat-nav-list>
 
   <div class="sidenav-user-section">

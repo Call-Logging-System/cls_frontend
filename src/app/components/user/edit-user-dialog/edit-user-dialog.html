@@ -1,0 +1,71 @@
+<div class="add-user-dialog">
+  <!-- Header -->
+  <div class="dialog-header">
+    <div class="dialog-header-icon">
+      <span class="material-icons">manage_accounts</span>
+    </div>
+    <div>
+      <h2 class="dialog-title">Edit User</h2>
+      <p class="dialog-subtitle">Editing record for {{ data.user.userName }}</p>
+    </div>
+    <button mat-icon-button class="close-btn" (click)="onCancel()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Form -->
+  <div class="dialog-body">
+    <form [formGroup]="form">
+      <!-- Full Name -->
+      <mat-form-field appearance="outline">
+        <mat-label>Full Name</mat-label>
+        <input matInput formControlName="fullName" />
+        <mat-icon matSuffix>badge</mat-icon>
+        @if (form.get('fullName')?.invalid && form.get('fullName')?.touched) {
+          <mat-error>Full name is required</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Email -->
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="email" />
+        <mat-icon matSuffix>mail_outline</mat-icon>
+        @if (form.get('email')?.hasError('required') && form.get('email')?.touched) {
+          <mat-error>Email is required</mat-error>
+        } @else if (form.get('email')?.hasError('email') && form.get('email')?.touched) {
+          <mat-error>Enter a valid email address</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Role -->
+      <mat-form-field appearance="outline">
+        <mat-label>Role</mat-label>
+        <mat-select formControlName="role">
+          @for (role of roles; track role.value) {
+            <mat-option [value]="role.value">
+              {{ role.label }}
+            </mat-option>
+          }
+        </mat-select>
+        @if (form.get('role')?.invalid && form.get('role')?.touched) {
+          <mat-error>Please select a role</mat-error>
+        }
+      </mat-form-field>
+    </form>
+  </div>
+
+  <!-- Actions -->
+  <div class="dialog-actions">
+    <button class="ghost-btn" (click)="onCancel()">Cancel</button>
+    <button class="primary-btn" (click)="onSubmit()" [disabled]="loading">
+      @if (loading) {
+        <span class="btn-spinner"></span>
+        Saving…
+      } @else {
+        <span class="material-icons">save</span>
+        Save Changes
+      }
+    </button>
+  </div>
+</div>

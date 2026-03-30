@@ -5,6 +5,7 @@ import { CallLogs } from './components/call-logs/call-logs';
 import { EditCallLogForm } from './components/call-logs/edit-call-log-form/edit-call-log-form';
 import { Login } from './components/login/login';
 import { PhoneBook } from './components/phone-book/phone-book';
+import { User } from './components/user/user';
 import { authGuard } from './services/auth/auth.guard';
 
 export const routes: Routes = [
@@ -33,4 +34,9 @@ export const routes: Routes = [
     component: PhoneBook,
     canActivate: [authGuard],
   },
+  {
+    path:'user-management',
+    component:User,
+    canActivate: [authGuard],
+  }
 ];
