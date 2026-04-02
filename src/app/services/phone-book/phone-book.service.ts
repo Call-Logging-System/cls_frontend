@@ -16,7 +16,7 @@ export class PhoneBookService {
   }
 
   getOfficeByUserName(userName: string): Observable<OfficeModel> {
-    return this.http.post<OfficeModel>(this.baseUrl + 'getOfficeByUserName', { userName });
+    return this.http.post<OfficeModel>(this.baseUrl + 'getOfficeByUserName',  userName );
   }
 
   updateOffice(payload: any): Observable<any> {

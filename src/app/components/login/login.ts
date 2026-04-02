@@ -2,14 +2,14 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
+import { NotificationService } from '../../services/common/notification.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -17,9 +17,9 @@ import { AuthService } from '../../services/auth/auth.service';
 export class Login {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
-  private readonly snackBar = inject(MatSnackBar);
   private readonly authService = inject(AuthService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly notificationService = inject(NotificationService);
 
   currentYear = new Date().getFullYear();
 
@@ -54,12 +54,7 @@ export class Login {
       next: () => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.snackBar.open('Logged in successfully.', 'Dismiss', {
-          duration: 3000,
-          horizontalPosition: 'right',
-          verticalPosition: 'top',
-          panelClass: ['cls-snackbar-success'],
-        });
+        this.notificationService.showSuccess('Logged in successfully.');
         this.router.navigate(['/call-logs']);
       },
       error: (err) => {

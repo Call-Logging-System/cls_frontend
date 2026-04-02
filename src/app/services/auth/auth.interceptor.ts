@@ -30,7 +30,7 @@ export class AuthInterceptor implements HttpInterceptor {
           } else if (error.status >= 500) {
             errorMessage = 'Server error. Please try again later.';
           } else {
-            errorMessage = `Error: ${error.status} - ${error.message}`;
+            errorMessage = error.error.message || `Error: ${error.status} - ${error.message}`;
           }
         }
         this.notificationService.showError(errorMessage);

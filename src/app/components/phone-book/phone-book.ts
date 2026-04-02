@@ -13,12 +13,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { OfficeModel } from '../../models/office/office.model';
+import { NotificationService } from '../../services/common/notification.service';
 import { PhoneBookService } from '../../services/phone-book/phone-book.service';
 import { EditPhoneBookDialog } from './edit-phone-book-dialog/edit-phone-book-dialog';
 // import { PhoneBookService } from '../../services/phone-book/phone-book.service';
@@ -46,7 +46,6 @@ export interface OfficeEntry {
     MatButtonModule,
     MatTooltipModule,
     MatDialogModule,
-    MatSnackBarModule,
     RouterModule,
   ],
   templateUrl: './phone-book.html',
@@ -55,9 +54,9 @@ export interface OfficeEntry {
 })
 export class PhoneBook implements OnInit, AfterViewInit {
   private readonly dialog = inject(MatDialog);
-  private readonly snackBar = inject(MatSnackBar);
   private readonly phoneBookService = inject(PhoneBookService);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly notificationService = inject(NotificationService);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -91,7 +90,6 @@ export class PhoneBook implements OnInit, AfterViewInit {
       },
       error: (err) => {
         console.error('Error loading offices', err);
-        this.showSnackbar('Failed to load offices.', 'error');
       },
     });
   }
@@ -118,17 +116,6 @@ export class PhoneBook implements OnInit, AfterViewInit {
     return { 2: 'level-circle', 3: 'level-division', 4: 'level-range' }[level] ?? '';
   }
 
-  // ── Add ────────────────────────────────────────────────
-
-  private showSnackbar(message: string, type: 'success' | 'error' | 'info'): void {
-    this.snackBar.open(message, 'Dismiss', {
-      duration: 3000,
-      horizontalPosition: 'right',
-      verticalPosition: 'top',
-      panelClass: [`cls-snackbar-${type}`],
-    });
-  }
-
   openEdit(office: any): void {
     const ref = this.dialog.open(EditPhoneBookDialog, {
       panelClass: 'cls-dialog',
@@ -138,12 +125,7 @@ export class PhoneBook implements OnInit, AfterViewInit {
     ref.afterClosed().subscribe((saved) => {
       if (saved) {
         this.loadOffices(); // refresh your list
-        this.snackBar.open('Office updated successfully.', 'Dismiss', {
-          duration: 3000,
-          horizontalPosition: 'right',
-          verticalPosition: 'top',
-          panelClass: ['cls-snackbar-success'],
-        });
+        this.notificationService.showSuccess('Office updated successfully.');
       }
     });
   }

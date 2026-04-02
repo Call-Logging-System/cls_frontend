@@ -3,9 +3,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { UserModel } from '../../models/user/user.model';
+import { NotificationService } from '../../services/common/notification.service';
 import { UserService } from '../../services/user/user.service';
 import { ConfirmDialog } from '../call-logs/confirm-dialog/confirm-dialog';
 import { AddUserDialog } from './add-user-dialog/add-user-dialog';
@@ -13,14 +13,14 @@ import { EditUserDialog } from './edit-user-dialog/edit-user-dialog';
 
 @Component({
   selector: 'app-user',
-  imports: [MatPaginatorModule, MatTableModule, MatIconModule, MatSnackBarModule, MatButtonModule],
+  imports: [MatPaginatorModule, MatTableModule, MatIconModule, MatButtonModule],
   templateUrl: './user.html',
   styleUrl: './user.css',
 })
 export class User implements OnInit {
   private readonly userService = inject(UserService);
-  private readonly snackBar = inject(MatSnackBar);
   private readonly dialog = inject(MatDialog);
+  private readonly notificationService = inject(NotificationService);
 
   displayedColumns = ['index', 'userName', 'email', 'edit', 'delete'];
 
@@ -37,7 +37,6 @@ export class User implements OnInit {
       },
       error: (err) => {
         console.error('Error loading users', err);
-        this.showSnackbar('Failed to load users.', 'error');
       },
     });
   }
@@ -56,7 +55,7 @@ export class User implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       if (!result) return; // Dialog was cancelled
 
-      this.showSnackbar('User added successfully!', 'success');
+      this.notificationService.showSuccess('User added successfully!');
       this.loadUsers(); // Refresh the user list
     });
   }
@@ -71,7 +70,7 @@ export class User implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       if (!result) return; // Dialog was cancelled
 
-      this.showSnackbar('User updated successfully!', 'success');
+      this.notificationService.showSuccess('User updated successfully!');
       this.loadUsers(); // Refresh the user list
     });
   }
@@ -90,19 +89,11 @@ export class User implements OnInit {
       this.userService.deleteUser(element.userId).subscribe({
         next: () => {
           this.loadUsers();
-          this.showSnackbar('User deleted successfully.', 'success');
+          this.notificationService.showSuccess('User deleted successfully.');
         },
-        error: () => this.showSnackbar('Failed to delete user.', 'error'),
+        error: () => {},
       });
     });
   }
 
-  private showSnackbar(message: string, type: 'success' | 'error' | 'info'): void {
-    this.snackBar.open(message, 'Dismiss', {
-      duration: 3000,
-      horizontalPosition: 'right',
-      verticalPosition: 'top',
-      panelClass: [`cls-snackbar-${type}`],
-    });
-  }
 }

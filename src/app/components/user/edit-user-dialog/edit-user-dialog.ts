@@ -7,9 +7,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { UserModel } from '../../../models/user/user.model';
+import { NotificationService } from '../../../services/common/notification.service';
 import { UserService } from '../../../services/user/user.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-edit-user-dialog',
@@ -29,8 +28,7 @@ export class EditUserDialog {
   private readonly dialogRef = inject(MatDialogRef<EditUserDialog>);
   readonly data = inject<{ user: UserModel }>(MAT_DIALOG_DATA); // ← injected row data
   private readonly userService = inject(UserService);
-  private readonly snackBar = inject(MatSnackBar);
-  private readonly router = inject(Router);
+  private readonly notificationService = inject(NotificationService);
 
   loading = false;
 
@@ -59,11 +57,10 @@ export class EditUserDialog {
 
     this.userService.updateUser(payload).subscribe({
       next: () => {
-        this.showSnackbar('User saved successfully.', 'success');
+        this.notificationService.showSuccess('User saved successfully.');
       },
       error: (err) => {
         console.error('Error saving user', err);
-        this.showSnackbar('Failed to save user. Please try again.', 'error');
       },
     });
 
@@ -72,14 +69,5 @@ export class EditUserDialog {
 
   onCancel(): void {
     this.dialogRef.close(null);
-  }
-
-  private showSnackbar(message: string, type: 'success' | 'error' | 'info'): void {
-    this.snackBar.open(message, 'Dismiss', {
-      duration: 3000,
-      horizontalPosition: 'right',
-      verticalPosition: 'top',
-      panelClass: [`cls-snackbar-${type}`],
-    });
   }
 }

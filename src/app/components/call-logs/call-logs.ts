@@ -5,12 +5,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { CallLog } from '../../models/call-log/call-log.model';
 import { CallLogService } from '../../services/call-log/call-log.service';
+import { NotificationService } from '../../services/common/notification.service';
 import { ConfirmDialog } from './confirm-dialog/confirm-dialog';
 
 @Component({
@@ -24,7 +24,6 @@ import { ConfirmDialog } from './confirm-dialog/confirm-dialog';
     MatButtonModule,
     MatIconModule,
     MatDialogModule,
-    MatSnackBarModule,
   ],
   templateUrl: './call-logs.html',
   styleUrl: './call-logs.css',
@@ -36,7 +35,7 @@ export class CallLogs implements OnInit,AfterViewInit {
   private readonly callLogService = inject(CallLogService);
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly notificationService = inject(NotificationService);
 
   displayedColumns: string[] = [
     'date',
@@ -94,7 +93,7 @@ export class CallLogs implements OnInit,AfterViewInit {
         }));
         this.callLogs.set(mappedData);
       },
-      error: () => this.showSnackbar('Failed to load call logs.', 'error'),
+      error: () => {},
     });
   }
 
@@ -122,20 +121,10 @@ export class CallLogs implements OnInit,AfterViewInit {
       this.callLogService.deleteCallLog(element.id).subscribe({
         next: () => {
           this.callLogs.update((logs) => logs.filter((log) => log.id !== element.id));
-          this.showSnackbar('Call log deleted successfully.', 'success');
+          this.notificationService.showSuccess('Call log deleted successfully.');
         },
-        error: () => this.showSnackbar('Failed to delete call log.', 'error'),
+        error: () => {},
       });
-    });
-  }
-
-  /** ── Snackbar helper ── */
-  showSnackbar(message: string, type: 'success' | 'error' | 'info') {
-    this.snackBar.open(message, 'Dismiss', {
-      duration: 3500,
-      horizontalPosition: 'right',
-      verticalPosition: 'top',
-      panelClass: [`cls-snackbar-${type}`],
     });
   }
 
@@ -160,11 +149,10 @@ export class CallLogs implements OnInit,AfterViewInit {
         a.download = `Forest_CallRegister_Updated.xlsx`;
         a.click();
         URL.revokeObjectURL(url);
-        this.showSnackbar('Export downloaded successfully.', 'success');
+        this.notificationService.showSuccess('Export downloaded successfully.');
       },
       error: (err) => {
         console.error('Export error:', err);
-        this.showSnackbar('Export failed. Please try again.', 'error');
       },
     });
   }

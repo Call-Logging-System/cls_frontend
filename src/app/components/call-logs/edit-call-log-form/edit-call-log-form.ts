@@ -8,10 +8,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CallLogService } from '../../../services/call-log/call-log.service';
+import { NotificationService } from '../../../services/common/notification.service';
 
 @Component({
   selector: 'app-edit-call-log-form',
@@ -26,7 +26,6 @@ import { CallLogService } from '../../../services/call-log/call-log.service';
     MatSelectModule,
     MatCheckboxModule,
     MatTooltipModule,
-    MatSnackBarModule,
   ],
   templateUrl: './edit-call-log-form.html',
   styleUrl: './edit-call-log-form.css',
@@ -36,8 +35,8 @@ export class EditCallLogForm implements OnInit, OnDestroy  {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly callLogSvc = inject(CallLogService);
-  private readonly snackBar = inject(MatSnackBar);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly notificationService = inject(NotificationService);
 
   editId: number | null = null;
   isLoading = true;
@@ -106,7 +105,7 @@ export class EditCallLogForm implements OnInit, OnDestroy  {
 
     this.callLogSvc.getUsersDropdown().subscribe({
       next: (data) => (this.users = data),
-      error: () => this.showSnackbar('Failed to load users.', 'error'),
+      error: () => {},
     });
 
     const id = this.route.snapshot.paramMap.get('id');
@@ -145,7 +144,6 @@ export class EditCallLogForm implements OnInit, OnDestroy  {
         this.cdr.detectChanges();
       },
       error: (err: any) => {
-        this.showSnackbar('Failed to load call log.', 'error');
         this.router.navigate(['/call-logs']);
       },
     });
@@ -164,26 +162,16 @@ export class EditCallLogForm implements OnInit, OnDestroy  {
 
     this.callLogSvc.updateCallLog(payload).subscribe({
       next: () => {
-        this.showSnackbar('Call log updated successfully.', 'success');
+        this.notificationService.showSuccess('Call log updated successfully.');
         this.router.navigate(['/call-logs']);
       },
       error: () => {
-        this.showSnackbar('Failed to update call log.', 'error');
       },
     });
   }
 
   goBack(): void {
     this.router.navigate(['/call-logs']);
-  }
-
-  private showSnackbar(message: string, type: 'success' | 'error' | 'info'): void {
-    this.snackBar.open(message, 'Dismiss', {
-      duration: 3000,
-      horizontalPosition: 'right',
-      verticalPosition: 'top',
-      panelClass: [`cls-snackbar-${type}`],
-    });
   }
 
   get currentSessionDisplay(): string {

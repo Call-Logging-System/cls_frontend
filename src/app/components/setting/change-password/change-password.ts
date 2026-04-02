@@ -11,9 +11,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
+import { NotificationService } from '../../../services/common/notification.service';
 
 function passwordsMatch(control: AbstractControl): ValidationErrors | null {
   const newPass = control.get('newPassword')?.value;
@@ -30,7 +30,6 @@ function passwordsMatch(control: AbstractControl): ValidationErrors | null {
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    MatSnackBarModule,
   ],
   templateUrl: './change-password.html',
   styleUrl: './change-password.css',
@@ -39,7 +38,7 @@ export class ChangePassword {
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly notificationService = inject(NotificationService);
 
   showCurrent = false;
   showNew = false;
@@ -69,13 +68,11 @@ export class ChangePassword {
     // Call the service to change password
     this.authService.changePassword(payload).subscribe({
       next: () => {
-        this.snackBar.open('Password changed successfully', 'Close', { duration: 3000 });
+        this.notificationService.showSuccess('Password changed successfully');
         this.router.navigate(['/call-logs']);
       },
       error: (err) => {
-        this.snackBar.open(`Error: ${err.message || 'Failed to change password'}`, 'Close', {
-          duration: 5000,
-        });
+        //this.notificationService.showError('Failed to change password. Please try again.');
       },
     });
   }

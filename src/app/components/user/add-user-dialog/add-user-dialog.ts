@@ -6,9 +6,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
 import { SaveUserModel } from '../../../models/user/user.model';
+import { NotificationService } from '../../../services/common/notification.service';
 import { UserService } from '../../../services/user/user.service';
 
 @Component({
@@ -28,8 +27,7 @@ export class AddUserDialog {
   private readonly fb = inject(FormBuilder);
   private readonly dialogRef = inject(MatDialogRef<AddUserDialog>);
   private readonly userService = inject(UserService);
-  private readonly snackBar = inject(MatSnackBar);
-  private readonly router = inject(Router);
+  private readonly notificationService = inject(NotificationService);
 
   showPassword = false;
   loading = false;
@@ -61,24 +59,13 @@ export class AddUserDialog {
 
     this.userService.saveUser(payload).subscribe({
       next:()=>{
-        this.showSnackbar('User saved successfully.', 'success');
+        this.notificationService.showSuccess('User saved successfully.');
       },
       error:(err) =>{
-        console.error('Error saving user', err);
-        this.showSnackbar('Failed to save user. Please try again.', 'error');
-      }
+        console.error('Error saving user', err);}
     })
 
     this.dialogRef.close(payload);
-  }
-
-  private showSnackbar(message: string, type: 'success' | 'error' | 'info'): void {
-    this.snackBar.open(message, 'Dismiss', {
-      duration: 3000,
-      horizontalPosition: 'right',
-      verticalPosition: 'top',
-      panelClass: [`cls-snackbar-${type}`],
-    });
   }
 
   onCancel(): void {

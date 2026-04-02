@@ -3,11 +3,11 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { NotificationService } from '../../../services/common/notification.service';
 import { PhoneBookService } from '../../../services/phone-book/phone-book.service';
 
 @Component({
@@ -22,7 +22,6 @@ import { PhoneBookService } from '../../../services/phone-book/phone-book.servic
     MatFormFieldModule,
     MatInputModule,
     MatCheckboxModule,
-    MatSnackBarModule,
   ],
   templateUrl: './edit-phone-book-dialog.html',
   styleUrl: './edit-phone-book-dialog.css',
@@ -31,7 +30,7 @@ export class EditPhoneBookDialog {
   private readonly dialogRef = inject(MatDialogRef<EditPhoneBookDialog>);
   private readonly data = inject(MAT_DIALOG_DATA);
   private readonly phoneBookSvc = inject(PhoneBookService);
-  private readonly snackBar = inject(MatSnackBar);
+  private readonly notificationService = inject(NotificationService);
 
   // ── Read-only context ──────────────────────────
   officeUserName: string = this.data.officeUserName ?? '';
@@ -67,15 +66,11 @@ export class EditPhoneBookDialog {
       next: () => {
         this.isSaving = false;
         this.dialogRef.close(true); // true = refresh list
+        this.notificationService.showSuccess('Office updated successfully.');
       },
       error: () => {
         this.isSaving = false;
-        this.snackBar.open('Failed to update office.', 'Dismiss', {
-          duration: 3000,
-          horizontalPosition: 'right',
-          verticalPosition: 'top',
-          panelClass: ['cls-snackbar-error'],
-        });
+        
       },
     });
   }

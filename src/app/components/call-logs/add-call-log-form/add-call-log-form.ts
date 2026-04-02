@@ -14,10 +14,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { CallLogService } from '../../../services/call-log/call-log.service';
+import { NotificationService } from '../../../services/common/notification.service';
 import { PhoneBookService } from '../../../services/phone-book/phone-book.service';
 
 @Component({
@@ -33,7 +33,6 @@ import { PhoneBookService } from '../../../services/phone-book/phone-book.servic
     MatSelectModule,
     MatCheckboxModule,
     MatTooltipModule,
-    MatSnackBarModule,
   ],
   templateUrl: './add-call-log-form.html',
   styleUrl: './add-call-log-form.css',
@@ -42,9 +41,9 @@ import { PhoneBookService } from '../../../services/phone-book/phone-book.servic
 export class AddCallLogForm implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly callLogSvc = inject(CallLogService);
-  private readonly snackBar = inject(MatSnackBar);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly phoneBookSvc = inject(PhoneBookService);
+  private readonly notificationService = inject(NotificationService);
 
   // ── Screen & mode ──────────────────────────────
   screen: 'incoming' | 'active' | 'review' = 'incoming';
@@ -131,7 +130,7 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.callLogSvc.getUsersDropdown().subscribe({
       next: (data) => (this.users = data),
-      error: () => this.showSnackbar('Failed to load users.', 'error'),
+      error: () => {},
     });
   }
 
@@ -227,11 +226,11 @@ export class AddCallLogForm implements OnInit, OnDestroy {
 
     this.callLogSvc.saveCallLog(payload).subscribe({
       next: () => {
-        this.showSnackbar('Call log saved successfully.', 'success');
+        this.notificationService.showSuccess('Call log saved successfully.');
         this.router.navigate(['/call-logs']);
       },
       error: () => {
-        this.showSnackbar('Failed to save call log.', 'error');
+        ;
       },
     });
   }
@@ -251,12 +250,4 @@ export class AddCallLogForm implements OnInit, OnDestroy {
     this.screen = 'active';
   }
 
-  private showSnackbar(message: string, type: 'success' | 'error' | 'info'): void {
-    this.snackBar.open(message, 'Dismiss', {
-      duration: 3000,
-      horizontalPosition: 'right',
-      verticalPosition: 'top',
-      panelClass: [`cls-snackbar-${type}`],
-    });
-  }
 }
