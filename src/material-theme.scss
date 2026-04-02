@@ -282,6 +282,19 @@ mat-paginator,
 /* ════════════════════════════════════════
    MAT SNACKBAR
 ════════════════════════════════════════ */
+.mat-mdc-snack-bar-container {
+  border-radius: var(--cls-radius-md) !important;
+  box-shadow: var(--cls-shadow-lg) !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 14px !important;
+  background-color: white !important; /* Default background */
+  color: var(--cls-text-primary) !important;
+}
+
+.mdc-snackbar__surface {
+  background-color: inherit !important;
+}
+
 .mat-mdc-snack-bar-container.error-snackbar {
   background-color: #f44336 !important;
   color: white !important;

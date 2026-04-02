@@ -1,6 +1,6 @@
 // login.ts
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -19,6 +19,7 @@ export class Login {
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
   private readonly authService = inject(AuthService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   currentYear = new Date().getFullYear();
 
@@ -51,6 +52,8 @@ export class Login {
 
     this.authService.login(username, password).subscribe({
       next: () => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
         this.snackBar.open('Logged in successfully.', 'Dismiss', {
           duration: 3000,
           horizontalPosition: 'right',
@@ -58,13 +61,19 @@ export class Login {
           panelClass: ['cls-snackbar-success'],
         });
         this.router.navigate(['/call-logs']);
-     },
+      },
       error: (err) => {
         this.isLoading = false;
         this.loginError = typeof err.error === 'string'
           ? err.error
           : (err.error?.message ?? 'Invalid email or password.');
+        // No snackbar for login error, only show error below password
+        this.cdr.markForCheck();
       },
+      complete: () => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      }
     });
   }
 }

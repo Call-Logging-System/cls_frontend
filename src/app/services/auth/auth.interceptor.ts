@@ -23,7 +23,15 @@ export class AuthInterceptor implements HttpInterceptor {
           errorMessage = `Error: ${error.error.message}`;
         } else {
           // Backend returned an unsuccessful response code
-          errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+          if (error.status === 401) {
+            errorMessage = 'Invalid credentials. Please check your username and password.';
+          } else if (error.status === 403) {
+            errorMessage = 'Access denied. You do not have permission to perform this action.';
+          } else if (error.status >= 500) {
+            errorMessage = 'Server error. Please try again later.';
+          } else {
+            errorMessage = `Error: ${error.status} - ${error.message}`;
+          }
         }
         this.notificationService.showError(errorMessage);
         return throwError(error);
