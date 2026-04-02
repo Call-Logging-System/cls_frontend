@@ -58,6 +58,13 @@
   width: 100%;
 }
 
+.nav-item-divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 4px 0;
+}
+
 /* ── Nav item: icon on top, label below ── */
 
 .nav-item {
