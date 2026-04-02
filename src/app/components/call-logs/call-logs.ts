@@ -1,6 +1,6 @@
 // call-logs.ts
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, effect, inject, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, effect, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -30,7 +30,7 @@ import { ConfirmDialog } from './confirm-dialog/confirm-dialog';
   styleUrl: './call-logs.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CallLogs implements AfterViewInit {
+export class CallLogs implements OnInit,AfterViewInit {
   callLogs = signal<CallLog[]>([]);
 
   private readonly callLogService = inject(CallLogService);
@@ -69,10 +69,13 @@ export class CallLogs implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  ngOnInit(): void {
+    this.loadCallLogs();
+  }
+
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    this.loadCallLogs();
   }
 
   loadCallLogs() {

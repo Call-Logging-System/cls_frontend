@@ -22,21 +22,25 @@ export const routes: Routes = [
     path: 'call-logs',
     component: CallLogs,
     canActivate: [authGuard],
+    data: { roles: [1, 2] },
   },
   {
     path: 'add-call-log',
     component: AddCallLogForm,
     canActivate: [authGuard],
+    data: { roles: [1, 2] },
   },
-  { path: 'edit-call-log/:id', component: EditCallLogForm, canActivate: [authGuard] },
+  { path: 'edit-call-log/:id', component: EditCallLogForm, canActivate: [authGuard], data: { roles: [1, 2] } },
   {
     path: 'phone-book',
     component: PhoneBook,
     canActivate: [authGuard],
+    data: { roles: [1, 2] },
   },
   {
     path:'user-management',
     component:User,
     canActivate: [authGuard],
+    data: { roles: [1] },
   }
 ];

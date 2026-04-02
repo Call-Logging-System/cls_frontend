@@ -7,7 +7,7 @@ import { CallLog, SaveCallLog } from '../../models/call-log/call-log.model';
   providedIn: 'root',
 })
 export class CallLogService {
-  readonly baseUrl = 'http://localhost:8081/api/call_logs/';
+  private readonly baseUrl = 'http://localhost:8081/api/call_logs/';
 
   constructor(private http: HttpClient) {}
 

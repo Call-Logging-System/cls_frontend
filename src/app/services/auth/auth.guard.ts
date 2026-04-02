@@ -3,15 +3,28 @@ import { CanActivateFn, Router } from '@angular/router';
 import { catchError, map, of } from 'rxjs';
 import { AuthService } from './auth.service';
 
-export const authGuard: CanActivateFn = () => {
+export const authGuard: CanActivateFn = (route) => {
   const authService = inject(AuthService);
   const router = inject(Router);
+
+  const proceed = () => {
+    const allowedRoles: number[] = route.data?.['roles'] ?? [];
+
+    // No roles defined on route → just auth check, no role restriction
+    if (allowedRoles.length === 0) return true;
+
+    const userRole = authService.userRole();
+    if (userRole !== null && allowedRoles.includes(userRole)) return true;
+
+    router.navigate(['/call-logs']); // redirect unauthorized users
+    return false;
+  };
 
   // Step 1: If user is already in memory (signal has value), allow immediately
   // This covers normal navigation after login — no need to hit the server
 
   if (authService.isLoggedIn()) {
-    return true;
+    return proceed();
   }
 
   // Step 2: Signal is empty (e.g. after page refresh)
@@ -20,12 +33,12 @@ export const authGuard: CanActivateFn = () => {
 
   return authService.restoreSession().pipe(
     map(() => {
-        return true; // Session restored successfully, allow access
+      return proceed(); // Session restored successfully, allow access
     }),
 
     catchError(() => {
-        router.navigate(['/login']); // Session restore failed (e.g. no cookie or invalid), redirect to login
-        return of(false); // Block access to the route
-    })
-  )
+      router.navigate(['/login']); // Session restore failed (e.g. no cookie or invalid), redirect to login
+      return of(false); // Block access to the route
+    }),
+  );
 };

@@ -62,7 +62,6 @@ export class AddUserDialog {
     this.userService.saveUser(payload).subscribe({
       next:()=>{
         this.showSnackbar('User saved successfully.', 'success');
-        this.router.navigate(['/user-management']);
       },
       error:(err) =>{
         console.error('Error saving user', err);

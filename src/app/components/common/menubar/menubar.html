@@ -1,21 +1,18 @@
 <div class="sidenav-inner">
   <!-- Nav -->
   <div class="nav-list">
-    <a class="nav-item" (click)="navigateTo('/call-logs')"
-       [class.active-link]="router.url === '/call-logs'">
-      <mat-icon>call</mat-icon>
-      <span class="nav-label">Call Logs</span>
-    </a>
-    <a class="nav-item" (click)="navigateTo('/phone-book')"
-       [class.active-link]="router.url === '/phone-book'">
-      <mat-icon>contacts</mat-icon>
-      <span class="nav-label">Phone Book</span>
-    </a>
-    <a class="nav-item" (click)="navigateTo('/user-management')"
-       [class.active-link]="router.url === '/user-management'">
-      <mat-icon>people</mat-icon>
-      <span class="nav-label">Users</span>
-    </a>
+    @for (item of navItems; track item.path) {
+      @if (isAllowed(item.path)) {
+        <a
+          class="nav-item"
+          (click)="navigateTo(item.path)"
+          [class.active-link]="router.url === item.path"
+        >
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span class="nav-label">{{ item.label }}</span>
+        </a>
+      }
+    }
   </div>
 
   <!-- Bottom user section -->

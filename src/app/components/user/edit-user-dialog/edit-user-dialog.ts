@@ -60,7 +60,6 @@ export class EditUserDialog {
     this.userService.updateUser(payload).subscribe({
       next: () => {
         this.showSnackbar('User saved successfully.', 'success');
-        this.router.navigate(['/user-management']);
       },
       error: (err) => {
         console.error('Error saving user', err);
