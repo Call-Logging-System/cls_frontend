@@ -7,6 +7,7 @@ import { Login } from './components/login/login';
 import { PhoneBook } from './components/phone-book/phone-book';
 import { User } from './components/user/user';
 import { authGuard } from './services/auth/auth.guard';
+import { ChangePassword } from './components/setting/change-password/change-password';
 
 export const routes: Routes = [
   {
@@ -20,17 +21,14 @@ export const routes: Routes = [
   },
   {
     path: 'call-logs',
-    component: CallLogs,
     canActivate: [authGuard],
     data: { roles: [1, 2] },
+    children: [
+      { path: '', component: CallLogs },
+      { path: 'add', component: AddCallLogForm },
+      { path: 'edit/:id', component: EditCallLogForm },
+    ],
   },
-  {
-    path: 'add-call-log',
-    component: AddCallLogForm,
-    canActivate: [authGuard],
-    data: { roles: [1, 2] },
-  },
-  { path: 'edit-call-log/:id', component: EditCallLogForm, canActivate: [authGuard], data: { roles: [1, 2] } },
   {
     path: 'phone-book',
     component: PhoneBook,
@@ -38,9 +36,15 @@ export const routes: Routes = [
     data: { roles: [1, 2] },
   },
   {
-    path:'user-management',
-    component:User,
+    path: 'user-management',
+    component: User,
     canActivate: [authGuard],
     data: { roles: [1] },
-  }
+  },
+  {
+    path: 'settings/change-password',
+    component: ChangePassword,
+    canActivate: [authGuard],
+    data: { roles: [1, 2] },
+  },
 ];

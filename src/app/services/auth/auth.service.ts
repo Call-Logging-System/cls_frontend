@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
+import { ChangePasswordModel } from '../../models/setting/change-password.model';
 
 export interface AuthUser {
   userId: number;
@@ -54,5 +55,9 @@ export class AuthService {
 
   setUser(user: AuthUser | null): void {
     this.currentUser.set(user);
+  }
+
+  changePassword(payload: ChangePasswordModel): Observable<any> {
+    return this.http.post(`${this.API}/change-password`, payload);
   }
 }

@@ -104,7 +104,7 @@ export class CallLogs implements OnInit,AfterViewInit {
   }
 
   openAddLogForm() {
-    this.router.navigate(['/add-call-log']);
+    this.router.navigate(['/call-logs/add']);
   }
 
   /** ── Delete with confirmation dialog ── */
@@ -148,7 +148,7 @@ export class CallLogs implements OnInit,AfterViewInit {
   }
 
   openEditForm(id: number): void {
-    this.router.navigate(['/edit-call-log', id]);
+    this.router.navigate(['/call-logs/edit', id]);
   }
 
   exportToExcel(): void {

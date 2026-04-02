@@ -1,12 +1,11 @@
 <div class="sidenav-inner">
-  <!-- Nav -->
   <div class="nav-list">
     @for (item of navItems; track item.path) {
       @if (isAllowed(item.path)) {
         <a
           class="nav-item"
           (click)="navigateTo(item.path)"
-          [class.active-link]="router.url === item.path"
+          [class.active-link]="currentUrl.startsWith(item.path)"
         >
           <mat-icon>{{ item.icon }}</mat-icon>
           <span class="nav-label">{{ item.label }}</span>
@@ -15,8 +14,20 @@
     }
   </div>
 
-  <!-- Bottom user section -->
   <div class="sidenav-user-section">
+    @for (item of bottomItems; track item.path) {
+      <a
+        class="nav-item settings-item"
+        (click)="navigateTo(item.path)"
+        [class.active-link]="currentUrl === item.path"
+      >
+        <mat-icon>{{ item.icon }}</mat-icon>
+        <span class="nav-label">{{ item.label }}</span>
+      </a>
+    }
+
+    <div class="user-section-divider"></div>
+
     <div class="avatar">{{ authService.userName()?.charAt(0)?.toUpperCase() }}</div>
     <div class="user-role">
       {{ authService.userRole() != null ? roles[authService.userRole()! - 1] : '' }}
