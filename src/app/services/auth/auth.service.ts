@@ -3,6 +3,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { ChangePasswordModel } from '../../models/setting/change-password.model';
+import { environment } from '../../../environments/environment';
 
 export interface AuthUser {
   userId: number;
@@ -16,7 +17,7 @@ export interface AuthUser {
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
-  private readonly API = 'http://localhost:8081/api/auth';
+  private readonly API = `${environment.apiUrl}/api/auth`;
 
   private currentUser = signal<AuthUser | null>(null);
 

@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { OfficeModel } from '../../models/office/office.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +10,7 @@ import { OfficeModel } from '../../models/office/office.model';
 export class PhoneBookService {
   constructor(private http: HttpClient) {}
 
-  private readonly baseUrl = 'http://localhost:8081/api/phone_book/';
+  private readonly baseUrl = `${environment.apiUrl}/api/phone_book/`;
 
   getOffices(): Observable<OfficeModel[]> {
     return this.http.get<OfficeModel[]>(this.baseUrl + 'offices');

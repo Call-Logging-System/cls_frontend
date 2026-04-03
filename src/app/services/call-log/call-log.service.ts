@@ -2,12 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CallLog, SaveCallLog } from '../../models/call-log/call-log.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CallLogService {
-  private readonly baseUrl = 'http://localhost:8081/api/call_logs/';
+  private readonly baseUrl = `${environment.apiUrl}/api/call_logs/`;
 
   constructor(private http: HttpClient) {}
 

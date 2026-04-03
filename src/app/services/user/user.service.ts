@@ -3,13 +3,14 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { SaveUserModel, UserModel } from '../../models/user/user.model';
+import { environment } from '../../../environments/environment';
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
   constructor(private http: HttpClient) {}
 
-  private readonly baseUrl = 'http://localhost:8081/api/user_management/';
+  private readonly baseUrl = `${environment.apiUrl}/api/user_management/`;
 
   getUsers(): Observable<UserModel[]> {
     return this.http.get<UserModel[]>(this.baseUrl + 'users');
