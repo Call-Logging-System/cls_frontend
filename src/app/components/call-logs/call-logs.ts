@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 import { CallLog } from '../../models/call-log/call-log.model';
 import { CallLogService } from '../../services/call-log/call-log.service';
 import { NotificationService } from '../../services/common/notification.service';
+import { LoadingService } from '../../services/common/loading.service';
 import { ConfirmDialog } from './confirm-dialog/confirm-dialog';
 
 @Component({
@@ -36,6 +37,7 @@ export class CallLogs implements OnInit,AfterViewInit {
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly notificationService = inject(NotificationService);
+  private readonly loadingService = inject(LoadingService);
 
   displayedColumns: string[] = [
     'date',
@@ -141,6 +143,7 @@ export class CallLogs implements OnInit,AfterViewInit {
   }
 
   exportToExcel(): void {
+    this.loadingService.setLoading(true);
     this.callLogService.exportAllCallLogs().subscribe({
       next: (blob) => {
         const url = URL.createObjectURL(blob);
@@ -150,9 +153,11 @@ export class CallLogs implements OnInit,AfterViewInit {
         a.click();
         URL.revokeObjectURL(url);
         this.notificationService.showSuccess('Export downloaded successfully.');
+        this.loadingService.setLoading(false);
       },
       error: (err) => {
         console.error('Export error:', err);
+        this.loadingService.setLoading(false);
       },
     });
   }

@@ -5,6 +5,7 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { Footer } from './components/common/footer/footer';
 import { Header } from './components/common/header/header';
+import { LoaderComponent } from './components/common/loader/loader';
 import { Menubar } from './components/common/menubar/menubar';
 
 @Component({
@@ -16,6 +17,7 @@ import { Menubar } from './components/common/menubar/menubar';
     Header,
     Footer,
     Menubar,
+    LoaderComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
