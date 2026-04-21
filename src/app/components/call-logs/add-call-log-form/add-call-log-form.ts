@@ -141,23 +141,17 @@ export class AddCallLogForm implements OnInit, OnDestroy {
 
   // ── Phone book lookup ──────────────────────────
   private lookupAndProceed(next: () => void): void {
-    const MIN_WAIT = 1500;
-    const started = Date.now();
-
-    const proceed = (contactNumber: string) => {
-      const elapsed = Date.now() - started;
-      const remaining = Math.max(0, MIN_WAIT - elapsed);
-
-      setTimeout(() => {
-        this.contactNumber = contactNumber;
+    this.phoneBookSvc.getOfficeByUserName(this.officeUserName.trim()).subscribe({
+      next: (office) => {
+        this.contactNumber = office?.contactNumber ?? '';
         next();
         this.cdr.detectChanges();
-      }, remaining);
-    };
-
-    this.phoneBookSvc.getOfficeByUserName(this.officeUserName.trim()).subscribe({
-      next: (office) => proceed(office?.contactNumber ?? ''),
-      error: () => proceed(''),
+      },
+      error: () => {
+        this.contactNumber = '';
+        next();
+        this.cdr.detectChanges();
+      },
     });
   }
 
