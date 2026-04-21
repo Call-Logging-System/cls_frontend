@@ -20,15 +20,6 @@
     </div>
 
     <div class="cls-form-card">
-      <!-- ── Lookup overlay ── -->
-      @if (isLookingUp) {
-        <div class="lookup-overlay">
-          <div class="lookup-overlay-spinner"></div>
-          <span class="lookup-overlay-text">Looking up office…</span>
-          <span class="lookup-overlay-sub">{{ officeUserName }}</span>
-        </div>
-      }
-
       <!-- Mode toggle -->
       <div class="mode-toggle">
         <button class="mode-btn" [class.active]="logMode === 'live'" (click)="logMode = 'live'">

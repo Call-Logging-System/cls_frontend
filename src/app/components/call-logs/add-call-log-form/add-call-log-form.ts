@@ -18,6 +18,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { CallLogService } from '../../../services/call-log/call-log.service';
 import { NotificationService } from '../../../services/common/notification.service';
+import { LoadingService } from '../../../services/common/loading.service';
 import { PhoneBookService } from '../../../services/phone-book/phone-book.service';
 
 @Component({
@@ -44,6 +45,7 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly phoneBookSvc = inject(PhoneBookService);
   private readonly notificationService = inject(NotificationService);
+  private readonly loadingService = inject(LoadingService);
 
   // ── Screen & mode ──────────────────────────────
   screen: 'incoming' | 'active' | 'review' = 'incoming';
@@ -53,7 +55,6 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   officeUserName = '';
   officeLevel: number | null = null;
   contactNumber = '';
-  isLookingUp = false;
 
   get officeLevelLabel(): string {
     const map: Record<number, string> = { 2: 'Circle', 3: 'Division', 4: 'Range' };
@@ -140,9 +141,6 @@ export class AddCallLogForm implements OnInit, OnDestroy {
 
   // ── Phone book lookup ──────────────────────────
   private lookupAndProceed(next: () => void): void {
-    this.isLookingUp = true;
-    this.cdr.detectChanges();
-
     const MIN_WAIT = 1500;
     const started = Date.now();
 
@@ -153,7 +151,6 @@ export class AddCallLogForm implements OnInit, OnDestroy {
       setTimeout(() => {
         this.contactNumber = contactNumber;
         next();
-        this.isLookingUp = false;
         this.cdr.detectChanges();
       }, remaining);
     };
