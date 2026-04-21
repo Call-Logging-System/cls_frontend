@@ -39,7 +39,6 @@ export class EditCallLogForm implements OnInit, OnDestroy  {
   private readonly notificationService = inject(NotificationService);
 
   editId: number | null = null;
-  isLoading = true;
 
   // ── Office fields ──────────────────────────────
   officeUserName = '';
@@ -101,13 +100,6 @@ export class EditCallLogForm implements OnInit, OnDestroy  {
 
   // ── Lifecycle ──────────────────────────────────
   ngOnInit(): void {
-    console.log('Full URL:', this.router.url);
-
-    this.callLogSvc.getUsersDropdown().subscribe({
-      next: (data) => (this.users = data),
-      error: () => {},
-    });
-
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.editId = +id;
@@ -119,7 +111,6 @@ export class EditCallLogForm implements OnInit, OnDestroy  {
 
   // ── Load existing record ────────────────────────
   private loadCallLog(id: number): void {
-    this.isLoading = true;
     this.callLogSvc.getCallLogById(id).subscribe({
       next: (data: any) => {
         this.officeUserName = data.officeUserName ?? '';
@@ -140,8 +131,13 @@ export class EditCallLogForm implements OnInit, OnDestroy  {
           isReleased: data.isReleased ?? false,
         };
         this.existingTimeTakenMinutes = data.timeTakenMinutes ?? 0;
-        this.isLoading = false;
         this.cdr.detectChanges();
+        
+        // Load users dropdown after call log data is loaded
+        this.callLogSvc.getUsersDropdown().subscribe({
+          next: (users) => (this.users = users),
+          error: () => {},
+        });
       },
       error: (err: any) => {
         this.router.navigate(['/call-logs']);

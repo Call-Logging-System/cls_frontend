@@ -20,17 +20,8 @@
     </button>
   </div>
 
-  <!-- ─── Loading state ─── -->
-  @if (isLoading) {
-    <div class="cls-loading-state">
-      <div class="cls-spinner"></div>
-      <span>Loading call log…</span>
-    </div>
-  }
-
   <!-- ─── Form card ─── -->
-  @if (!isLoading) {
-    <div class="cls-form-card">
+  <div class="cls-form-card">
       <!-- Office Details -->
       <div class="cls-form-section">
         <div class="cls-form-section-title">Office Details</div>
@@ -233,5 +224,4 @@
         </button>
       </div>
     </div>
-  }
-</div>
+  </div>
