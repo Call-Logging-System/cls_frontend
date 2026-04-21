@@ -10,8 +10,8 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { CallLog } from '../../models/call-log/call-log.model';
 import { CallLogService } from '../../services/call-log/call-log.service';
-import { NotificationService } from '../../services/common/notification.service';
 import { LoadingService } from '../../services/common/loading.service';
+import { NotificationService } from '../../services/common/notification.service';
 import { ConfirmDialog } from './confirm-dialog/confirm-dialog';
 
 @Component({
