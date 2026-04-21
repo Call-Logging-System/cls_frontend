@@ -98,6 +98,18 @@ export class EditCallLogForm implements OnInit, OnDestroy  {
     );
   }
 
+  get isFormValid(): boolean {
+    return !!(
+      this.officeUserName?.trim() &&
+      this.officeLevel &&
+      this.callLog.issueType &&
+      this.callLog.priority &&
+      this.callLog.status &&
+      this.callLog.issueReported?.trim() &&
+      this.callLog.reportedTo
+    );
+  }
+
   // ── Lifecycle ──────────────────────────────────
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -147,6 +159,12 @@ export class EditCallLogForm implements OnInit, OnDestroy  {
 
   // ── Update ─────────────────────────────────────
   saveCallLog(): void {
+    // Server-side validation - prevent form bypass
+    if (!this.isFormValid) {
+      this.notificationService.showError('Please fill all required fields.');
+      return;
+    }
+
     const payload = {
       id: this.editId,
       officeUserName: this.officeUserName,

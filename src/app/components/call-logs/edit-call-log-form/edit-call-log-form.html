@@ -27,7 +27,7 @@
         <div class="cls-form-section-title">Office Details</div>
         <div class="cls-form-grid-2">
           <mat-form-field appearance="outline">
-            <mat-label>Office Username</mat-label>
+            <mat-label>Office Username <span style="color: red;">*</span></mat-label>
             <input
               matInput
               [(ngModel)]="officeUserName"
@@ -38,7 +38,7 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Office Level</mat-label>
+            <mat-label>Office Level <span style="color: red;">*</span></mat-label>
             <mat-select [(ngModel)]="officeLevel" name="officeLevel">
               <mat-option [value]="2">Circle</mat-option>
               <mat-option [value]="3">Division</mat-option>
@@ -130,7 +130,7 @@
         <div class="cls-form-section-title">Issue Info</div>
         <div class="cls-form-grid">
           <mat-form-field appearance="outline">
-            <mat-label>Issue Type</mat-label>
+            <mat-label>Issue Type <span style="color: red;">*</span></mat-label>
             <mat-select [(ngModel)]="callLog.issueType" name="issueType">
               <mat-option value="B">🐛 Bug</mat-option>
               <mat-option value="S">🎧 Support</mat-option>
@@ -140,7 +140,7 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Priority</mat-label>
+            <mat-label>Priority <span style="color: red;">*</span></mat-label>
             <mat-select [(ngModel)]="callLog.priority" name="priority">
               <mat-option value="H">🔴 High</mat-option>
               <mat-option value="M">🟡 Medium</mat-option>
@@ -149,7 +149,7 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Status</mat-label>
+            <mat-label>Status <span style="color: red;">*</span></mat-label>
             <mat-select [(ngModel)]="callLog.status" name="status">
               <mat-option value="O">Open</mat-option>
               <mat-option value="P">In Progress</mat-option>
@@ -159,7 +159,7 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Reported To</mat-label>
+            <mat-label>Reported To <span style="color: red;">*</span></mat-label>
             <mat-select [(ngModel)]="callLog.reportedTo" name="reportedTo">
               <mat-option [value]="null">— None —</mat-option>
               @for (user of users; track user.key) {
@@ -184,7 +184,7 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="cls-col-full">
-            <mat-label>Issue Reported</mat-label>
+            <mat-label>Issue Reported <span style="color: red;">*</span></mat-label>
             <input
               matInput
               [(ngModel)]="callLog.issueReported"
@@ -218,7 +218,7 @@
           <mat-icon>close</mat-icon>
           Cancel
         </button>
-        <button mat-raised-button class="primary-btn" (click)="saveCallLog()">
+        <button mat-raised-button class="primary-btn" (click)="saveCallLog()" [disabled]="!isFormValid">
           <mat-icon>save</mat-icon>
           Save Changes
         </button>

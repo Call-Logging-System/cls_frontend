@@ -101,6 +101,18 @@ export class AddCallLogForm implements OnInit, OnDestroy {
     return m > 0 ? `${m}m ${s}s` : `${s}s`;
   }
 
+  get isFormValid(): boolean {
+    return !!(
+      this.officeUserName?.trim() &&
+      this.officeLevel &&
+      this.callLog.issueType &&
+      this.callLog.priority &&
+      this.callLog.status &&
+      this.callLog.issueReported?.trim() &&
+      this.callLog.reportedTo
+    );
+  }
+
   private pad = (n: number) => n.toString().padStart(2, '0');
 
   // ── Labels ─────────────────────────────────────
@@ -157,6 +169,12 @@ export class AddCallLogForm implements OnInit, OnDestroy {
 
   // ── Timer controls ─────────────────────────────
   startCall(): void {
+    // Server-side validation - prevent form bypass
+    if (!this.officeUserName?.trim() || !this.officeLevel) {
+      this.notificationService.showError('Office Username and Office Level are required.');
+      return;
+    }
+
     this.lookupAndProceed(() => {
       const now = new Date();
       this.callLog.callDate = now.toISOString().split('T')[0];
@@ -173,6 +191,17 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   }
 
   startManual(): void {
+    // Server-side validation - prevent form bypass
+    if (!this.officeUserName?.trim() || !this.officeLevel) {
+      this.notificationService.showError('Office Username and Office Level are required.');
+      return;
+    }
+
+    if (!this.callLog.callDate || !this.callLog.callStartTime || !this.callLog.callEndTime) {
+      this.notificationService.showError('All fields are required.');
+      return;
+    }
+
     this.lookupAndProceed(() => {
       this.screen = 'active';
     });
@@ -192,6 +221,12 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   }
 
   endCall(): void {
+    // Server-side validation check - prevent form bypass
+    if (!this.isFormValid) {
+      this.notificationService.showError('Please fill all required fields.');
+      return;
+    }
+
     if (this.logMode === 'live') {
       clearInterval(this.timerInterval);
       this.timerInterval = null;
@@ -208,6 +243,12 @@ export class AddCallLogForm implements OnInit, OnDestroy {
 
   // ── Save ───────────────────────────────────────
   saveCallLog(): void {
+    // Server-side validation check - prevent form bypass
+    if (!this.isFormValid) {
+      this.notificationService.showError('Please fill all required fields.');
+      return;
+    }
+
     const payload = {
       officeUserName: this.officeUserName,
       officeLevel: this.officeLevel,
