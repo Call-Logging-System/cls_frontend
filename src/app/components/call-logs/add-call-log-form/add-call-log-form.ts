@@ -17,8 +17,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { CallLogService } from '../../../services/call-log/call-log.service';
-import { NotificationService } from '../../../services/common/notification.service';
 import { LoadingService } from '../../../services/common/loading.service';
+import { NotificationService } from '../../../services/common/notification.service';
 import { PhoneBookService } from '../../../services/phone-book/phone-book.service';
 
 @Component({
