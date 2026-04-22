@@ -1,4 +1,7 @@
 {
+  "buildCommand": "ng build --configuration production",
+  "outputDirectory": "dist/cls_frontend/browser",
+  "framework": "angular",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
