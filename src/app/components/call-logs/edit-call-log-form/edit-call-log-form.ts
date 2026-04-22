@@ -8,7 +8,8 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,6 +18,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { CallLogService } from '../../../services/call-log/call-log.service';
 import { NotificationService } from '../../../services/common/notification.service';
 
@@ -26,6 +28,7 @@ import { NotificationService } from '../../../services/common/notification.servi
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     MatButtonModule,
     MatIconModule,
     MatFormFieldModule,
@@ -33,6 +36,7 @@ import { NotificationService } from '../../../services/common/notification.servi
     MatSelectModule,
     MatCheckboxModule,
     MatTooltipModule,
+    MatAutocompleteModule,
   ],
   templateUrl: './edit-call-log-form.html',
   styleUrl: './edit-call-log-form.css',
@@ -63,6 +67,10 @@ export class EditCallLogForm implements OnInit, OnDestroy {
     return this.officeLevel ? (map[this.officeLevel] ?? '') : '';
   }
 
+  issueReportedControl = new FormControl('');
+  filteredIssueReported: any[] = [];
+  private issueReportedSearchSubject = new Subject<string>();
+
   // ── Users dropdown ─────────────────────────────
   users: { key: number; value: string }[] = [];
 
@@ -85,9 +93,7 @@ export class EditCallLogForm implements OnInit, OnDestroy {
   // ── Labels ─────────────────────────────────────
   get typeLabel(): string {
     return (
-      ({ B: 'Bug', S: 'Support', C: 'Change', K: 'Backend' } as any)[
-        this.callLog.issueType
-      ] ?? '—'
+      ({ B: 'Bug', S: 'Support', C: 'Change', K: 'Backend' } as any)[this.callLog.issueType] ?? '—'
     );
   }
   get priorityLabel(): string {
@@ -98,16 +104,13 @@ export class EditCallLogForm implements OnInit, OnDestroy {
   }
   get statusLabel(): string {
     return (
-      ({ O: 'Open', P: 'In Progress', D: 'Pending', C: 'Closed' } as any)[
-        this.callLog.status
-      ] ?? '—'
+      ({ O: 'Open', P: 'In Progress', D: 'Pending', C: 'Closed' } as any)[this.callLog.status] ??
+      '—'
     );
   }
   get statusClass(): string {
     return (
-      ({ O: 'open', P: 'progress', D: 'pending', C: 'closed' } as any)[
-        this.callLog.status
-      ] ?? ''
+      ({ O: 'open', P: 'progress', D: 'pending', C: 'closed' } as any)[this.callLog.status] ?? ''
     );
   }
 
@@ -132,6 +135,34 @@ export class EditCallLogForm implements OnInit, OnDestroy {
     } else {
       this.router.navigate(['/call-logs']);
     }
+
+    this.issueReportedSearchSubject
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((query) => {
+        if (query.length >= 3) {
+          this.callLogSvc.searchIssueReported(query).subscribe({
+            next: (issues) => {
+              this.filteredIssueReported = issues;
+              this.cdr.detectChanges();
+            },
+            error: () => {
+              this.filteredIssueReported = [];
+              this.cdr.detectChanges();
+            },
+          });
+        } else {
+          this.filteredIssueReported = [];
+          this.cdr.detectChanges();
+        }
+      });
+
+    // Subscribe to issue reported input changes
+    this.issueReportedControl.valueChanges.subscribe((value) => {
+      if (typeof value === 'string') {
+        this.callLog.issueReported = value;
+        this.issueReportedSearchSubject.next(value);
+      }
+    });
   }
 
   // ── Load existing record ────────────────────────
@@ -156,22 +187,19 @@ export class EditCallLogForm implements OnInit, OnDestroy {
           isReleased: data.isReleased ?? false,
         };
         this.existingTimeTakenMinutes = data.timeTakenMinutes ?? 0;
+        this.issueReportedControl.setValue(this.callLog.issueReported, { emitEvent: false });
         this.cdr.detectChanges();
 
         this.callLogSvc.getUsersDropdown().subscribe({
           next: (users) => (this.users = users),
           error: () => {
-            this.notificationService.showError(
-              'Failed to load users dropdown. Please refresh.'
-            );
+            this.notificationService.showError('Failed to load users dropdown. Please refresh.');
           },
         });
       },
       error: () => {
         // Record not found or server error — go back to list with message
-        this.notificationService.showError(
-          'Call log not found or could not be loaded.'
-        );
+        this.notificationService.showError('Call log not found or could not be loaded.');
         this.router.navigate(['/call-logs']);
       },
     });
@@ -204,9 +232,7 @@ export class EditCallLogForm implements OnInit, OnDestroy {
       error: () => {
         // Keep user on form so they don't lose changes
         this.isSaving = false;
-        this.notificationService.showError(
-          'Failed to update call log. Please try again.'
-        );
+        this.notificationService.showError('Failed to update call log. Please try again.');
         this.cdr.detectChanges();
       },
     });
@@ -250,6 +276,13 @@ export class EditCallLogForm implements OnInit, OnDestroy {
     const mm = String(now.getMinutes()).padStart(2, '0');
     this.callLog.callEndTime = `${hh}:${mm}`;
 
+    this.cdr.detectChanges();
+  }
+
+  selectIssueReported(issue: any): void {
+    this.callLog.issueReported = typeof issue === 'string' ? issue : issue.name;
+    this.issueReportedControl.setValue(this.callLog.issueReported, { emitEvent: false });
+    this.filteredIssueReported = [];
     this.cdr.detectChanges();
   }
 

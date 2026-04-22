@@ -187,10 +187,24 @@
             <mat-label>Issue Reported <span style="color: red;">*</span></mat-label>
             <input
               matInput
-              [(ngModel)]="callLog.issueReported"
-              name="issueReported"
-              placeholder="Brief description of the issue"
+              [formControl]="issueReportedControl"
+              placeholder="Start typing... (min 3 characters)"
+              [matAutocomplete]="issueReportedAuto"
             />
+
+            <mat-autocomplete #issueReportedAuto="matAutocomplete" (optionSelected)="selectIssueReported($event.option.value)">
+              @if (filteredIssueReported.length > 0) {
+                @for (issue of filteredIssueReported; track issue) {
+                  <mat-option [value]="issue">
+                    {{ typeof issue === 'string' ? issue : issue.name }}
+                  </mat-option>
+                }
+              } @else if (issueReportedControl.value && issueReportedControl.value.length >= 3) {
+                <mat-option disabled>
+                  No issues found
+                </mat-option>
+              }
+            </mat-autocomplete>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="cls-col-full">

@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { OfficeModel } from '../../models/office/office.model';
 import { environment } from '../../../environments/environment';
+import { OfficeModel } from '../../models/office/office.model';
 
 @Injectable({
   providedIn: 'root',
@@ -22,5 +22,9 @@ export class PhoneBookService {
 
   updateOffice(payload: any): Observable<any> {
     return this.http.post<any>(this.baseUrl + 'update', payload);
+  }
+
+  searchOffices(query: string): Observable<OfficeModel[]> {
+    return this.http.post<OfficeModel[]>(this.baseUrl + 'searchOffice',  query );
   }
 }

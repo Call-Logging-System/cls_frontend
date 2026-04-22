@@ -7,7 +7,8 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -16,6 +17,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { OfficeModel } from '../../../models/office/office.model';
 import { CallLogService } from '../../../services/call-log/call-log.service';
 import { LoadingService } from '../../../services/common/loading.service';
 import { NotificationService } from '../../../services/common/notification.service';
@@ -27,6 +30,7 @@ import { PhoneBookService } from '../../../services/phone-book/phone-book.servic
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     MatButtonModule,
     MatIconModule,
     MatFormFieldModule,
@@ -34,6 +38,7 @@ import { PhoneBookService } from '../../../services/phone-book/phone-book.servic
     MatSelectModule,
     MatCheckboxModule,
     MatTooltipModule,
+    MatAutocompleteModule,
   ],
   templateUrl: './add-call-log-form.html',
   styleUrl: './add-call-log-form.css',
@@ -58,6 +63,16 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   officeUserName = '';
   officeLevel: number | null = null;
   contactNumber = '';
+
+  // ── Autocomplete fields ────────────────────────
+  officeUserControl = new FormControl('');
+  filteredOffices: OfficeModel[] = [];
+  private searchSubject = new Subject<string>();
+  private destroy$ = new Subject<void>();
+
+  issueReportedControl = new FormControl('');
+  filteredIssueReported: any[] = [];
+  private issueReportedSearchSubject = new Subject<string>();
 
   get officeLevelLabel(): string {
     const map: Record<number, string> = { 2: 'Circle', 3: 'Division', 4: 'Range' };
@@ -159,10 +174,92 @@ export class AddCallLogForm implements OnInit, OnDestroy {
         );
       },
     });
+
+    // Setup autocomplete search with debounce
+    this.searchSubject
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+      )
+      .subscribe((query) => {
+        if (query.length >= 3) {
+          this.phoneBookSvc.searchOffices(query).subscribe({
+            next: (offices) => {
+              this.filteredOffices = offices;
+              this.cdr.detectChanges();
+            },
+            error: () => {
+              this.filteredOffices = [];
+              this.cdr.detectChanges();
+            },
+          });
+        } else {
+          this.filteredOffices = [];
+          this.cdr.detectChanges();
+        }
+      });
+
+    // Subscribe to input changes
+    this.officeUserControl.valueChanges.subscribe((value) => {
+      if (typeof value === 'string') {
+        this.officeUserName = value;
+        this.searchSubject.next(value);
+      }
+    });
+
+    // Setup issue reported autocomplete search with debounce
+    this.issueReportedSearchSubject
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+      )
+      .subscribe((query) => {
+        if (query.length >= 3) {
+          this.callLogSvc.searchIssueReported(query).subscribe({
+            next: (issues) => {
+              this.filteredIssueReported = issues;
+              this.cdr.detectChanges();
+            },
+            error: () => {
+              this.filteredIssueReported = [];
+              this.cdr.detectChanges();
+            },
+          });
+        } else {
+          this.filteredIssueReported = [];
+          this.cdr.detectChanges();
+        }
+      });
+
+    // Subscribe to issue reported input changes
+    this.issueReportedControl.valueChanges.subscribe((value) => {
+      if (typeof value === 'string') {
+        this.callLog.issueReported = value;
+        this.issueReportedSearchSubject.next(value);
+      }
+    });
   }
 
   ngOnDestroy(): void {
     this.clearTimer();
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  selectOffice(office: OfficeModel): void {
+    this.officeUserName = office.officeUserName;
+    this.officeLevel = office.officeLevel;
+    this.contactNumber = office.contactNumber ?? '';
+    this.officeUserControl.setValue(office.officeUserName, { emitEvent: false });
+    this.filteredOffices = [];
+    this.cdr.detectChanges();
+  }
+
+  selectIssueReported(issue: any): void {
+    this.callLog.issueReported = typeof issue === 'string' ? issue : issue.name;
+    this.issueReportedControl.setValue(this.callLog.issueReported, { emitEvent: false });
+    this.filteredIssueReported = [];
+    this.cdr.detectChanges();
   }
 
   // ── Phone book lookup ──────────────────────────

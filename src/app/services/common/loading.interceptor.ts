@@ -9,8 +9,8 @@ export class LoadingInterceptor implements HttpInterceptor {
   constructor(private loadingService: LoadingService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Skip loading for export requests
-    if (req.url.includes('export')) {
+    // Skip loading for export requests, office search, and issue search
+    if (req.url.includes('export') || req.url.includes('searchOffice') || req.url.includes('searchIssue')) {
       return next.handle(req);
     }
     this.loadingService.setLoading(true);

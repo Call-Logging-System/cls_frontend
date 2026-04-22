@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CallLog, SaveCallLog } from '../../models/call-log/call-log.model';
 import { environment } from '../../../environments/environment';
+import { CallLog, SaveCallLog } from '../../models/call-log/call-log.model';
 
 @Injectable({
   providedIn: 'root',
@@ -48,5 +48,9 @@ export class CallLogService {
         responseType: 'blob',
       },
     );
+  }
+
+  searchIssueReported(query: string): Observable<any[]> {
+    return this.http.post<any[]>(`${this.baseUrl}` + `searchIssue`, query);
   }
 }
