@@ -65,12 +65,15 @@ export class EditPhoneBookDialog {
     this.phoneBookSvc.updateOffice(payload).subscribe({
       next: () => {
         this.isSaving = false;
-        this.dialogRef.close(true); // true = refresh list
         this.notificationService.showSuccess('Office updated successfully.');
+        this.dialogRef.close(true);
       },
       error: () => {
+        // Keep dialog open so user doesn't lose their edits
         this.isSaving = false;
-        
+        this.notificationService.showError(
+          'Failed to update office. Please try again.'
+        );
       },
     });
   }

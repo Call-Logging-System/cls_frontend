@@ -1,6 +1,13 @@
 // edit-call-log-form.ts
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -31,7 +38,7 @@ import { NotificationService } from '../../../services/common/notification.servi
   styleUrl: './edit-call-log-form.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EditCallLogForm implements OnInit, OnDestroy  {
+export class EditCallLogForm implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly callLogSvc = inject(CallLogService);
@@ -39,14 +46,15 @@ export class EditCallLogForm implements OnInit, OnDestroy  {
   private readonly notificationService = inject(NotificationService);
 
   editId: number | null = null;
+  isSaving = false;
 
   // ── Office fields ──────────────────────────────
   officeUserName = '';
   officeLevel: number | null = null;
-  contactNumber = ''; 
+  contactNumber = '';
 
-  existingTimeTakenMinutes = 0; // loaded from DB
-  currentSessionSeconds = 0; // seconds in active session
+  existingTimeTakenMinutes = 0;
+  currentSessionSeconds = 0;
   timerInterval: any = null;
   isTimerRunning = false;
 
@@ -77,7 +85,9 @@ export class EditCallLogForm implements OnInit, OnDestroy  {
   // ── Labels ─────────────────────────────────────
   get typeLabel(): string {
     return (
-      ({ B: 'Bug', S: 'Support', C: 'Change', K: 'Backend' } as any)[this.callLog.issueType] ?? '—'
+      ({ B: 'Bug', S: 'Support', C: 'Change', K: 'Backend' } as any)[
+        this.callLog.issueType
+      ] ?? '—'
     );
   }
   get priorityLabel(): string {
@@ -88,13 +98,16 @@ export class EditCallLogForm implements OnInit, OnDestroy  {
   }
   get statusLabel(): string {
     return (
-      ({ O: 'Open', P: 'In Progress', D: 'Pending', C: 'Closed' } as any)[this.callLog.status] ??
-      '—'
+      ({ O: 'Open', P: 'In Progress', D: 'Pending', C: 'Closed' } as any)[
+        this.callLog.status
+      ] ?? '—'
     );
   }
   get statusClass(): string {
     return (
-      ({ O: 'open', P: 'progress', D: 'pending', C: 'closed' } as any)[this.callLog.status] ?? ''
+      ({ O: 'open', P: 'progress', D: 'pending', C: 'closed' } as any)[
+        this.callLog.status
+      ] ?? ''
     );
   }
 
@@ -144,14 +157,21 @@ export class EditCallLogForm implements OnInit, OnDestroy  {
         };
         this.existingTimeTakenMinutes = data.timeTakenMinutes ?? 0;
         this.cdr.detectChanges();
-        
-        // Load users dropdown after call log data is loaded
+
         this.callLogSvc.getUsersDropdown().subscribe({
           next: (users) => (this.users = users),
-          error: () => {},
+          error: () => {
+            this.notificationService.showError(
+              'Failed to load users dropdown. Please refresh.'
+            );
+          },
         });
       },
-      error: (err: any) => {
+      error: () => {
+        // Record not found or server error — go back to list with message
+        this.notificationService.showError(
+          'Call log not found or could not be loaded.'
+        );
         this.router.navigate(['/call-logs']);
       },
     });
@@ -159,11 +179,12 @@ export class EditCallLogForm implements OnInit, OnDestroy  {
 
   // ── Update ─────────────────────────────────────
   saveCallLog(): void {
-    // Server-side validation - prevent form bypass
     if (!this.isFormValid) {
       this.notificationService.showError('Please fill all required fields.');
       return;
     }
+
+    this.isSaving = true;
 
     const payload = {
       id: this.editId,
@@ -176,10 +197,17 @@ export class EditCallLogForm implements OnInit, OnDestroy  {
 
     this.callLogSvc.updateCallLog(payload).subscribe({
       next: () => {
+        this.isSaving = false;
         this.notificationService.showSuccess('Call log updated successfully.');
         this.router.navigate(['/call-logs']);
       },
       error: () => {
+        // Keep user on form so they don't lose changes
+        this.isSaving = false;
+        this.notificationService.showError(
+          'Failed to update call log. Please try again.'
+        );
+        this.cdr.detectChanges();
       },
     });
   }
@@ -201,7 +229,7 @@ export class EditCallLogForm implements OnInit, OnDestroy  {
   startTimer(): void {
     if (this.isTimerRunning) return;
     this.isTimerRunning = true;
-    this.currentSessionSeconds = 0; // reset session counter
+    this.currentSessionSeconds = 0;
     this.timerInterval = setInterval(() => {
       this.currentSessionSeconds++;
       this.cdr.detectChanges();
@@ -214,11 +242,9 @@ export class EditCallLogForm implements OnInit, OnDestroy  {
     this.timerInterval = null;
     this.isTimerRunning = false;
 
-    // Accumulate session into existing total
     this.existingTimeTakenMinutes += Math.ceil(this.currentSessionSeconds / 60);
     this.currentSessionSeconds = 0;
 
-    // Update end time to now
     const now = new Date();
     const hh = String(now.getHours()).padStart(2, '0');
     const mm = String(now.getMinutes()).padStart(2, '0');

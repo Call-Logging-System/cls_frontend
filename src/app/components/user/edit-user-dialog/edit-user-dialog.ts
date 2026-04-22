@@ -26,7 +26,7 @@ import { UserService } from '../../../services/user/user.service';
 export class EditUserDialog {
   private readonly fb = inject(FormBuilder);
   private readonly dialogRef = inject(MatDialogRef<EditUserDialog>);
-  readonly data = inject<{ user: UserModel }>(MAT_DIALOG_DATA); // ← injected row data
+  readonly data = inject<{ user: UserModel }>(MAT_DIALOG_DATA);
   private readonly userService = inject(UserService);
   private readonly notificationService = inject(NotificationService);
 
@@ -48,8 +48,11 @@ export class EditUserDialog {
       this.form.markAllAsTouched();
       return;
     }
+
+    this.loading = true;
+
     const payload = {
-      userId: this.data.user.userId, // carry the ID for the backend update
+      userId: this.data.user.userId,
       userName: this.form.value.fullName!,
       email: this.form.value.email!,
       role: this.form.value.role!,
@@ -57,14 +60,18 @@ export class EditUserDialog {
 
     this.userService.updateUser(payload).subscribe({
       next: () => {
-        this.notificationService.showSuccess('User saved successfully.');
+        this.loading = false;
+        this.notificationService.showSuccess('User updated successfully.');
+        this.dialogRef.close(payload);
       },
-      error: (err) => {
-        console.error('Error saving user', err);
+      error: () => {
+        // Keep dialog open so user doesn't lose their edits
+        this.loading = false;
+        this.notificationService.showError(
+          'Failed to update user. Please try again.'
+        );
       },
     });
-
-    this.dialogRef.close(payload);
   }
 
   onCancel(): void {

@@ -30,7 +30,7 @@ import { ConfirmDialog } from './confirm-dialog/confirm-dialog';
   styleUrl: './call-logs.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CallLogs implements OnInit,AfterViewInit {
+export class CallLogs implements OnInit, AfterViewInit {
   callLogs = signal<CallLog[]>([]);
 
   private readonly callLogService = inject(CallLogService);
@@ -95,11 +95,14 @@ export class CallLogs implements OnInit,AfterViewInit {
         }));
         this.callLogs.set(mappedData);
       },
-      error: () => {},
+      error: () => {
+        // AuthInterceptor handles 401/403/500 globally.
+        // This fires for network errors or unexpected failures.
+        this.notificationService.showError('Failed to load call logs. Please refresh the page.');
+      },
     });
   }
 
-  /** Count logs by status — used by stat cards */
   getCount(status: string): number {
     return this.callLogs().filter((log) => log.status === status).length;
   }
@@ -108,12 +111,11 @@ export class CallLogs implements OnInit,AfterViewInit {
     this.router.navigate(['/call-logs/add']);
   }
 
-  /** ── Delete with confirmation dialog ── */
   openDeleteDialog(element: CallLog) {
     const ref = this.dialog.open(ConfirmDialog, {
       width: '420px',
-      panelClass: 'cls-dialog', // for global dialog styling
-      disableClose: true, // must click a button, not backdrop
+      panelClass: 'cls-dialog',
+      disableClose: true,
       data: { issue: element.issue },
     });
 
@@ -125,7 +127,11 @@ export class CallLogs implements OnInit,AfterViewInit {
           this.callLogs.update((logs) => logs.filter((log) => log.id !== element.id));
           this.notificationService.showSuccess('Call log deleted successfully.');
         },
-        error: () => {},
+        error: () => {
+          // AuthInterceptor handles 401/403/500 globally.
+          // This fires if delete fails for any other reason.
+          this.notificationService.showError('Failed to delete call log. Please try again.');
+        },
       });
     });
   }
@@ -155,8 +161,8 @@ export class CallLogs implements OnInit,AfterViewInit {
         this.notificationService.showSuccess('Export downloaded successfully.');
         this.loadingService.setLoading(false);
       },
-      error: (err) => {
-        console.error('Export error:', err);
+      error: () => {
+        this.notificationService.showError('Export failed. Please try again.');
         this.loadingService.setLoading(false);
       },
     });

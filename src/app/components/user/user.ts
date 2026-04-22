@@ -35,8 +35,10 @@ export class User implements OnInit {
       next: (users) => {
         this.dataSource.data = users;
       },
-      error: (err) => {
-        console.error('Error loading users', err);
+      error: () => {
+        this.notificationService.showError(
+          'Failed to load users. Please refresh the page.'
+        );
       },
     });
   }
@@ -53,10 +55,9 @@ export class User implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (!result) return; // Dialog was cancelled
-
+      if (!result) return;
       this.notificationService.showSuccess('User added successfully!');
-      this.loadUsers(); // Refresh the user list
+      this.loadUsers();
     });
   }
 
@@ -66,20 +67,19 @@ export class User implements OnInit {
       disableClose: true,
       data: { user: element },
     });
-    
-    dialogRef.afterClosed().subscribe((result) => {
-      if (!result) return; // Dialog was cancelled
 
+    dialogRef.afterClosed().subscribe((result) => {
+      if (!result) return;
       this.notificationService.showSuccess('User updated successfully!');
-      this.loadUsers(); // Refresh the user list
+      this.loadUsers();
     });
   }
 
   openDeleteDialog(element: UserModel) {
     const ref = this.dialog.open(ConfirmDialog, {
       width: '420px',
-      panelClass: 'cls-dialog', // for global dialog styling
-      disableClose: true, // must click a button, not backdrop
+      panelClass: 'cls-dialog',
+      disableClose: true,
       data: { issue: element.userName },
     });
 
@@ -91,9 +91,12 @@ export class User implements OnInit {
           this.loadUsers();
           this.notificationService.showSuccess('User deleted successfully.');
         },
-        error: () => {},
+        error: () => {
+          this.notificationService.showError(
+            'Failed to delete user. Please try again.'
+          );
+        },
       });
     });
   }
-
 }

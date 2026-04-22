@@ -51,6 +51,9 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   screen: 'incoming' | 'active' | 'review' = 'incoming';
   logMode: 'live' | 'manual' = 'live';
 
+  // ── Saving state ───────────────────────────────
+  isSaving = false;
+
   // ── Office fields ──────────────────────────────
   officeUserName = '';
   officeLevel: number | null = null;
@@ -91,7 +94,9 @@ export class AddCallLogForm implements OnInit, OnDestroy {
     const h = Math.floor(this.timerSeconds / 3600);
     const m = Math.floor((this.timerSeconds % 3600) / 60);
     const s = this.timerSeconds % 60;
-    return h > 0 ? `${this.pad(h)}:${this.pad(m)}:${this.pad(s)}` : `${this.pad(m)}:${this.pad(s)}`;
+    return h > 0
+      ? `${this.pad(h)}:${this.pad(m)}:${this.pad(s)}`
+      : `${this.pad(m)}:${this.pad(s)}`;
   }
 
   get activeTimeDisplay(): string {
@@ -118,7 +123,9 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   // ── Labels ─────────────────────────────────────
   get typeLabel(): string {
     return (
-      ({ B: 'Bug', S: 'Support', C: 'Change', K: 'Backend' } as any)[this.callLog.issueType] ?? '—'
+      ({ B: 'Bug', S: 'Support', C: 'Change', K: 'Backend' } as any)[
+        this.callLog.issueType
+      ] ?? '—'
     );
   }
   get priorityLabel(): string {
@@ -129,13 +136,16 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   }
   get statusLabel(): string {
     return (
-      ({ O: 'Open', P: 'In Progress', D: 'Pending', C: 'Closed' } as any)[this.callLog.status] ??
-      '—'
+      ({ O: 'Open', P: 'In Progress', D: 'Pending', C: 'Closed' } as any)[
+        this.callLog.status
+      ] ?? '—'
     );
   }
   get statusClass(): string {
     return (
-      ({ O: 'open', P: 'progress', D: 'pending', C: 'closed' } as any)[this.callLog.status] ?? ''
+      ({ O: 'open', P: 'progress', D: 'pending', C: 'closed' } as any)[
+        this.callLog.status
+      ] ?? ''
     );
   }
 
@@ -143,7 +153,11 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.callLogSvc.getUsersDropdown().subscribe({
       next: (data) => (this.users = data),
-      error: () => {},
+      error: () => {
+        this.notificationService.showError(
+          'Failed to load users. Please refresh the page.'
+        );
+      },
     });
   }
 
@@ -160,6 +174,7 @@ export class AddCallLogForm implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       },
       error: () => {
+        // Not a blocking error — office may just not exist in phone book yet
         this.contactNumber = '';
         next();
         this.cdr.detectChanges();
@@ -169,9 +184,10 @@ export class AddCallLogForm implements OnInit, OnDestroy {
 
   // ── Timer controls ─────────────────────────────
   startCall(): void {
-    // Server-side validation - prevent form bypass
     if (!this.officeUserName?.trim() || !this.officeLevel) {
-      this.notificationService.showError('Office Username and Office Level are required.');
+      this.notificationService.showError(
+        'Office Username and Office Level are required.'
+      );
       return;
     }
 
@@ -191,14 +207,19 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   }
 
   startManual(): void {
-    // Server-side validation - prevent form bypass
     if (!this.officeUserName?.trim() || !this.officeLevel) {
-      this.notificationService.showError('Office Username and Office Level are required.');
+      this.notificationService.showError(
+        'Office Username and Office Level are required.'
+      );
       return;
     }
 
-    if (!this.callLog.callDate || !this.callLog.callStartTime || !this.callLog.callEndTime) {
-      this.notificationService.showError('All fields are required.');
+    if (
+      !this.callLog.callDate ||
+      !this.callLog.callStartTime ||
+      !this.callLog.callEndTime
+    ) {
+      this.notificationService.showError('All timing fields are required.');
       return;
     }
 
@@ -221,7 +242,6 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   }
 
   endCall(): void {
-    // Server-side validation check - prevent form bypass
     if (!this.isFormValid) {
       this.notificationService.showError('Please fill all required fields.');
       return;
@@ -243,11 +263,12 @@ export class AddCallLogForm implements OnInit, OnDestroy {
 
   // ── Save ───────────────────────────────────────
   saveCallLog(): void {
-    // Server-side validation check - prevent form bypass
     if (!this.isFormValid) {
       this.notificationService.showError('Please fill all required fields.');
       return;
     }
+
+    this.isSaving = true;
 
     const payload = {
       officeUserName: this.officeUserName,
@@ -258,11 +279,18 @@ export class AddCallLogForm implements OnInit, OnDestroy {
 
     this.callLogSvc.saveCallLog(payload).subscribe({
       next: () => {
+        this.isSaving = false;
         this.notificationService.showSuccess('Call log saved successfully.');
         this.router.navigate(['/call-logs']);
       },
       error: () => {
-        ;
+        // AuthInterceptor handles 401/403/500 globally.
+        // This keeps the user on the review screen so they don't lose their data.
+        this.isSaving = false;
+        this.notificationService.showError(
+          'Failed to save call log. Please try again.'
+        );
+        this.cdr.detectChanges();
       },
     });
   }
@@ -281,5 +309,4 @@ export class AddCallLogForm implements OnInit, OnDestroy {
     }
     this.screen = 'active';
   }
-
 }

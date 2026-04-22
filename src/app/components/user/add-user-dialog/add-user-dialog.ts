@@ -33,15 +33,15 @@ export class AddUserDialog {
   loading = false;
 
   roles = [
-    { value: 1,   label: 'Admin',   icon: 'admin_panel_settings' },
-    { value: 2,   label: 'Support', icon: 'support_agent' },
+    { value: 1, label: 'Admin', icon: 'admin_panel_settings' },
+    { value: 2, label: 'Support', icon: 'support_agent' },
   ];
 
   form = this.fb.group({
     fullName: ['', Validators.required],
-    email:    ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
-    role:     [null as number | null, Validators.required],
+    role: [null as number | null, Validators.required],
   });
 
   onSubmit(): void {
@@ -50,22 +50,30 @@ export class AddUserDialog {
       return;
     }
 
-    const payload : SaveUserModel = {
-      userName : this.form.value.fullName!,
-      email : this.form.value.email!,
-      password : this.form.value.password!,
-      role : this.form.value.role!,
-    }
+    this.loading = true;
+
+    const payload: SaveUserModel = {
+      userName: this.form.value.fullName!,
+      email: this.form.value.email!,
+      password: this.form.value.password!,
+      role: this.form.value.role!,
+    };
 
     this.userService.saveUser(payload).subscribe({
-      next:()=>{
+      next: () => {
+        this.loading = false;
         this.notificationService.showSuccess('User saved successfully.');
+        this.dialogRef.close(payload);
       },
-      error:(err) =>{
-        console.error('Error saving user', err);}
-    })
-
-    this.dialogRef.close(payload);
+      error: () => {
+        // AuthInterceptor handles 401/403/500.
+        // 400 = user already exists (RecordAlreadyExistsException from backend)
+        this.loading = false;
+        this.notificationService.showError(
+          'Failed to create user. The email may already be in use.'
+        );
+      },
+    });
   }
 
   onCancel(): void {
