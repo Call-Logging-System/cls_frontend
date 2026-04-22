@@ -26,16 +26,12 @@ export class AuthInterceptor implements HttpInterceptor {
           errorMessage = `Error: ${error.error.message}`;
         } else {
           // Backend returned an unsuccessful response code
-          if (error.status === 401) {
+          if (error.status === 401 || error.status === 403) {
             // JWT token expired or invalid
             errorMessage = 'Your session has expired. Please log in again.';
             // Clear the user from auth service
             this.authService.setUser(null);
             // Redirect to login page
-            this.router.navigate(['/login']);
-          } else if (error.status === 403) {
-            errorMessage = 'Access denied. You do not have permission to perform this action.';
-            this.authService.setUser(null);
             this.router.navigate(['/login']);
           } else if (error.status >= 500) {
             errorMessage = 'Server error. Please try again later.';
