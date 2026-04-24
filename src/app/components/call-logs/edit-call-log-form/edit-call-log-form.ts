@@ -167,43 +167,46 @@ export class EditCallLogForm implements OnInit, OnDestroy {
 
   // ── Load existing record ────────────────────────
   private loadCallLog(id: number): void {
-    this.callLogSvc.getCallLogById(id).subscribe({
-      next: (data: any) => {
-        this.officeUserName = data.officeUserName ?? '';
-        this.officeLevel = data.officeLevel ?? null;
-        this.contactNumber = data.contactNumber ?? '';
-        this.callLog = {
-          callDate: data.callDate ?? '',
-          callStartTime: data.callStartTime ?? '',
-          callEndTime: data.callEndTime ?? '',
-          issueType: data.issueType ?? '',
-          priority: data.priority ?? '',
-          status: data.status ?? 'O',
-          issueReported: data.issueReported ?? '',
-          description: data.description ?? '',
-          reportedTo: data.reportedTo ?? null,
-          solvedBy: data.solvedBy ?? null,
-          releaseDate: data.releaseDate ?? null,
-          isReleased: data.isReleased ?? false,
-        };
-        this.existingTimeTakenMinutes = data.timeTakenMinutes ?? 0;
-        this.issueReportedControl.setValue(this.callLog.issueReported, { emitEvent: false });
-        this.cdr.detectChanges();
+  // Load users dropdown in parallel, not nested
+  this.callLogSvc.getUsersDropdown().subscribe({
+    next: (users) => {
+      this.users = users;
+      this.cdr.detectChanges();
+    },
+    error: () => {
+      this.notificationService.showError('Failed to load users dropdown. Please refresh.');
+    },
+  });
 
-        this.callLogSvc.getUsersDropdown().subscribe({
-          next: (users) => (this.users = users),
-          error: () => {
-            this.notificationService.showError('Failed to load users dropdown. Please refresh.');
-          },
-        });
-      },
-      error: () => {
-        // Record not found or server error — go back to list with message
-        this.notificationService.showError('Call log not found or could not be loaded.');
-        this.router.navigate(['/call-logs']);
-      },
-    });
-  }
+  this.callLogSvc.getCallLogById(id).subscribe({
+    next: (data: any) => {
+      this.officeUserName = data.officeUserName ?? '';
+      this.officeLevel = data.officeLevel ?? null;
+      this.contactNumber = data.contactNumber ?? '';
+      this.callLog = {
+        callDate: data.callDate ?? '',
+        callStartTime: data.callStartTime ?? '',
+        callEndTime: data.callEndTime ?? '',
+        issueType: data.issueType ?? '',
+        priority: data.priority ?? '',
+        status: data.status ?? 'O',
+        issueReported: data.issueReported ?? '',
+        description: data.description ?? '',
+        reportedTo: data.reportedTo ?? null,
+        solvedBy: data.solvedBy ?? null,
+        releaseDate: data.releaseDate ?? null,
+        isReleased: data.isReleased ?? false,
+      };
+      this.existingTimeTakenMinutes = data.timeTakenMinutes ?? 0;
+      this.issueReportedControl.setValue(this.callLog.issueReported, { emitEvent: false });
+      this.cdr.detectChanges();
+    },
+    error: () => {
+      this.notificationService.showError('Call log not found or could not be loaded.');
+      this.router.navigate(['/call-logs']);
+    },
+  });
+}
 
   // ── Update ─────────────────────────────────────
   saveCallLog(): void {
