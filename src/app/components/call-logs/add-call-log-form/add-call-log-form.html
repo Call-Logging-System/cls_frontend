@@ -66,7 +66,7 @@
 
           <mat-form-field appearance="outline">
             <mat-label>Office Level <span style="color: red">*</span></mat-label>
-            <mat-select [(ngModel)]="officeLevel" name="officeLevel">
+            <mat-select [(ngModel)]="officeLevel" name="officeLevel" [disabled]="officeLevelLocked">
               <mat-option [value]="2">Circle</mat-option>
               <mat-option [value]="3">Division</mat-option>
               <mat-option [value]="4">Range</mat-option>
@@ -222,19 +222,19 @@
           <mat-form-field appearance="outline">
             <mat-label>Issue Type <span style="color: red">*</span></mat-label>
             <mat-select [(ngModel)]="callLog.issueType" name="issueType">
-              <mat-option value="B">🐛 Bug</mat-option>
-              <mat-option value="S">🎧 Support</mat-option>
-              <mat-option value="C">🔄 Change</mat-option>
-              <mat-option value="K">⚙️ Backend</mat-option>
+              <mat-option value="B">Bug</mat-option>
+              <mat-option value="S">Support</mat-option>
+              <mat-option value="C">Change</mat-option>
+              <mat-option value="K">Backend</mat-option>
             </mat-select>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Priority <span style="color: red">*</span></mat-label>
             <mat-select [(ngModel)]="callLog.priority" name="priority">
-              <mat-option value="H">🔴 High</mat-option>
-              <mat-option value="M">🟡 Medium</mat-option>
-              <mat-option value="L">🟢 Low</mat-option>
+              <mat-option value="H">High</mat-option>
+              <mat-option value="M">Medium</mat-option>
+              <mat-option value="L">Low</mat-option>
             </mat-select>
           </mat-form-field>
 

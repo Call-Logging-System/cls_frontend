@@ -74,6 +74,8 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   filteredIssueReported: any[] = [];
   private issueReportedSearchSubject = new Subject<string>();
 
+  officeLevelLocked : boolean = false;
+
   get officeLevelLabel(): string {
     const map: Record<number, string> = { 2: 'Circle', 3: 'Division', 4: 'Range' };
     return this.officeLevel ? (map[this.officeLevel] ?? '') : '';
@@ -189,6 +191,7 @@ export class AddCallLogForm implements OnInit, OnDestroy {
     this.officeUserControl.valueChanges.subscribe((value) => {
       if (typeof value === 'string') {
         this.officeUserName = value;
+        this.officeLevelLocked = false; // Unlock office level if user types manually
         this.searchSubject.next(value);
       }
     });
@@ -235,6 +238,7 @@ export class AddCallLogForm implements OnInit, OnDestroy {
     this.contactNumber = office.contactNumber ?? '';
     this.officeUserControl.setValue(office.officeUserName, { emitEvent: false });
     this.filteredOffices = [];
+    this.officeLevelLocked = true; // Lock office level after selection
     this.cdr.detectChanges();
   }
 
