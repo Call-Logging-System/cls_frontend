@@ -350,8 +350,31 @@ export class AddCallLogForm implements OnInit, OnDestroy {
       this.timerState = 'idle';
       this.callLog.callEndTime = new Date().toTimeString().slice(0, 8);
       this.finalDuration = this.activeTimeDisplay;
+    } else{
+      this.finalDuration = this.calManualDuration(this.callLog.callStartTime,this.callLog.callEndTime);
     }
     this.screen = 'review';
+  }
+
+  private calManualDuration(start: string, end: string): string {
+    if (!start || !end) return '—';
+
+    const [sh,sm,ss=0] = start.split(':').map(Number);
+    const [eh,em,es=0] = end.split(':').map(Number);
+
+    const startSeconds = sh * 3600 + sm * 60 + ss;
+    const endSeconds = eh * 3600 + em * 60 + es;
+    const diff = endSeconds - startSeconds;
+
+    if(diff <= 0) return '—'; // End time before start time
+
+    const h = Math.floor(diff/3600);
+    const m = Math.floor((diff % 3600) / 60);
+    const s = diff % 60;
+
+    if(h > 0) return `${h}h ${m}m ${s}s`;
+    if(m > 0) return `${m}m ${s}s`;
+    return `${s}s`;
   }
 
   private clearTimer(): void {
