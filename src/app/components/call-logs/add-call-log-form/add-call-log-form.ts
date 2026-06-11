@@ -109,9 +109,7 @@ export class AddCallLogForm implements OnInit, OnDestroy {
     const h = Math.floor(this.timerSeconds / 3600);
     const m = Math.floor((this.timerSeconds % 3600) / 60);
     const s = this.timerSeconds % 60;
-    return h > 0
-      ? `${this.pad(h)}:${this.pad(m)}:${this.pad(s)}`
-      : `${this.pad(m)}:${this.pad(s)}`;
+    return h > 0 ? `${this.pad(h)}:${this.pad(m)}:${this.pad(s)}` : `${this.pad(m)}:${this.pad(s)}`;
   }
 
   get activeTimeDisplay(): string {
@@ -138,9 +136,7 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   // ── Labels ─────────────────────────────────────
   get typeLabel(): string {
     return (
-      ({ B: 'Bug', S: 'Support', C: 'Change', K: 'Backend' } as any)[
-        this.callLog.issueType
-      ] ?? '—'
+      ({ B: 'Bug', S: 'Support', C: 'Change', K: 'Backend' } as any)[this.callLog.issueType] ?? '—'
     );
   }
   get priorityLabel(): string {
@@ -151,16 +147,13 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   }
   get statusLabel(): string {
     return (
-      ({ O: 'Open', P: 'In Progress', D: 'Pending', C: 'Closed' } as any)[
-        this.callLog.status
-      ] ?? '—'
+      ({ O: 'Open', P: 'In Progress', D: 'Pending', C: 'Closed' } as any)[this.callLog.status] ??
+      '—'
     );
   }
   get statusClass(): string {
     return (
-      ({ O: 'open', P: 'progress', D: 'pending', C: 'closed' } as any)[
-        this.callLog.status
-      ] ?? ''
+      ({ O: 'open', P: 'progress', D: 'pending', C: 'closed' } as any)[this.callLog.status] ?? ''
     );
   }
 
@@ -169,35 +162,28 @@ export class AddCallLogForm implements OnInit, OnDestroy {
     this.callLogSvc.getUsersDropdown().subscribe({
       next: (data) => (this.users = data),
       error: () => {
-        this.notificationService.showError(
-          'Failed to load users. Please refresh the page.'
-        );
+        this.notificationService.showError('Failed to load users. Please refresh the page.');
       },
     });
 
     // Setup autocomplete search with debounce
-    this.searchSubject
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-      )
-      .subscribe((query) => {
-        if (query.length >= 3) {
-          this.phoneBookSvc.searchOffices(query).subscribe({
-            next: (offices) => {
-              this.filteredOffices = offices;
-              this.cdr.detectChanges();
-            },
-            error: () => {
-              this.filteredOffices = [];
-              this.cdr.detectChanges();
-            },
-          });
-        } else {
-          this.filteredOffices = [];
-          this.cdr.detectChanges();
-        }
-      });
+    this.searchSubject.pipe(debounceTime(300), distinctUntilChanged()).subscribe((query) => {
+      if (query.length >= 3) {
+        this.phoneBookSvc.searchOffices(query).subscribe({
+          next: (offices) => {
+            this.filteredOffices = offices;
+            this.cdr.detectChanges();
+          },
+          error: () => {
+            this.filteredOffices = [];
+            this.cdr.detectChanges();
+          },
+        });
+      } else {
+        this.filteredOffices = [];
+        this.cdr.detectChanges();
+      }
+    });
 
     // Subscribe to input changes
     this.officeUserControl.valueChanges.subscribe((value) => {
@@ -209,10 +195,7 @@ export class AddCallLogForm implements OnInit, OnDestroy {
 
     // Setup issue reported autocomplete search with debounce
     this.issueReportedSearchSubject
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-      )
+      .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe((query) => {
         if (query.length >= 3) {
           this.callLogSvc.searchIssueReported(query).subscribe({
@@ -282,9 +265,7 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   // ── Timer controls ─────────────────────────────
   startCall(): void {
     if (!this.officeUserName?.trim() || !this.officeLevel) {
-      this.notificationService.showError(
-        'Office Username and Office Level are required.'
-      );
+      this.notificationService.showError('Office Username and Office Level are required.');
       return;
     }
 
@@ -305,18 +286,17 @@ export class AddCallLogForm implements OnInit, OnDestroy {
 
   startManual(): void {
     if (!this.officeUserName?.trim() || !this.officeLevel) {
-      this.notificationService.showError(
-        'Office Username and Office Level are required.'
-      );
+      this.notificationService.showError('Office Username and Office Level are required.');
       return;
     }
 
-    if (
-      !this.callLog.callDate ||
-      !this.callLog.callStartTime ||
-      !this.callLog.callEndTime
-    ) {
+    if (!this.callLog.callDate || !this.callLog.callStartTime || !this.callLog.callEndTime) {
       this.notificationService.showError('All timing fields are required.');
+      return;
+    }
+
+    if (!this.isTimeValid()) {
+      this.notificationService.showError('Start time must be earlier than end time.');
       return;
     }
 
@@ -350,8 +330,11 @@ export class AddCallLogForm implements OnInit, OnDestroy {
       this.timerState = 'idle';
       this.callLog.callEndTime = new Date().toTimeString().slice(0, 8);
       this.finalDuration = this.activeTimeDisplay;
-    } else{
-      this.finalDuration = this.calManualDuration(this.callLog.callStartTime,this.callLog.callEndTime);
+    } else {
+      this.finalDuration = this.calManualDuration(
+        this.callLog.callStartTime,
+        this.callLog.callEndTime,
+      );
     }
     this.screen = 'review';
   }
@@ -359,22 +342,34 @@ export class AddCallLogForm implements OnInit, OnDestroy {
   private calManualDuration(start: string, end: string): string {
     if (!start || !end) return '—';
 
-    const [sh,sm,ss=0] = start.split(':').map(Number);
-    const [eh,em,es=0] = end.split(':').map(Number);
+    const [sh, sm, ss = 0] = start.split(':').map(Number);
+    const [eh, em, es = 0] = end.split(':').map(Number);
 
     const startSeconds = sh * 3600 + sm * 60 + ss;
     const endSeconds = eh * 3600 + em * 60 + es;
     const diff = endSeconds - startSeconds;
 
-    if(diff <= 0) return '—'; // End time before start time
+    if (diff <= 0) return '—'; // End time before start time
 
-    const h = Math.floor(diff/3600);
+    const h = Math.floor(diff / 3600);
     const m = Math.floor((diff % 3600) / 60);
     const s = diff % 60;
 
-    if(h > 0) return `${h}h ${m}m ${s}s`;
-    if(m > 0) return `${m}m ${s}s`;
+    if (h > 0) return `${h}h ${m}m ${s}s`;
+    if (m > 0) return `${m}m ${s}s`;
     return `${s}s`;
+  }
+
+  public isTimeValid(): boolean {
+    const start = this.callLog.callStartTime;
+    const end = this.callLog.callEndTime;
+
+    if (!start || !end) return true;
+
+    const [sh, sm] = start.split(':').map(Number);
+    const [eh, em] = end.split(':').map(Number);
+
+    return eh * 60 + em > sh * 60 + sm;
   }
 
   private clearTimer(): void {
@@ -407,9 +402,7 @@ export class AddCallLogForm implements OnInit, OnDestroy {
         // AuthInterceptor handles 401/403/500 globally.
         // This keeps the user on the review screen so they don't lose their data.
         this.isSaving = false;
-        this.notificationService.showError(
-          'Failed to save call log. Please try again.'
-        );
+        this.notificationService.showError('Failed to save call log. Please try again.');
         this.cdr.detectChanges();
       },
     });
