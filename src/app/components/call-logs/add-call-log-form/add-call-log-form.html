@@ -18,7 +18,10 @@
         Back
       </button>
     </div>
-
+    <div class="cls-mandatory-strip">
+      <mat-icon>info_outline</mat-icon>
+      Fields marked with <span class="cls-mandatory-star">*</span> are mandatory
+    </div>
     <div class="cls-form-card">
       <!-- Mode toggle -->
       <div class="mode-toggle">
@@ -37,7 +40,7 @@
         <div class="cls-form-section-title">Office Details</div>
         <div class="cls-form-grid-2">
           <mat-form-field appearance="outline">
-            <mat-label>Office Username <span style="color: red;">*</span></mat-label>
+            <mat-label>Office Username <span style="color: red">*</span></mat-label>
             <input
               matInput
               [formControl]="officeUserControl"
@@ -45,7 +48,10 @@
               [matAutocomplete]="auto"
             />
             <mat-icon matSuffix>business</mat-icon>
-            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectOffice($event.option.value)">
+            <mat-autocomplete
+              #auto="matAutocomplete"
+              (optionSelected)="selectOffice($event.option.value)"
+            >
               @if (filteredOffices.length > 0) {
                 @for (office of filteredOffices; track office.id) {
                   <mat-option [value]="office">
@@ -53,15 +59,13 @@
                   </mat-option>
                 }
               } @else if (officeUserControl.value && officeUserControl.value.length >= 3) {
-                <mat-option disabled>
-                  No offices found
-                </mat-option>
+                <mat-option disabled> No offices found </mat-option>
               }
             </mat-autocomplete>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Office Level <span style="color: red;">*</span></mat-label>
+            <mat-label>Office Level <span style="color: red">*</span></mat-label>
             <mat-select [(ngModel)]="officeLevel" name="officeLevel">
               <mat-option [value]="2">Circle</mat-option>
               <mat-option [value]="3">Division</mat-option>
@@ -96,14 +100,14 @@
           <div class="cls-form-section-title">Call Timing</div>
           <div class="cls-form-grid-2">
             <mat-form-field appearance="outline">
-              <mat-label>Call Date <span style="color: red;">*</span></mat-label>
+              <mat-label>Call Date <span style="color: red">*</span></mat-label>
               <input matInput type="date" [(ngModel)]="callLog.callDate" name="callDate" />
             </mat-form-field>
 
             <div></div>
 
             <mat-form-field appearance="outline">
-              <mat-label>Start Time <span style="color: red;">*</span></mat-label>
+              <mat-label>Start Time <span style="color: red">*</span></mat-label>
               <input
                 matInput
                 type="time"
@@ -113,7 +117,7 @@
             </mat-form-field>
 
             <mat-form-field appearance="outline">
-              <mat-label>End Time <span style="color: red;">*</span></mat-label>
+              <mat-label>End Time <span style="color: red">*</span></mat-label>
               <input matInput type="time" [(ngModel)]="callLog.callEndTime" name="callEndTime" />
             </mat-form-field>
           </div>
@@ -183,7 +187,10 @@
         </div>
       }
     </div>
-
+    <div class="cls-mandatory-strip">
+      <mat-icon>info_outline</mat-icon>
+      Fields marked with <span class="cls-mandatory-star">*</span> are mandatory
+    </div>
     <div class="cls-form-card">
       <!-- ── Office Details ── -->
       <div class="cls-form-section">
@@ -213,7 +220,7 @@
         <div class="cls-form-section-title">Issue Info</div>
         <div class="cls-form-grid">
           <mat-form-field appearance="outline">
-            <mat-label>Issue Type <span style="color: red;">*</span></mat-label>
+            <mat-label>Issue Type <span style="color: red">*</span></mat-label>
             <mat-select [(ngModel)]="callLog.issueType" name="issueType">
               <mat-option value="B">🐛 Bug</mat-option>
               <mat-option value="S">🎧 Support</mat-option>
@@ -223,7 +230,7 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Priority <span style="color: red;">*</span></mat-label>
+            <mat-label>Priority <span style="color: red">*</span></mat-label>
             <mat-select [(ngModel)]="callLog.priority" name="priority">
               <mat-option value="H">🔴 High</mat-option>
               <mat-option value="M">🟡 Medium</mat-option>
@@ -232,7 +239,7 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Status <span style="color: red;">*</span></mat-label>
+            <mat-label>Status <span style="color: red">*</span></mat-label>
             <mat-select [(ngModel)]="callLog.status" name="status">
               <mat-option value="O">Open</mat-option>
               <mat-option value="P">In Progress</mat-option>
@@ -242,7 +249,7 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Reported To <span style="color: red;">*</span></mat-label>
+            <mat-label>Reported To <span style="color: red">*</span></mat-label>
             <mat-select [(ngModel)]="callLog.reportedTo" name="reportedTo">
               <mat-option [value]="null">— None —</mat-option>
               @for (user of users; track user.key) {
@@ -267,14 +274,17 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="cls-col-full">
-            <mat-label>Issue Reported <span style="color: red;">*</span></mat-label>
+            <mat-label>Issue Reported <span style="color: red">*</span></mat-label>
             <input
               matInput
               [formControl]="issueReportedControl"
               placeholder="Start typing... (min 3 characters)"
               [matAutocomplete]="issueReportedAuto"
             />
-            <mat-autocomplete #issueReportedAuto="matAutocomplete" (optionSelected)="selectIssueReported($event.option.value)">
+            <mat-autocomplete
+              #issueReportedAuto="matAutocomplete"
+              (optionSelected)="selectIssueReported($event.option.value)"
+            >
               @if (filteredIssueReported.length > 0) {
                 @for (issue of filteredIssueReported; track issue) {
                   <mat-option [value]="issue">
@@ -282,9 +292,7 @@
                   </mat-option>
                 }
               } @else if (issueReportedControl.value && issueReportedControl.value.length >= 3) {
-                <mat-option disabled>
-                  No issues found
-                </mat-option>
+                <mat-option disabled> No issues found </mat-option>
               }
             </mat-autocomplete>
           </mat-form-field>
@@ -314,12 +322,22 @@
           Back
         </button>
         @if (logMode === 'live') {
-          <button mat-raised-button class="danger-btn" (click)="endCall()" [disabled]="!isFormValid">
+          <button
+            mat-raised-button
+            class="danger-btn"
+            (click)="endCall()"
+            [disabled]="!isFormValid"
+          >
             <mat-icon>call_end</mat-icon>
             End Call & Review
           </button>
         } @else {
-          <button mat-raised-button class="primary-btn" (click)="endCall()" [disabled]="!isFormValid">
+          <button
+            mat-raised-button
+            class="primary-btn"
+            (click)="endCall()"
+            [disabled]="!isFormValid"
+          >
             <mat-icon>arrow_forward</mat-icon>
             Review & Save
           </button>
